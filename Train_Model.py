@@ -8,9 +8,14 @@ from imutils.video import FileVideoStream
 from imutils.video import FPS
 import imutils
 import pathlib
-import Video_train as vt
+#import Video_train as vt
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.callbacks import TensorBoard
+from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
+
 
 mp_holistic = mp.solutions.holistic # Holistic model
 mp_drawing = mp.solutions.drawing_utils # Drawing utilities
@@ -61,22 +66,22 @@ def extract_keypoints(results):
 
 
 
-pose = []
-for res in results.pose_landmarks.landmark:
-    test = np.array([res.x, res.y, res.z, res.visibility])
-    pose.append(test)
+#pose = []
+#for res in results.pose_landmarks.landmark:
+ #   test = np.array([res.x, res.y, res.z, res.visibility])
+  #  pose.append(test)
 
-pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(132)
-face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(1404)
-lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
-rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
+#pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(132)
+#face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(1404)
+#lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
+#rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
 
 
 
-face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(1404)
-result_test = extract_keypoints(results)
-if input("Press Enter to save the Video Nodes !!"):
-    np.save('0', result_test)
+#face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(1404)
+#result_test = extract_keypoints(results)
+#if input("Press Enter to save the Video Nodes !!"):
+    #np.save('0', result_test)
 
 # Path for exported data, numpy arrays
 DATA_PATH = data_path=pathlib.Path.cwd().joinpath('MP_DATA')
@@ -165,8 +170,60 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 if cv2.waitKey(10) & 0xFF == ord('q'):
                     break
                     
-    cap.release()
-    cv2.destroyAllWindows()
+        cap.release()
+    #cv2.destroyAllWindows()
+label_map = {label:num for num, label in enumerate(actions)}
+print(label_map)
 
+sequences, labels = [], []
+for action in actions:
+    for sequence in np.array(os.listdir(os.path.join(DATA_PATH, action))).astype(int):
+        window = []
+        for frame_num in range(1,sequence_length+1):
+            res = np.load(os.path.join(DATA_PATH, action, str(sequence), "{}.npy".format(frame_num)))
+            window.append(res)
+        sequences.append(window)
+        labels.append(label_map[action])
 
     
+np.array(sequences).shape
+np.array(labels).shape
+X = np.array(sequences)
+X.shape
+y = to_categorical(labels).astype(int)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
+y_test.shape
+
+log_dir = os.path.join('Logs')
+tb_callback = TensorBoard(log_dir=log_dir)
+
+model = Sequential()
+model.add(LSTM(64, return_sequences=True, activation='relu'))
+model.add(LSTM(128, return_sequences=True, activation='relu'))
+model.add(LSTM(64, return_sequences=False, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(actions.shape[0], activation='softmax'))
+model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
+
+model.fit(X_train, y_train, epochs=500, callbacks=[tb_callback])
+print(model.summary())
+
+res = model.predict(X_test)
+actions[np.argmax(res[2])]
+actions[np.argmax(y_test[2])]
+
+#Save Weights
+model.save('action.h5')
+model.load_weights('action.h5')
+
+#Evaluation using Confusion Matrix and Accuracy
+yhat = model.predict(X_test)
+ytrue = np.argmax(y_test, axis=1).tolist()
+yhat = np.argmax(yhat, axis=1).tolist()
+multilabel_confusion_matrix(ytrue, yhat)
+accuracy_score(ytrue, yhat)
+
+
+
+
