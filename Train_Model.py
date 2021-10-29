@@ -72,13 +72,13 @@ DATA_PATH = data_path=pathlib.Path.cwd().joinpath('MP_DATA')
 path_video=data_path=pathlib.Path.cwd().joinpath('Sign_Video')
 print(path_video)
 # Actions that we try to detect
-actions = np.array(['hello'])
+actions = np.array(['hello', 'alright', 'Assalam-o-Alaikum','good afternoon','good evening','good morning'])
 
 # Thirty videos worth of data
-no_sequences = 14
+no_sequences = 15
 
 # Videos are going to be 30 frames in length
-sequence_length = 14
+sequence_length = 15
 
 # Folder start
 start_folder = 0
@@ -193,7 +193,7 @@ log_dir = os.path.join('Logs')
 tb_callback = TensorBoard(log_dir=log_dir)
 
 model = Sequential()
-model.add(LSTM(64, return_sequences=True, activation='relu',input_shape=(14,1662)))
+model.add(LSTM(64, return_sequences=True, activation='relu',input_shape=(15,1662)))
 model.add(LSTM(128, return_sequences=True, activation='relu'))
 model.add(LSTM(64, return_sequences=False, activation='relu'))
 model.add(Dense(64, activation='relu'))
@@ -201,7 +201,7 @@ model.add(Dense(32, activation='relu'))
 model.add(Dense(actions.shape[0], activation='softmax'))
 model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 
-model.fit(X_train, y_train, epochs=500, callbacks=[tb_callback])
+model.fit(X_train, y_train, epochs=2000, callbacks=[tb_callback])
 print(model.summary())
 
 res = model.predict(X_test)
