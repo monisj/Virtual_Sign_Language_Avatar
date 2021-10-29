@@ -89,12 +89,19 @@ def prob_viz(res, actions, input_frame, colors):
         
     return output_frame
 
-#plt.figure(figsize=(18,18))
-#plt.imshow(prob_viz(res, actions, image, colors))
 
 model = keras.models.load_model('action.h5')
 model.load_weights('action.h5')
-#res = model.predict(X_test)
+colors = [(245,117,16), (117,245,16), (16,117,245)]
+#plt.figure(figsize=(18,18))
+#plt.imshow(prob_viz(res, actions, image, colors))
+#sequence.reverse()
+#len(sequence)
+#sequence.append('def')
+#sequence.reverse()
+#sequence[-30:]
+
+
 
 # 1. New detection variables
 sequence = []
@@ -123,7 +130,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         keypoints = extract_keypoints(results)
         sequence.append(keypoints)
         sequence = sequence[-30:]
-        
+        print(len(sequence))
         if len(sequence) == 30:
             res = model.predict(np.expand_dims(sequence, axis=0))[0]
             print(actions[np.argmax(res)])

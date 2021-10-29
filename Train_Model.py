@@ -15,7 +15,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
 from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
-
+from scipy import stats
 
 mp_holistic = mp.solutions.holistic # Holistic model
 mp_drawing = mp.solutions.drawing_utils # Drawing utilities
@@ -29,14 +29,14 @@ def mediapipe_detection(image, model):
     return image, results
 
 def draw_landmarks(image, results):
-    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACE_CONNECTIONS) # Draw face connections
+    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION) # Draw face connections
     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS) # Draw pose connections
     mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS) # Draw left hand connections
     mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS) # Draw right hand connections
 
 def draw_styled_landmarks(image, results):
     # Draw face connections
-    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACE_CONNECTIONS, 
+    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION, 
                              mp_drawing.DrawingSpec(color=(80,110,10), thickness=1, circle_radius=1), 
                              mp_drawing.DrawingSpec(color=(80,256,121), thickness=1, circle_radius=1)
                              ) 
@@ -66,28 +66,13 @@ def extract_keypoints(results):
 
 
 
-#pose = []
-#for res in results.pose_landmarks.landmark:
- #   test = np.array([res.x, res.y, res.z, res.visibility])
-  #  pose.append(test)
-
-#pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(132)
-#face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(1404)
-#lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
-#rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
-
-
-
-#face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(1404)
-#result_test = extract_keypoints(results)
-#if input("Press Enter to save the Video Nodes !!"):
-    #np.save('0', result_test)
 
 # Path for exported data, numpy arrays
 DATA_PATH = data_path=pathlib.Path.cwd().joinpath('MP_DATA')
-
+path_video=data_path=pathlib.Path.cwd().joinpath('Sign_Video')
+print(path_video)
 # Actions that we try to detect
-actions = np.array(['hello', 'alright', 'Assalam-o-Alaikum','good afternoon','good evening','good morning'])
+actions = np.array(['hello'])
 
 # Thirty videos worth of data
 no_sequences = 14
@@ -98,17 +83,24 @@ sequence_length = 14
 # Folder start
 start_folder = 0
 
-
+for action in actions: 
+    for sequence in range(no_sequences):
+        try: 
+            os.makedirs(os.path.join(DATA_PATH, action, str(sequence)))
+        except:
+            pass
+cv2.destroyAllWindows()
 # Set mediapipe model 
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
-    
     # NEW LOOP
     # Loop through actions
     for action in actions:
-        if pathlib.Path(DATA_PATH).joinpath(action).is_dir():
-            print(action)
-            continue
-        cap = cv2.VideoCapture(f'{action}.mp4')
+
+        #if pathlib.Path(DATA_PATH).joinpath(action).is_dir():
+        print(action)
+            #continue
+        print("Going Loop")
+        cap = cv2.VideoCapture(f'{path_video}/{action}.mp4')
         # Loop through sequences aka videos
         length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         fps    = cap.get(cv2.CAP_PROP_FPS)
@@ -120,7 +112,9 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         loop=1
         frame_counter = start
         flip=False
+        
         while loop <= no_sequences:
+            print(loop,"frame")
             # Loop through video length aka sequence length
             next=False
             f=0
@@ -134,8 +128,6 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 f+=1
                 #print(frame_counter)
                 if frame_counter == end:
-                    #print(loop,end)
-                    #print(loop//2)
                     if flip is False:
                         flip=True
                     else:
@@ -162,16 +154,19 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 cv2.imshow('OpenCV Feed', image)
                 # NEW Export keypoints
                 keypoints = extract_keypoints(results)
-                pathlib.Path(data_path).joinpath(action,str(loop)).mkdir(parents=True, exist_ok=True)
-                npy_path = pathlib.Path(data_path).joinpath(action,str(loop),str(f))
+                #pathlib.Path(data_path).joinpath(action,str(loop)).mkdir(parents=True, exist_ok=True)
+                npy_path = os.path.join(DATA_PATH, action, str(loop-1), str(f))
+                
+                #npy_path = pathlib.Path(data_path).joinpath(action,str(loop),str(f))
                 np.save(npy_path, keypoints)
-
+                print(npy_path,"Saving Path Points")
+                
                 # Break gracefully
                 if cv2.waitKey(10) & 0xFF == ord('q'):
                     break
                     
         cap.release()
-    #cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
 label_map = {label:num for num, label in enumerate(actions)}
 print(label_map)
 
@@ -198,7 +193,7 @@ log_dir = os.path.join('Logs')
 tb_callback = TensorBoard(log_dir=log_dir)
 
 model = Sequential()
-model.add(LSTM(64, return_sequences=True, activation='relu'))
+model.add(LSTM(64, return_sequences=True, activation='relu',input_shape=(14,1662)))
 model.add(LSTM(128, return_sequences=True, activation='relu'))
 model.add(LSTM(64, return_sequences=False, activation='relu'))
 model.add(Dense(64, activation='relu'))
@@ -215,7 +210,7 @@ actions[np.argmax(y_test[2])]
 
 #Save Weights
 model.save('action.h5')
-model.load_weights('action.h5')
+#model.load_weights('action.h5')
 
 #Evaluation using Confusion Matrix and Accuracy
 yhat = model.predict(X_test)
