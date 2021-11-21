@@ -42,17 +42,17 @@ def draw_styled_landmarks(image, results):
                              ) 
     # Draw pose connections
     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
-                             mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=4), 
+                             mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=2), 
                              mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
                              ) 
     # Draw left hand connections
     mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=4), 
+                             mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=2), 
                              mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
                              ) 
     # Draw right hand connections  
     mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=4), 
+                             mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
                              mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
                              )
 
@@ -72,16 +72,16 @@ DATA_PATH = data_path=pathlib.Path.cwd().joinpath('MP_DATA')
 path_video=data_path=pathlib.Path.cwd().joinpath('Sign_Video')
 print(path_video)
 # Actions that we try to detect
-actions = np.array(['hello', 'alright', 'Assalam-o-Alaikum','good afternoon','good evening','good morning'])
+actions = np.array(['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'])
 
-# Thirty videos worth of data
+# Fifteen videos worth of data
 no_sequences = 15
 
-# Videos are going to be 30 frames in length
+# Videos are going to be 15 frames in length
 sequence_length = 15
 
 # Folder start
-start_folder = 0
+start_folder = 1
 
 for action in actions: 
     for sequence in range(no_sequences):
@@ -89,7 +89,8 @@ for action in actions:
             os.makedirs(os.path.join(DATA_PATH, action, str(sequence)))
         except:
             pass
-cv2.destroyAllWindows()
+
+        
 # Set mediapipe model 
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
     # NEW LOOP
@@ -130,6 +131,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 if frame_counter == end:
                     if flip is False:
                         flip=True
+                        loop+=1
                     else:
                         flip=False
                         if loop%2 == 0 and loop >= 2:
@@ -151,7 +153,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 draw_styled_landmarks(image, results)
                 
                 
-                cv2.imshow('OpenCV Feed', image)
+                cv2.imshow('OpenCV Feed', image) #Uncomment to enable
                 # NEW Export keypoints
                 keypoints = extract_keypoints(results)
                 #pathlib.Path(data_path).joinpath(action,str(loop)).mkdir(parents=True, exist_ok=True)
@@ -162,7 +164,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 print(npy_path,"Saving Path Points")
                 
                 # Break gracefully
-                if cv2.waitKey(10) & 0xFF == ord('q'):
+                if cv2.waitKey(5) & 0xFF == ord('q'):
                     break
                     
         cap.release()
@@ -199,18 +201,23 @@ model.add(LSTM(64, return_sequences=False, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(actions.shape[0], activation='softmax'))
+
+res = [.7, 0.2, 0.1]
+actions[np.argmax(res)]
+
 model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 
-model.fit(X_train, y_train, epochs=2000, callbacks=[tb_callback])
+
+model.fit(X_train, y_train, epochs=500, callbacks=[tb_callback])
 print(model.summary())
 
 res = model.predict(X_test)
-actions[np.argmax(res[2])]
-actions[np.argmax(y_test[2])]
+actions[np.argmax(res[0])]
+actions[np.argmax(y_test[1])]
 
 #Save Weights
 model.save('action.h5')
-#model.load_weights('action.h5')
+model.load_weights('action.h5')
 
 #Evaluation using Confusion Matrix and Accuracy
 yhat = model.predict(X_test)
