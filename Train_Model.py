@@ -9,6 +9,7 @@ from imutils.video import FPS
 import imutils
 import pathlib
 #import Video_train as vt
+#import tflearn
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
@@ -19,6 +20,8 @@ from scipy import stats
 
 mp_holistic = mp.solutions.holistic # Holistic model
 mp_drawing = mp.solutions.drawing_utils # Drawing utilities
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_hands = mp.solutions.hands
 
 def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # COLOR CONVERSION BGR 2 RGB
@@ -28,41 +31,48 @@ def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR) # COLOR COVERSION RGB 2 BGR
     return image, results
 
-def draw_landmarks(image, results):
-    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION) # Draw face connections
-    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS) # Draw pose connections
-    mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS) # Draw left hand connections
-    mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS) # Draw right hand connections
 
 def draw_styled_landmarks(image, results):
     # Draw face connections
-    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION, 
-                             mp_drawing.DrawingSpec(color=(80,110,10), thickness=1, circle_radius=1), 
-                             mp_drawing.DrawingSpec(color=(80,256,121), thickness=1, circle_radius=1)
-                             ) 
+    #mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION, 
+     #                        mp_drawing.DrawingSpec(color=(80,110,10), thickness=1, circle_radius=1), 
+     #                        mp_drawing.DrawingSpec(color=(80,256,121), thickness=1, circle_radius=1)
+      #                       ) 
     # Draw pose connections
-    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
-                             mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=2), 
-                             mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
-                             ) 
+    #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
+    #                         mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=2), 
+     #                        mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
+     #                        ) 
     # Draw left hand connections
-    mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=2), 
-                             mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
-                             ) 
+    #mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
+    #                         mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=2), 
+     #                        mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
+     #                        ) 
     # Draw right hand connections  
-    mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
-                             mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
-                             )
+    #mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
+     #                        mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
+     #                        mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
+      #                       )
 
+    mp_drawing.draw_landmarks(
+          image,
+          results.left_hand_landmarks,
+          mp_hands.HAND_CONNECTIONS,
+          mp_drawing_styles.get_default_hand_landmarks_style(),
+          mp_drawing_styles.get_default_hand_connections_style())
 
+    mp_drawing.draw_landmarks(
+          image,
+          results.right_hand_landmarks,
+          mp_hands.HAND_CONNECTIONS,
+          mp_drawing_styles.get_default_hand_landmarks_style(),
+          mp_drawing_styles.get_default_hand_connections_style())
 def extract_keypoints(results):
-    pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
-    face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468*3)
+    #pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
+    #face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468*3)
     lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
     rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
-    return np.concatenate([pose, face, lh, rh])
+    return np.concatenate([ lh, rh])
 
 
 
@@ -72,16 +82,16 @@ DATA_PATH = data_path=pathlib.Path.cwd().joinpath('MP_DATA')
 path_video=data_path=pathlib.Path.cwd().joinpath('Sign_Video')
 print(path_video)
 # Actions that we try to detect
-actions = np.array(['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'])
+actions = np.array(['D'])
 
 # Fifteen videos worth of data
-no_sequences = 15
+no_sequences = 30
 
 # Videos are going to be 15 frames in length
-sequence_length = 15
+sequence_length = 30
 
 # Folder start
-start_folder = 1
+start_folder = 0
 
 for action in actions: 
     for sequence in range(no_sequences):
@@ -123,24 +133,11 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
                 # Read feed
                 ret, frame = cap.read()
-                if flip:
-                    frame=cv2.flip(frame,1)
                 frame_counter+=1
                 f+=1
                 #print(frame_counter)
                 if frame_counter == end:
-                    if flip is False:
-                        flip=True
-                        loop+=1
-                    else:
-                        flip=False
-                        if loop%2 == 0 and loop >= 2:
-                            start=round(fps*1.5)
-                            end=mid-fps
-                        else:
-                            start=mid+fps
-                            end=round(length-fps*2)
-                        loop+=1
+                    loop+=1
                     next=True
                     frame_counter = start
                     cap.set(cv2.CAP_PROP_POS_FRAMES, start)
@@ -169,62 +166,63 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                     
         cap.release()
     cv2.destroyAllWindows()
-label_map = {label:num for num, label in enumerate(actions)}
-print(label_map)
+#label_map = {label:num for num, label in enumerate(actions)}
+#print(label_map)
 
-sequences, labels = [], []
-for action in actions:
-    for sequence in np.array(os.listdir(os.path.join(DATA_PATH, action))).astype(int):
-        window = []
-        for frame_num in range(1,sequence_length+1):
-            res = np.load(os.path.join(DATA_PATH, action, str(sequence), "{}.npy".format(frame_num)))
-            window.append(res)
-        sequences.append(window)
-        labels.append(label_map[action])
+#sequences, labels = [], []
+#for action in actions:
+#    for sequence in np.array(os.listdir(os.path.join(DATA_PATH, action))).astype(int):
+#        window = []
+#        for frame_num in range(1,sequence_length+1):
+#            res = np.load(os.path.join(DATA_PATH, action, str(sequence), "{}.npy".format(frame_num)))
+#            window.append(res)
+#        sequences.append(window)
+#        labels.append(label_map[action])
 
     
-np.array(sequences).shape
-np.array(labels).shape
-X = np.array(sequences)
-X.shape
-y = to_categorical(labels).astype(int)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
-y_test.shape
+#np.array(sequences).shape
+#np.array(labels).shape
+#X = np.array(sequences)
+#X.shape
+#y = to_categorical(labels).astype(int)
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
+#y_test.shape
 
-log_dir = os.path.join('Logs')
-tb_callback = TensorBoard(log_dir=log_dir)
+#log_dir = os.path.join('Logs')
+#tb_callback = TensorBoard(log_dir=log_dir)
 
-model = Sequential()
-model.add(LSTM(64, return_sequences=True, activation='relu',input_shape=(15,1662)))
-model.add(LSTM(128, return_sequences=True, activation='relu'))
-model.add(LSTM(64, return_sequences=False, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(actions.shape[0], activation='softmax'))
-
-res = [.7, 0.2, 0.1]
-actions[np.argmax(res)]
-
-model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
+#model = Sequential()
+#model.add(LSTM(64, return_sequences=True, activation='relu',input_shape=(15,1662)))
+#model.add(LSTM(128, return_sequences=True, activation='relu'))
+#model.add(LSTM(64, return_sequences=False, activation='relu'))
+#model.add(Dense(64, activation='relu'))
+#model.add(Dense(32, activation='relu'))
+#model.add(Dense(actions.shape[0], activation='softmax'))
 
 
-model.fit(X_train, y_train, epochs=500, callbacks=[tb_callback])
-print(model.summary())
+#model = tflearn.DNN(net, tensorboard_verbose=0)
+#model.fit(X_train, y_train, validation_set=(X_test, y_test), snapshot_step=100,n_epoch=10)
+#res = [.7, 0.2, 0.1]
+#actions[np.argmax(res)]
 
-res = model.predict(X_test)
-actions[np.argmax(res[0])]
-actions[np.argmax(y_test[1])]
+#model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
+#model.fit(X_train, y_train, epochs=500, callbacks=[tb_callback])
+#print(model.summary())
+
+#res = model.predict(X_test)
+#actions[np.argmax(res[0])]
+#actions[np.argmax(y_test[1])]
 
 #Save Weights
-model.save('action.h5')
-model.load_weights('action.h5')
+#model.save('action.h5')
+#model.load_weights('action.h5')
 
 #Evaluation using Confusion Matrix and Accuracy
-yhat = model.predict(X_test)
-ytrue = np.argmax(y_test, axis=1).tolist()
-yhat = np.argmax(yhat, axis=1).tolist()
-multilabel_confusion_matrix(ytrue, yhat)
-accuracy_score(ytrue, yhat)
+#yhat = model.predict(X_test)
+#ytrue = np.argmax(y_test, axis=1).tolist()
+#yhat = np.argmax(yhat, axis=1).tolist()
+#multilabel_confusion_matrix(ytrue, yhat)
+#accuracy_score(ytrue, yhat)
 
 
 
