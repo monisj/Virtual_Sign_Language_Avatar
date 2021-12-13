@@ -10,5 +10,6 @@ Virtual Sign Language Teacher is designed for assisting the hearing-impaired chi
 ~~~
 
 # Demos of Keypoint Captures
+![Key](https://github.com/monisj/Virtual_Sign_Language_Avatar/blob/master/Github_Rd/Keypoints.PNG)
 
 Here The Captured Keypoints are stored, compaired and predicted for the Pakistan Sign Language Gestures
