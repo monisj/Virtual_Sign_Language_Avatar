@@ -56,7 +56,7 @@ def draw_styled_landmarks(image, results):
 
     mp_drawing.draw_landmarks(
           image,
-          resilts.left_hand_landmarks,
+          results.left_hand_landmarks,
           mp_hands.HAND_CONNECTIONS,
           mp_drawing_styles.get_default_hand_landmarks_style(),
           mp_drawing_styles.get_default_hand_connections_style())

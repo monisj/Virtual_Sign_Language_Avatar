@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import pandas as pd
 import os
 from matplotlib import pyplot as plt
 import time
@@ -17,6 +18,7 @@ from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
 from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 from scipy import stats
+import csv
 
 mp_holistic = mp.solutions.holistic # Holistic model
 mp_drawing = mp.solutions.drawing_utils # Drawing utilities
@@ -67,14 +69,37 @@ def draw_styled_landmarks(image, results):
           mp_hands.HAND_CONNECTIONS,
           mp_drawing_styles.get_default_hand_landmarks_style(),
           mp_drawing_styles.get_default_hand_connections_style())
-def extract_keypoints(results):
+
+#def extract_keypoints(results):
     #pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
     #face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468*3)
-    lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
-    rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
-    return np.concatenate([ lh, rh])
+ #   lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
+  #  rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
+   # return np.concatenate([ lh, rh])
 
+def extract_keypoints(results):
+    with open("keypoints.csv","a",newline="") as points:
+        if results.right_hand_landmarks:
+            for res in results.right_hand_landmarks.landmark:
+                tup = (res.x,res.y,res.z,1)
+                writer= csv.writer(points)
+                writer.writerow(tup)
+        else:
+            pass
+    points.close()
 
+# rescale the frame by function
+def rescale(frame,scale):
+    #get the webcam size
+    height, width, channels = frame.shape
+    #prepare the crop
+    centerX,centerY=int(height/3),int(width/3)
+    radiusX,radiusY= int(scale*height/170),int(scale*width/170)
+
+    minX,maxX=centerX-radiusX,centerX+radiusX
+    minY,maxY=centerY-radiusY,centerY+radiusY
+    cropped = frame[minX:maxX, minY:maxY]
+    return cv2.resize(cropped, (width, height)) 
 
 
 # Path for exported data, numpy arrays
@@ -85,13 +110,22 @@ print(path_video)
 actions = np.array(['D'])
 
 # Fifteen videos worth of data
-no_sequences = 30
+no_sequences = 10
 
 # Videos are going to be 15 frames in length
-sequence_length = 30
+sequence_length = 10
 
 # Folder start
 start_folder = 0
+
+# delete old "keypoints.csv" file and create new csv file with header
+
+if(os.path.exists('keypoints.csv') and os.path.isfile('keypoints.csv')):
+  os.remove('keypoints.csv')
+  print("file deleted")
+else:
+  print("file not found")
+
 
 for action in actions: 
     for sequence in range(no_sequences):
@@ -133,6 +167,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
                 # Read feed
                 ret, frame = cap.read()
+                frame = rescale(frame,32)
                 frame_counter+=1
                 f+=1
                 #print(frame_counter)
@@ -157,8 +192,8 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 npy_path = os.path.join(DATA_PATH, action, str(loop-1), str(f))
                 
                 #npy_path = pathlib.Path(data_path).joinpath(action,str(loop),str(f))
-                np.save(npy_path, keypoints)
-                print(npy_path,"Saving Path Points")
+                #np.save(npy_path, keypoints)
+                #print(npy_path,"Saving Path Points")
                 
                 # Break gracefully
                 if cv2.waitKey(5) & 0xFF == ord('q'):
@@ -224,6 +259,5 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 #multilabel_confusion_matrix(ytrue, yhat)
 #accuracy_score(ytrue, yhat)
 
-
-
-
+df = pd.read_csv("keypoints.csv",names=['x','y','z','percent'])
+print(df)
