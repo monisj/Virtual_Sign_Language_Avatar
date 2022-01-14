@@ -85,6 +85,7 @@ def extract_keypoints(results):
 
 
 
+<<<<<<< HEAD
 def train(act,DATA_PATH):
     # Actions that we try to detect
     actions = np.array([act,'NG'])
@@ -164,3 +165,77 @@ print(li)
 
 for items in li:
     train(items,DATA_PATH)
+=======
+
+# Path for exported data, numpy arrays
+DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Auto_train_data')
+path_video=data_path=pathlib.Path.cwd().joinpath('Videos')
+print(path_video)
+# Actions that we try to detect
+actions = np.array(['B','NG'])
+
+# Fifteen videos worth of data
+no_sequences = 29
+
+# Videos are going to be 15 frames in length
+sequence_length = 29
+
+# Folder start
+start_folder = 0
+
+label_map = {label:num for num, label in enumerate(actions)}
+print(label_map)
+sequences, labels = [], []
+for action in actions:
+    for sequence in np.array(os.listdir(os.path.join(DATA_PATH, action))).astype(int):
+        window = []
+        for frame_num in range(1,sequence_length+1):
+            res = np.load(os.path.join(DATA_PATH, action, str(sequence), "{}.npy".format(frame_num)))
+            window.append(res)
+        sequences.append(window)
+        labels.append(label_map[action])
+
+    
+
+np.array(sequences).shape
+np.array(labels).shape
+X = np.array(sequences)
+X.shape
+y = to_categorical(labels).astype(int)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
+y_test.shape
+
+log_dir = os.path.join('Logs')
+tb_callback = TensorBoard(log_dir=log_dir)
+
+model = Sequential()
+model.add(LSTM(64, return_sequences=True, activation='relu',input_shape=(29,126)))
+model.add(LSTM(128, return_sequences=True, activation='relu'))
+model.add(LSTM(64, return_sequences=False, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(actions.shape[0], activation='softmax'))
+
+
+model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
+model.fit(X_train, y_train, epochs=100, callbacks=[tb_callback],use_multiprocessing=True)
+print(model.summary())
+
+res = model.predict(X_test)
+actions[np.argmax(res[0])]
+actions[np.argmax(y_test[1])]
+
+#Save Weights
+model.save('actions_auto.h5')
+model.load_weights('actions_auto.h5')
+
+#Evaluation using Confusion Matrix and Accuracy
+yhat = model.predict(X_test)
+ytrue = np.argmax(y_test, axis=1).tolist()
+yhat = np.argmax(yhat, axis=1).tolist()
+multilabel_confusion_matrix(ytrue, yhat)
+accuracy_score(ytrue, yhat)
+
+
+
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72

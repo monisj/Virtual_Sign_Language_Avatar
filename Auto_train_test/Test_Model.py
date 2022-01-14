@@ -27,6 +27,7 @@ mp_hands = mp.solutions.hands
 
 #alphabet=input("Enter Variable to Predict=")
 
+<<<<<<< HEAD
 DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Model_Count_files')
 
 # Actions that we try to detect
@@ -42,6 +43,18 @@ no_sequences = no_f
 
 # Videos are going to be 30 frames in length
 sequence_length = no_f
+=======
+DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Auto_train_data')
+
+# Actions that we try to detect
+actions = np.array(['B','NG'])
+
+# Thirty videos worth of data
+no_sequences = 29
+
+# Videos are going to be 30 frames in length
+sequence_length = 29
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
 
 # Folder start
 start_folder = 0
@@ -98,16 +111,25 @@ def prob_viz(res, actions, input_frame):
     output_frame = input_frame.copy()
     for num, prob in enumerate(res):
         cv2.rectangle(output_frame, (0,60+num*40), (int(prob*100), 90+num*40), colors[num], -1)
+<<<<<<< HEAD
         print("Accuracy of {} = {:.2f}%".format(actions[num],prob*100))
+=======
+        print("Accuracy of {} =".format(actions[num]),prob)
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
         cv2.putText(output_frame, actions[num], (0, 85+num*40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
         
     return output_frame
 
 
+<<<<<<< HEAD
 model = keras.models.load_model('model_files'+'\\'+actions[0]+'.h5')
 model.load_weights('model_files'+'\\'+actions[0]+'.h5')
 
 
+=======
+model = keras.models.load_model('actions_auto.h5')
+model.load_weights('actions_auto.h5')
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
 colors = [(245,117,16), (117,245,16), (16,117,245)]
 #plt.figure(figsize=(18,18))
 #plt.imshow(prob_viz(res, actions, image, colors))
@@ -123,12 +145,20 @@ res = [.7, 0.2, 0.1]
 sequence = []
 sentence = []
 predictions = []
+<<<<<<< HEAD
 threshold = 0.1
+=======
+threshold = 0.5
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
 colors = [(245,117,16), (117,245,16), (16,117,245)]
 
 
 cap = cv2.VideoCapture(0)
+<<<<<<< HEAD
 with mp_holistic.Holistic(min_detection_confidence=0.1, min_tracking_confidence=0.1) as holistic:
+=======
+with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
     while cap.isOpened():
        
         # Read feed
@@ -145,9 +175,15 @@ with mp_holistic.Holistic(min_detection_confidence=0.1, min_tracking_confidence=
         keypoints = extract_keypoints(results)
         sequence.append(keypoints)
         #sequence.reverse()
+<<<<<<< HEAD
         sequence = sequence[-no_f:]
         #print(len(sequence))
         if len(sequence) == no_f:
+=======
+        sequence = sequence[-29:]
+        #print(len(sequence))
+        if len(sequence) == 29:
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
             #x=np.array(sequence)
             #x=x.reshape(15,126,1)
             res = model.predict(np.expand_dims(sequence, axis=0),use_multiprocessing=True)[0] #Work on this side
@@ -156,7 +192,11 @@ with mp_holistic.Holistic(min_detection_confidence=0.1, min_tracking_confidence=
             
             
         #3. Viz logic
+<<<<<<< HEAD
             if np.unique(predictions[-30:])[0]==np.argmax(res): 
+=======
+            if np.unique(predictions[-10:])[0]==np.argmax(res): 
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
                 if res[np.argmax(res)] > threshold: 
                     if len(sentence) > 0: 
                         if actions[np.argmax(res)] != sentence[-1]:
@@ -164,8 +204,13 @@ with mp_holistic.Holistic(min_detection_confidence=0.1, min_tracking_confidence=
                     else:
                         sentence.append(actions[np.argmax(res)])
 
+<<<<<<< HEAD
             if len(sentence) > 1: 
                 sentence =[]
+=======
+            if len(sentence) > 5: 
+                sentence = sentence[-5]
+>>>>>>> bdc99018a82ec7840c03a68115ed26f33c6c7e72
                 print(actions[np.argmax(res)],"Gesture")
             # Viz probabilities
             image = prob_viz(res, actions, image)
