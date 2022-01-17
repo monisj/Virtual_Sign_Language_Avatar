@@ -18,9 +18,14 @@ from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 from scipy import stats
 
 mp_holistic = mp.solutions.holistic # Holistic model
-mp_drawing = mp.solutions.drawing_utils # Drawing utilities
+#mp_drawing = mp.solutions.drawing_utils # Drawing utilities
+
+
+mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
+
+
 
 def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # COLOR CONVERSION BGR 2 RGB
@@ -32,67 +37,63 @@ def mediapipe_detection(image, model):
 
 
 def draw_styled_landmarks(image, results):
+    mp_holistic = mp.solutions.holistic # Holistic model
+    mp_drawing = mp.solutions.drawing_utils # Drawing utilities
 
+    
     # Draw face connections
     #mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION, 
-     #                        mp_drawing.DrawingSpec(color=(80,110,10), thickness=1, circle_radius=1), 
-     #                        mp_drawing.DrawingSpec(color=(80,256,121), thickness=1, circle_radius=1)
-      #                       ) 
+                            #mp_drawing.DrawingSpec(color=(80,110,10), thickness=1, circle_radius=1), 
+                            #mp_drawing.DrawingSpec(color=(80,256,121), thickness=1, circle_radius=1)
+                            #) 
     # Draw pose connections
     #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
-    #                         mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=2), 
-     #                        mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
-     #                        ) 
+                             #mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=2), 
+                             #mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
+                             #) 
     # Draw left hand connections
-    #mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-    #                         mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=2), 
-     #                        mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
-     #                        ) 
+    mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
+                             mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=2), 
+                             mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
+                             ) 
     # Draw right hand connections  
-    #mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-     #                        mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
-     #                        mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
-      #                       )
+    mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
+                             mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
+                             mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
+                             )
 
-    mp_drawing.draw_landmarks(
-          image,
-          results.left_hand_landmarks,
-          mp_hands.HAND_CONNECTIONS,
-          mp_drawing_styles.get_default_hand_landmarks_style(),
-          mp_drawing_styles.get_default_hand_connections_style())
+    
+    #mp_drawing.draw_landmarks(
+          #image,
+          #results.left_hand_landmarks,
+          #mp_hands.HAND_CONNECTIONS,
+          #mp_drawing_styles.get_default_hand_landmarks_style(),
+          #mp_drawing_styles.get_default_hand_connections_style())
 
-    mp_drawing.draw_landmarks(
-          image,
-          results.right_hand_landmarks,
-          mp_hands.HAND_CONNECTIONS,
-          mp_drawing_styles.get_default_hand_landmarks_style(),
-          mp_drawing_styles.get_default_hand_connections_style())
+    #mp_drawing.draw_landmarks(
+         # image,
+         # results.right_hand_landmarks,
+         # mp_hands.HAND_CONNECTIONS,
+         # mp_drawing_styles.get_default_hand_landmarks_style(),
+         # mp_drawing_styles.get_default_hand_connections_style())
+
+
+    
 def extract_keypoints(results):
-    #pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
+   # pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
     #face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468*3)
     lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
     rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
     return np.concatenate([ lh, rh])
 
 
-# rescale the frame by function
-def rescale(frame,scale):
-    #get the webcam size
-    height, width, channels = frame.shape
-    #prepare the crop
-    centerX,centerY=int(height/3),int(width/3)
-    radiusX,radiusY= int(scale*height/96),int(scale*width/96)
 
-    minX,maxX=centerX-radiusX,centerX+radiusX
-    minY,maxY=centerY-radiusY,centerY+radiusY
-    cropped = frame[minX:maxX, minY:maxY]
-    return cv2.resize(cropped, (width, height))
 
-def cap(act,DATA_PATH,path_video):
+def cap(act,DATA_PATH):
     #act=input("Enter Variable for Capture=") uncomment for mannual capture
     # Path for exported data, numpy arrays
     
-    print(path_video)
+    print(act)
     # Actions that we try to detect
     actions = np.array([act])
 
@@ -105,7 +106,7 @@ def cap(act,DATA_PATH,path_video):
     # Folder start
     start_folder = 0
     try:
-        os.makedirs(os.path.join(DATA_PATH, actions[0], str(0)))
+        os.makedirs(os.path.join(DATA_PATH, actions[0],str(0)))
     except:
         pass
 
@@ -113,7 +114,7 @@ def cap(act,DATA_PATH,path_video):
 
         
     # Set mediapipe model 
-    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+    with mp_holistic.Holistic(smooth_landmarks=True,min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
         # NEW LOOP
         # Loop through actions
         for action in actions:
@@ -122,21 +123,18 @@ def cap(act,DATA_PATH,path_video):
             print(action)
                 #continue
             print("Going Loop")
-            cap = cv2.VideoCapture(0)
+            cap = cv2.VideoCapture(f'{action}.mp4')
             # Loop through sequences aka videos
             length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             fps = cap.get(cv2.CAP_PROP_FPS)
             start=20
             end=round(length-fps*2)
             mid=(length//2)
-            end=mid-28
             cap.set(cv2.CAP_PROP_POS_FRAMES, start)
             loop=1
             frame_counter = start
-            flip=False
-            temp_stop = 0
             next=False
-            while loop <= mid:
+            while loop <= 330:
                 print(loop,"frame")
                 # Loop through video length aka sequence length
                 f=0
@@ -144,11 +142,9 @@ def cap(act,DATA_PATH,path_video):
 
                     # Read feed
                     ret, frame = cap.read()
-                    #frame=rescale(frame,32)
                     frame_counter+=1
                     f+=1
-                    #print(frame_counter)
-                    if frame_counter == mid:
+                    if frame_counter == 330:
                         next=True
                         print("end")
                         frame_counter = start
@@ -166,7 +162,7 @@ def cap(act,DATA_PATH,path_video):
                     # NEW Export keypoints
                     keypoints = extract_keypoints(results)
                     #pathlib.Path(data_path).joinpath(action,str(loop)).mkdir(parents=True, exist_ok=True)
-                    npy_path = os.path.join(DATA_PATH, action, str(loop-1), str(f))
+                    npy_path = os.path.join(DATA_PATH, action, str(loop-1),str(f))
                 
                     #npy_path = pathlib.Path(data_path).joinpath(action,str(loop),str(f))
                     np.save(npy_path, keypoints)
@@ -196,15 +192,15 @@ def cap(act,DATA_PATH,path_video):
 
     for fi in range(1,no_f+1):
         for fi2 in range(1,no_f+1):
-            print("dir copy=",str(DATA_PATH)+'\\'+str(actions[0])+"\\"+str(fi)+'\\'+str(fi)+'.npy') Uncomment for real results
+            print("dir copy=",str(DATA_PATH)+'\\'+str(actions[0])+"\\"+str(fi)+'\\'+str(fi)+'.npy') #Uncomment for real results
             shutil.copy(str(DATA_PATH)+'\\'+str(actions[0])+'\\'+str(0)+'\\'+str(fi)+'.npy',str(DATA_PATH)+'\\'+str(actions[0])+'\\'+str(fi)+'\\'+str(fi2)+'.npy')
 
 DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Auto_train_data')
-path_video=data_path=pathlib.Path.cwd().joinpath('Videos\Science')
-l=os.listdir(path_video)
-li=[x.split('.')[0] for x in l]
-print(li)
+#path_video=data_path=pathlib.Path.cwd().joinpath('Videos\Science')
+#l=os.listdir(path_video)
+#li=[x.split('.')[0] for x in l]
+#print(li)
        
 
-for items in li:
-    cap(items,DATA_PATH,path_video)
+#for items in li:
+cap('C',DATA_PATH)
