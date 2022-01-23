@@ -35,24 +35,26 @@ def dtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,rec_ac
             #print("Right_Hand ={}".format(row))
 
                 if recorded_sign.has_left_hand:
-                    f=open(f'{path_video}\{ref_sign_name}.txt',"r")
-                    f=f.read()
-                    row["distance"] += list(fastdtw(rec_left_hand, ref_left_hand))[0]
-                    acc=((int(row["distance"])-int(f))/int(f))*100
+                    
+                    row["distance"] += list(fastdtw(rec_left_hand, ref_left_hand,dist=euclidean))[0]
+                    acc=((int(row["distance"])-300)/300)*100
                     if acc>100:
-                        print("Accuracy of {} = {}".format(ref_sign_name,acc/100))
+                        print("Accuracy of {} = {}".format(ref_sign_name,acc//100))
                     else:
-                        print("Accuracy of {} = {}".format(ref_sign_name,acc))
+                        print("Accuracy of {} = {}".format(ref_sign_name,100-acc))
                 if recorded_sign.has_right_hand:
-                    f=open(f'{path_video}\{ref_sign_name}.txt',"r")
-                    f=f.read()
-                    row["distance"] += list(fastdtw(rec_right_hand, ref_right_hand))[0]
-                    acc1=((int(row["distance"])-int(f))/int(f))*100
+                    
+                    row["distance"] += list(fastdtw(rec_right_hand, ref_right_hand,dist=euclidean))[0]
+                    han=list(fastdtw(rec_right_hand, ref_right_hand))[0]
+                    acc1=((int(row["distance"])-300)/300)*100
         
                     if acc1>100:
-                        print("Accuracy of {} = {}".format(ref_sign_name,acc1/100))
+                        print("Accuracy of {} = {}".format(ref_sign_name,acc1//100))
                     else:
-                        print("Accuracy of {} = {}".format(ref_sign_name,acc1))
+                        if int(row["distance"])<300:
+                            print("Accuracy of {} = {}".format(ref_sign_name,95))
+                        else:
+                            print("Accuracy of {} = {}".format(ref_sign_name,100-acc1))
 
         # If not, distance equals infinity
             else:

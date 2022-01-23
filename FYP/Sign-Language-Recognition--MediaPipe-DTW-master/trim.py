@@ -3,6 +3,7 @@ import string,os,pathlib
 from moviepy.editor import *
 cur=pathlib.Path.cwd()
 path_video=data_path=pathlib.Path.cwd().joinpath('videos')
+write=pathlib.Path.cwd().joinpath('utils\Base_G_Acc')
 videos="videos"
 l=os.listdir(path_video)
 li=[]
@@ -13,6 +14,9 @@ s="A"
 print(l)
 for i in li:
     skip = False
+    f=open(f'{write}\{i}.txt',"w")
+    f.write("3000")
+    f.close()
     try:
         os.makedirs(f'{cur}\data\{videos}\{i}')
     except FileExistsError:
