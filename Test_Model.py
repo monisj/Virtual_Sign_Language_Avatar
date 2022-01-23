@@ -24,13 +24,13 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 # Path for exported data, numpy arrays
 
-DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Model_Count_files')
+DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Data_Files')
 # Actions that we try to detect
-actions = np.array(['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'])
-#no_f=os.listdir(str(DATA_PATH)+'\\'+str(actions[0])+'\\'+str(0)+'\\')
+actions = np.array(['A','NG'])
+#no_f=os.listdir(str(DATA_PATH)+'\\'+str(actions[0]))
 #f = open(str(DATA_PATH)+'\\'+str(actions[0])+".txt", "r")
-no_f=50
 
+no_f=110-1
 print("files=",no_f)
 no_sequences = no_f
 sequence_length = no_f
@@ -61,19 +61,12 @@ def draw_styled_landmarks(image, results):
               #               mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=4), 
                 #             mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
                 #             ) 
-    # Draw left hand connections
-    mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=4), 
-                             mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
-                             ) 
-    # Draw right hand connections  
-    mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=4), 
-                             mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
-                             )
+    
 
-    #mp_drawing.draw_landmarks(image,results.left_hand_landmarks,mp_hands.HAND_CONNECTIONS,mp_drawing_styles.get_default_hand_landmarks_style(),mp_drawing_styles.get_default_hand_connections_style())
-    #mp_drawing.draw_landmarks(image,results.right_hand_landmarks,mp_hands.HAND_CONNECTIONS,mp_drawing_styles.get_default_hand_landmarks_style(),mp_drawing_styles.get_default_hand_connections_style())
+    mp_drawing.draw_landmarks(image,results.left_hand_landmarks,mp_hands.HAND_CONNECTIONS,mp_drawing_styles.get_default_hand_landmarks_style(),mp_drawing_styles.get_default_hand_connections_style())
+
+
+    mp_drawing.draw_landmarks(image,results.right_hand_landmarks,mp_hands.HAND_CONNECTIONS,mp_drawing_styles.get_default_hand_landmarks_style(),mp_drawing_styles.get_default_hand_connections_style())
 
 def extract_keypoints(results):
     #pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
@@ -88,7 +81,6 @@ def prob_viz(res, actions, input_frame):
     output_frame = input_frame.copy()
     for num, prob in enumerate(res):
         #cv2.rectangle(output_frame, (0,60+num*40), (int(prob*100), 90+num*40), colors[num], -1)
-        #if actions[num]=='A':
         print("Accuracy of {} = {:.2f}%".format(actions[num],prob*100))
         #cv2.putText(output_frame, actions[num], (0, 85+num*40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
         
@@ -96,8 +88,8 @@ def prob_viz(res, actions, input_frame):
 
 
 
-model = keras.models.load_model('model_files'+'\\'+'A.h5')
-model.load_weights('model_files'+'\\'+'A.h5')
+model = keras.models.load_model('model_files'+'\\'+actions[0]+'.h5')
+model.load_weights('model_files'+'\\'+actions[0]+'.h5')
 
 colors = [(245,117,16), (117,245,16), (16,117,245)]
 #plt.figure(figsize=(18,18))
@@ -114,7 +106,7 @@ res = [.7, 0.2, 0.1]
 sequence = []
 sentence = []
 predictions = []
-threshold = 0.9
+threshold = 0.5
 colors = [(245,117,16), (117,245,16), (16,117,245)]
 
 
@@ -153,7 +145,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             
             
         #3. Viz logic
-            if np.unique(predictions[-10:])[0]==np.argmax(res):
+            if np.unique(predictions[-30:])[0]==np.argmax(res):
                 if res[np.argmax(res)] > threshold: 
                     if len(sentence) > 0: 
                         if actions[np.argmax(res)] != sentence[-1]:

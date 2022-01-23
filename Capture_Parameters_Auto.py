@@ -18,14 +18,9 @@ from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 from scipy import stats
 
 mp_holistic = mp.solutions.holistic # Holistic model
-#mp_drawing = mp.solutions.drawing_utils # Drawing utilities
-
-
-mp_drawing = mp.solutions.drawing_utils
+mp_drawing = mp.solutions.drawing_utils # Drawing utilities
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
-
-
 
 def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # COLOR CONVERSION BGR 2 RGB
@@ -37,45 +32,20 @@ def mediapipe_detection(image, model):
 
 
 def draw_styled_landmarks(image, results):
-    mp_holistic = mp.solutions.holistic # Holistic model
-    mp_drawing = mp.solutions.drawing_utils # Drawing utilities
-
-    
     # Draw face connections
-    #mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION, 
-                            #mp_drawing.DrawingSpec(color=(80,110,10), thickness=1, circle_radius=1), 
-                            #mp_drawing.DrawingSpec(color=(80,256,121), thickness=1, circle_radius=1)
-                            #) 
-    # Draw pose connections
-    #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
-                             #mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=2), 
-                             #mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
-                             #) 
-    # Draw left hand connections
-    mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=2), 
-                             mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
-                             ) 
-    # Draw right hand connections  
-    mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
-                             mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
-                             mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
-                             )
+    mp_drawing.draw_landmarks(
+          image,
+          results.left_hand_landmarks,
+          mp_hands.HAND_CONNECTIONS,
+          mp_drawing_styles.get_default_hand_landmarks_style(),
+          mp_drawing_styles.get_default_hand_connections_style())
 
-    
-    #mp_drawing.draw_landmarks(
-          #image,
-          #results.left_hand_landmarks,
-          #mp_hands.HAND_CONNECTIONS,
-          #mp_drawing_styles.get_default_hand_landmarks_style(),
-          #mp_drawing_styles.get_default_hand_connections_style())
-
-    #mp_drawing.draw_landmarks(
-         # image,
-         # results.right_hand_landmarks,
-         # mp_hands.HAND_CONNECTIONS,
-         # mp_drawing_styles.get_default_hand_landmarks_style(),
-         # mp_drawing_styles.get_default_hand_connections_style())
+    mp_drawing.draw_landmarks(
+          image,
+          results.right_hand_landmarks,
+          mp_hands.HAND_CONNECTIONS,
+          mp_drawing_styles.get_default_hand_landmarks_style(),
+          mp_drawing_styles.get_default_hand_connections_style())
 
 
     
@@ -89,10 +59,7 @@ def extract_keypoints(results):
 
 
 
-def cap(act,DATA_PATH):
-    #act=input("Enter Variable for Capture=") uncomment for mannual capture
-    # Path for exported data, numpy arrays
-    
+def cap(act,DATA_PATH,path_video):
     print(act)
     # Actions that we try to detect
     actions = np.array([act])
@@ -103,8 +70,6 @@ def cap(act,DATA_PATH):
     # Videos are going to be 15 frames in length
     #sequence_length = 50
 
-    # Folder start
-    start_folder = 0
     try:
         os.makedirs(os.path.join(DATA_PATH, actions[0],str(0)))
     except:
@@ -114,7 +79,7 @@ def cap(act,DATA_PATH):
 
         
     # Set mediapipe model 
-    with mp_holistic.Holistic(smooth_landmarks=True,min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
         # NEW LOOP
         # Loop through actions
         for action in actions:
@@ -123,18 +88,19 @@ def cap(act,DATA_PATH):
             print(action)
                 #continue
             print("Going Loop")
-            cap = cv2.VideoCapture(f'{action}.mp4')
+            #cap = cv2.VideoCapture(f'{path_video}/{action}.mp4')
+            cap = cv2.VideoCapture(0)
             # Loop through sequences aka videos
             length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             fps = cap.get(cv2.CAP_PROP_FPS)
-            start=20
+            start=0
             end=round(length-fps*2)
             mid=(length//2)
             cap.set(cv2.CAP_PROP_POS_FRAMES, start)
             loop=1
             frame_counter = start
             next=False
-            while loop <= 330:
+            while loop <= 300:
                 print(loop,"frame")
                 # Loop through video length aka sequence length
                 f=0
@@ -144,7 +110,7 @@ def cap(act,DATA_PATH):
                     ret, frame = cap.read()
                     frame_counter+=1
                     f+=1
-                    if frame_counter == 330:
+                    if frame_counter == 300:
                         next=True
                         print("end")
                         frame_counter = start
@@ -171,7 +137,7 @@ def cap(act,DATA_PATH):
                     # Break gracefully
                     if cv2.waitKey(5) & 0xFF == ord('q'):
                         break
-                loop=mid+1
+                loop=300+1
                     
             cap.release()
         cv2.destroyAllWindows()
@@ -195,12 +161,12 @@ def cap(act,DATA_PATH):
             print("dir copy=",str(DATA_PATH)+'\\'+str(actions[0])+"\\"+str(fi)+'\\'+str(fi)+'.npy') #Uncomment for real results
             shutil.copy(str(DATA_PATH)+'\\'+str(actions[0])+'\\'+str(0)+'\\'+str(fi)+'.npy',str(DATA_PATH)+'\\'+str(actions[0])+'\\'+str(fi)+'\\'+str(fi2)+'.npy')
 
-DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Auto_train_data')
-#path_video=data_path=pathlib.Path.cwd().joinpath('Videos\Science')
+DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Data_files')
+path_video=data_path=pathlib.Path.cwd().joinpath('Videos')
 #l=os.listdir(path_video)
 #li=[x.split('.')[0] for x in l]
 #print(li)
        
 
 #for items in li:
-cap('C',DATA_PATH)
+cap('NG',DATA_PATH,path_video)

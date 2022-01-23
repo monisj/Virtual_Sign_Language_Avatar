@@ -8,8 +8,6 @@ from imutils.video import FileVideoStream
 from imutils.video import FPS
 import imutils
 import pathlib
-#import Video_train as vt
-#import tflearn
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical 
 from tensorflow.keras.models import Sequential
@@ -17,8 +15,6 @@ from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
 from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 from scipy import stats
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout #For CNN
-import tensorflow.keras.utils as tf
 
 
 mp_holistic = mp.solutions.holistic # Holistic model
@@ -85,14 +81,11 @@ def extract_keypoints(results):
 
 def train(act,DATA_PATH):
     # Actions that we try to detect
-    actions = np.array(['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'])
-    li=[]
-    for i in actions:
-        val=os.listdir(str(DATA_PATH)+'\\'+str(i)+'\\')
-        li.append(len(val))
-
-    no_f=min(li)
-    print(no_f)
+    #actions = np.array(['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'])
+    actions = np.array(act)
+    val=os.listdir(str(DATA_PATH)+'\\'+str(actions[0])+'\\')
+    no_f=len(val)
+    #print(no_f)
     #print("files=",no_f)
 
     # Fifteen videos worth of data
@@ -102,22 +95,22 @@ def train(act,DATA_PATH):
     sequence_length = no_f
 
     # Folder start
-    start_folder = 0
+    #start_folder = 0
 
     label_map = {label:num for num, label in enumerate(actions)}
     print(label_map)
     sequences, labels = [], []
+    
     for action in actions:
         for sequence in np.array(os.listdir(os.path.join(DATA_PATH, action))).astype(int):
             window = []
-            for frame_num in range(1,sequence_length):
+            for frame_num in range(1,no_sequences):
                 res = np.load(os.path.join(DATA_PATH, action,str(sequence) ,"{}.npy".format(frame_num)))
                 window.append(res)
             sequences.append(window)
             labels.append(label_map[action])
 
-    
-
+   
     np.array(sequences).shape
     np.array(labels).shape
     X = np.array(sequences)
@@ -130,15 +123,15 @@ def train(act,DATA_PATH):
     tb_callback = TensorBoard(log_dir=log_dir)
 
     model = Sequential()
-    model.add(LSTM(128, return_sequences=True, activation='relu',input_shape=(no_f-1,126)))
-    #model.add(LSTM(128, return_sequences=True, activation='relu'))
+    model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(no_f-1,126))) 
+    model.add(LSTM(128, return_sequences=True, activation='relu'))
     model.add(LSTM(64, return_sequences=False, activation='relu'))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(actions.shape[0], activation='softmax'))
 
 
-    model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
+    model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model.fit(X_train, y_train, epochs=25, callbacks=[tb_callback],use_multiprocessing=True)
     print(model.summary())
 
@@ -159,12 +152,13 @@ def train(act,DATA_PATH):
 
     
 
-DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Auto_train_data')
+DATA_PATH = data_path=pathlib.Path.cwd().joinpath('Data_Files')
 #path_video=data_path=pathlib.Path.cwd().joinpath('Videos\Science')
 #l=os.listdir(DATA_PATH)
 #li=[x.split('.')[0] for x in l]
 #print(li)
 
 #for items in li:
-train('C',DATA_PATH)
+#model_name=input("What model name you like to input")
+train(['A','NG'],DATA_PATH)
 
