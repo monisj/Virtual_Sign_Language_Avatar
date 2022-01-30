@@ -21,23 +21,26 @@ def extract_landmarks(results):
     :param results: mediapipe object that contains the 3D position of all keypoints
     :return: Two np arrays of size (1, 21 * 3) = (1, nb_keypoints * nb_coordinates) corresponding to both hands
     """
-    #pose = landmark_to_array(results.pose_landmarks).reshape(99).tolist()
-    pose = np.zeros(99).tolist()
+    # pose = np.zeros(99).tolist()
+    # if results.pose_landmarks:
+    #     pose = landmark_to_array(results.pose_landmarks).reshape(99).tolist()
+
     left_hand = np.zeros(63).tolist()
     if results.left_hand_landmarks:
         left_hand = landmark_to_array(results.left_hand_landmarks).reshape(63).tolist()
 
     right_hand = np.zeros(63).tolist()
     if results.right_hand_landmarks:
-        right_hand = (
-            landmark_to_array(results.right_hand_landmarks).reshape(63).tolist()
-        )
-    return pose, left_hand, right_hand
+        right_hand = landmark_to_array(results.right_hand_landmarks).reshape(63).tolist()
+    #return pose, left_hand, right_hand
+    return left_hand, right_hand
 
 
 def save_landmarks_from_video(video_name):
-    landmark_list = {"pose": [], "left_hand": [], "right_hand": []}
-    sign_name = video_name.split("-")[0]
+    #print(video_name)
+    #landmark_list = {"pose": [], "left_hand": [], "right_hand": []}
+    landmark_list = {"left_hand": [], "right_hand": []}
+    sign_name = video_name.split("_")[0]
 
     # Set the Video stream
     cap = cv2.VideoCapture(
@@ -53,8 +56,9 @@ def save_landmarks_from_video(video_name):
                 image, results = mediapipe_detection(frame, holistic)
 
                 # Store results
-                pose, left_hand, right_hand = extract_landmarks(results)
-                landmark_list["pose"].append(pose)
+                # pose, left_hand, right_hand = extract_landmarks(results)
+                left_hand, right_hand = extract_landmarks(results)
+                # landmark_list["pose"].append(pose)
                 landmark_list["left_hand"].append(left_hand)
                 landmark_list["right_hand"].append(right_hand)
             else:
@@ -72,9 +76,9 @@ def save_landmarks_from_video(video_name):
         os.mkdir(data_path)
 
     # Saving the landmark_list in the correct folder
-    save_array(
-        landmark_list["pose"], os.path.join(data_path, f"pose_{video_name}.pickle")
-    )
+    # save_array(
+    #     landmark_list["pose"], os.path.join(data_path, f"pose_{video_name}.pickle")
+    # )
     save_array(
         landmark_list["left_hand"], os.path.join(data_path, f"lh_{video_name}.pickle")
     )

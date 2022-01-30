@@ -8,11 +8,10 @@ from utils.landmark_utils import extract_landmarks
 
 
 class SignRecorder(object):
-    def __init__(self, reference_signs: pd.DataFrame,rec_acc, seq_len=50):
+    def __init__(self, reference_signs: pd.DataFrame, seq_len=100):
         # Variables for recording
         self.is_recording = False
         self.seq_len = seq_len
-        self.rec_acc=rec_acc
 
         # List of results stored each frame
         self.recorded_results = []
@@ -53,7 +52,7 @@ class SignRecorder(object):
         """
         left_hand_list, right_hand_list = [], []
         for results in self.recorded_results:
-            _, left_hand, right_hand = extract_landmarks(results)
+            left_hand, right_hand = extract_landmarks(results)
             left_hand_list.append(left_hand)
             right_hand_list.append(right_hand)
 
@@ -61,13 +60,13 @@ class SignRecorder(object):
         recorded_sign = SignModel(left_hand_list, right_hand_list)
 
         # Compute sign similarity with DTW (ascending order)
-        self.reference_signs = dtw_distances(recorded_sign, self.reference_signs,self.rec_acc)
+        self.reference_signs = dtw_distances(recorded_sign, self.reference_signs)
 
         # Reset variables
         self.recorded_results = []
         self.is_recording = False
 
-    def _get_sign_predicted(self, batch_size=5, threshold=0.5):
+    def _get_sign_predicted(self, batch_size=4, threshold=0.5):
         """
         Method that outputs the sign that appears the most in the list of closest
         reference signs, only if its proportion within the batch is greater than the threshold
@@ -87,5 +86,5 @@ class SignRecorder(object):
 
         predicted_sign, count = sign_counter[0]
         if count / batch_size < threshold:
-            return "Signe inconnu"
+            return "Invalid Sign"
         return predicted_sign

@@ -33,7 +33,7 @@ class WebcamManager(object):
         frame = cv2.flip(frame, 1)
 
         # Write result if there is
-        frame = self.draw_text(frame)
+        #frame = self.draw_text(frame)
 
         # Chose circle color
         color = WHITE_COLOR
@@ -42,34 +42,8 @@ class WebcamManager(object):
 
         # Update the frame
         cv2.circle(frame, (30, 30), 20, color, -1)
-        cv2.imshow("OpenCV Feed", frame)
-
-    def update2(
-        self, frame: np.ndarray, results, sign_detected: str, is_recording: bool
-    ):
-        self.sign_detected = sign_detected
-
-        # Draw landmarks
-        self.draw_landmarks(frame, results)
-
-        WIDTH = int(HEIGHT * len(frame[0]) / len(frame))
-        # Resize frame
-        frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation=cv2.INTER_AREA)
-
-        # Flip the image vertically for mirror effect
-        frame = cv2.flip(frame, 1)
-
-        # Write result if there is
-        frame = self.draw_text(frame)
-
-        # Chose circle color
-        color = WHITE_COLOR
-        if is_recording:
-            color = RED_COLOR
-
-        # Update the frame
-        cv2.circle(frame, (30, 30), 20, color, -1)
-        cv2.imshow("OpenCV Feed", frame)
+        #cv2.imshow("OpenCV Feed", frame)
+        return frame
 
     def draw_text(
         self,

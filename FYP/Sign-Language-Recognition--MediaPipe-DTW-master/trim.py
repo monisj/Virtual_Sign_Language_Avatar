@@ -3,20 +3,16 @@ import string,os,pathlib
 from moviepy.editor import *
 cur=pathlib.Path.cwd()
 path_video=data_path=pathlib.Path.cwd().joinpath('videos')
-write=pathlib.Path.cwd().joinpath('utils\Base_G_Acc')
 videos="videos"
 l=os.listdir(path_video)
 li=[]
 for i in l:
     if '.mp4' in i:
         li.append(i.split('.')[0])
-s="A"
+
 print(l)
 for i in li:
     skip = False
-    f=open(f'{write}\{i}.txt',"w")
-    f.write("3000")
-    f.close()
     try:
         os.makedirs(f'{cur}\data\{videos}\{i}')
     except FileExistsError:
@@ -28,7 +24,16 @@ for i in li:
         print(duration)
         #clip1=original_video.subclip(0,(duration/2))
         #clip1.write_videofile(os.path.join(f'{cur}\data\{videos}\{i}',f'{i}-1.mp4'))
+        
         clip2=original_video.subclip((duration/2),duration)
-        clip2.write_videofile(os.path.join(f'{cur}\data\{videos}\{i}',f'{i}-2.mp4'))
+        clip2.write_videofile(os.path.join(f'{cur}\data\{videos}\{i}',f'{i}.mp4'))
+
+       #clip1_f=original_video.subclip(0,(duration/2))
+        #clip1_f=clip1.fx(vfx.mirror_x)
+        #clip1_f.write_videofile(os.path.join(f'{cur}\data\{videos}\{i}',f'{i}-1-f.mp4'))
+
+        #clip2_f=original_video.subclip((duration/2),duration)
+        #clip2_f=clip1.fx(vfx.mirror_x)
+        #clip2_f.write_videofile(os.path.join(f'{cur}\data\{videos}\{i}',f'{i}-2-f.mp4'))
     
 
