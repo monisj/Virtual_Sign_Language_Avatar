@@ -16,12 +16,17 @@ class WebcamManager(object):
 
     def __init__(self):
         self.sign_detected = ""
+        self.sign=[" "]
+        self.dist=[" "]
+        self.val=""
 
     def update(
-        self, frame: np.ndarray, results, sign_detected: str, is_recording: bool
+        self, frame: np.ndarray, results, sign_detected, is_recording,sign,dist,val
     ):
         self.sign_detected = sign_detected
-
+        self.sign=sign
+        self.dist=dist
+        self.val=val
         # Draw landmarks
         self.draw_landmarks(frame, results)
 
@@ -33,7 +38,7 @@ class WebcamManager(object):
         frame = cv2.flip(frame, 1)
 
         # Write result if there is
-        #frame = self.draw_text(frame)
+        frame,acc = self.draw_text(frame)
 
         # Chose circle color
         color = WHITE_COLOR
@@ -43,7 +48,7 @@ class WebcamManager(object):
         # Update the frame
         cv2.circle(frame, (30, 30), 20, color, -1)
         #cv2.imshow("OpenCV Feed", frame)
-        return frame
+        return frame,acc
 
     def draw_text(
         self,
@@ -54,7 +59,62 @@ class WebcamManager(object):
         offset=int(HEIGHT * 0.02),
         bg_color=(245, 242, 176, 0.85),
     ):
+        acc2=0
         window_w = int(HEIGHT * len(frame[0]) / len(frame))
+        list1=[]
+        if self.sign_detected==self.val:
+            self.sign_detected=f'Predicted Correctly With Accuracy ={self.dist[0]}'
+            for i in range(len(self.sign)):
+                if self.sign[i]==self.val:
+                    list1.append(self.dist[i])
+                    if len(list1)==2:
+                        acc1=int(list1[0])
+                        acc2=int(list1[1])
+                        acc1=((acc1-500)/500)*100
+                        acc2=((acc2-500)/500)*100
+                        if int(list1[0])<500 or int(list1[1])<500:
+                            self.sign_detected='Predicted correctly With Accuracy =95'
+                            acc2=95
+                            break
+                        else:
+                            if acc1>100 or acc2>100:
+                                acc=((acc1+acc2)/2)//100
+                                self.sign_detected=f'Predicted correctly With Accuracy ={acc}'
+                                acc2=acc
+                                break
+                            else:
+                                acc=(acc1+acc2)/2
+                                self.sign_detected=f'Predicted correctly With Accuracy ={100-acc}'
+                                acc2=100-acc
+                                break
+        elif self.sign_detected !=self.val:
+            for i in range(len(self.sign)):
+                if self.sign[i]==self.val:
+                    list1.append(self.dist[i])
+                    if len(list1)==2:
+                        if list1[0]==float('inf'):
+                            self.sign_detected='No Sign Detected'
+                            acc2=0
+                        else:    
+                            acc1=int(list1[0])
+                            acc2=int(list1[1])
+                            acc1=((acc1-500)/500)*100
+                            acc2=((acc2-500)/500)*100
+                            if int(list1[0])<500 or int(list1[1])<500:
+                                self.sign_detected='Predicted Incorrectly With Accuracy =95'
+                                acc2=95
+                                break
+                            else:
+                                if acc1>100 or acc2>100:
+                                    acc=((acc1+acc2)/2)//100
+                                    self.sign_detected=f'Predicted Incorrectly With Accuracy ={acc}'
+                                    acc2=acc
+                                    break
+                                else:
+                                    acc=(acc1+acc2)//2
+                                    self.sign_detected=f'Predicted Incorrectly With Accuracy ={100-acc}'
+                                    acc2=100-acc
+                                    break
 
         (text_w, text_h), _ = cv2.getTextSize(
             self.sign_detected, font, font_size, font_thickness
@@ -68,11 +128,11 @@ class WebcamManager(object):
             self.sign_detected,
             (text_x, text_y + text_h + font_size - 1),
             font,
-            font_size,
-            (118, 62, 37),
+            1,
+            (200, 50, 37),
             font_thickness,
         )
-        return frame
+        return frame,acc2
 
     @staticmethod
     def draw_landmarks(image, results):

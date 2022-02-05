@@ -90,14 +90,14 @@ def load_reference_signs(videos):
     )
     return reference_signs
 
-def new_load_reference_signs(videos):
-    print('loading references')
+def new_load_reference_signs(videos,subject):
+    # print('loading references')
     reference_signs = pd.DataFrame(columns=["name", "sign_model", "distance"])
     #tstart=time.time()
     for video_name in videos:
         #vstart=time.time()
         sign_name = video_name.split("_")[0]
-        path = os.path.join("data", "dataset", sign_name, video_name)
+        path = os.path.join("data", f"{subject}_dataset", sign_name, video_name)
         #data_path = os.path.join(path, video_name)
 
         # lstart=time.time()
@@ -126,9 +126,9 @@ def new_load_reference_signs(videos):
     #     print(f'{video_name} time=',(vend-vstart))
     # tend=time.time()
     # print('total time=',(tend-tstart))
-    print(
-        f'Dictionary count: {reference_signs[["name", "sign_model"]].groupby(["name"]).count()}'
-    )
+    # print(
+    #     f'Dictionary count: {reference_signs[["name", "sign_model"]].groupby(["name"]).count()}'
+    # )
     return reference_signs
 
 

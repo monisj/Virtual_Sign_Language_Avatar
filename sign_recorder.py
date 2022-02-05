@@ -8,7 +8,7 @@ from utils.landmark_utils import extract_landmarks
 
 
 class SignRecorder(object):
-    def __init__(self, reference_signs: pd.DataFrame, seq_len=100):
+    def __init__(self, reference_signs: pd.DataFrame, seq_len=70):
         # Variables for recording
         self.is_recording = False
         self.seq_len = seq_len
@@ -26,7 +26,7 @@ class SignRecorder(object):
         self.reference_signs["distance"].values[:] = 0
         self.is_recording = True
 
-    def process_results(self, results) -> (str, bool):
+    def process_results(self, results):
         """
         If the SignRecorder is in the recording state:
             it stores the landmarks during seq_len frames and then computes the sign distances
@@ -42,8 +42,10 @@ class SignRecorder(object):
                 print(self.reference_signs)
 
         if np.sum(self.reference_signs["distance"].values) == 0:
-            return "", self.is_recording
-        return self._get_sign_predicted(), self.is_recording
+            return "", self.is_recording,[" "],[" "]
+        sign=self.reference_signs.iloc[::]["name"].values
+        dist=self.reference_signs.iloc[::]["distance"].values
+        return self._get_sign_predicted(), self.is_recording,sign,dist
 
     def compute_distances(self):
         """

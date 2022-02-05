@@ -1,5 +1,5 @@
 import cv2
-import os
+import os,pathlib
 import numpy as np
 import pickle as pkl
 import mediapipe as mp
@@ -35,6 +35,53 @@ def extract_landmarks(results):
     #return pose, left_hand, right_hand
     return left_hand, right_hand
 
+def save_landmarks_from_new_video(video_name,video_path,dataset_path):
+    landmark_list = {"left_hand": [], "right_hand": []}
+    sign_name = video_name.split("_")[0]
+
+    # Set the Video stream
+    cap = cv2.VideoCapture(
+        str(pathlib.Path.joinpath(video_path,f'{video_name}.mp4'))
+    )
+    with mp.solutions.holistic.Holistic(
+        min_detection_confidence=0.5, min_tracking_confidence=0.5
+    ) as holistic:
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                # Make detections
+                image, results = mediapipe_detection(frame, holistic)
+
+                # Store results
+                # pose, left_hand, right_hand = extract_landmarks(results)
+                left_hand, right_hand = extract_landmarks(results)
+                # landmark_list["pose"].append(pose)
+                landmark_list["left_hand"].append(left_hand)
+                landmark_list["right_hand"].append(right_hand)
+            else:
+                break
+        cap.release()
+
+    # Create the folder of the sign if it doesn't exists
+    path = dataset_path
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+    # Create the folder of the video data if it doesn't exists
+    data_path = pathlib.Path(dataset_path).joinpath(video_name)
+    if not os.path.exists(data_path):
+        os.mkdir(data_path)
+
+    # Saving the landmark_list in the correct folder
+    # save_array(
+    #     landmark_list["pose"], os.path.join(data_path, f"pose_{video_name}.pickle")
+    # )
+    save_array(
+        landmark_list["left_hand"], os.path.join(data_path, f"lh_{video_name}.pickle")
+    )
+    save_array(
+        landmark_list["right_hand"], os.path.join(data_path, f"rh_{video_name}.pickle")
+    )
 
 def save_landmarks_from_video(video_name):
     #print(video_name)
