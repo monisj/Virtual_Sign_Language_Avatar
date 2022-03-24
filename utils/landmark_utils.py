@@ -41,7 +41,7 @@ def save_landmarks_from_new_video(video_name,video_path,dataset_path):
 
     # Set the Video stream
     cap = cv2.VideoCapture(
-        str(pathlib.Path.joinpath(video_path,f'{video_name}.mp4'))
+        str(pathlib.Path.cwd().joinpath(video_path,f'{video_name}.mp4'))
     )
     with mp.solutions.holistic.Holistic(
         min_detection_confidence=0.5, min_tracking_confidence=0.5
