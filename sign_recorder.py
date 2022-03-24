@@ -2,30 +2,38 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 
-from utils.dtw import dtw_distances
+from utils.dtw import dtw_distances,fdtw_distances
 from models.sign_model import SignModel
 from utils.landmark_utils import extract_landmarks
 
 
 class SignRecorder(object):
-    def __init__(self, reference_signs: pd.DataFrame, seq_len=70):
+    def __init__(self, reference_signs: pd.DataFrame, seq_len=False):
         # Variables for recording
         self.is_recording = False
         self.seq_len = seq_len
-
+        self.temp=False
+        self.num_temp=0
         # List of results stored each frame
         self.recorded_results = []
 
         # DataFrame storing the distances between the recorded sign & all the reference signs from the dataset
         self.reference_signs = reference_signs
 
-    def record(self):
+    def record(self,record):
         """
         Initialize sign_distances & start recording
         """
-        self.reference_signs["distance"].values[:] = 0
-        self.is_recording = True
-
+        if not record:
+            self.seq_len=False
+            #self.seq_len=False
+        else:
+            self.reference_signs["distance"].values[:] = 0
+            self.is_recording = True
+            if record:
+                self.seq_len=True
+            else:
+                self.seq_len=False
     def process_results(self, results):
         """
         If the SignRecorder is in the recording state:
@@ -34,12 +42,21 @@ class SignRecorder(object):
         :return: Return the word predicted (blank text if there is no distances)
                 & the recording state
         """
+        
+        
         if self.is_recording:
-            if len(self.recorded_results) < self.seq_len:
+            if self.seq_len:
                 self.recorded_results.append(results)
+                self.temp=True
             else:
-                self.compute_distances()
-                print(self.reference_signs)
+                if self.num_temp<10 and self.temp==True:
+                    self.num_temp+=1
+                    self.recorded_results.append(results)
+                else:
+                    self.num_temp=0 #For Safe Measures 
+                    self.temp=False
+                    self.compute_distances()
+                    print(self.reference_signs) #Uncomment to reveal distances
 
         if np.sum(self.reference_signs["distance"].values) == 0:
             return "", self.is_recording,[" "],[" "]
@@ -62,13 +79,14 @@ class SignRecorder(object):
         recorded_sign = SignModel(left_hand_list, right_hand_list)
 
         # Compute sign similarity with DTW (ascending order)
-        self.reference_signs = dtw_distances(recorded_sign, self.reference_signs)
+        #self.reference_signs = dtw_distances(recorded_sign, self.reference_signs) #Old Algorithm
+        self.reference_signs = fdtw_distances(recorded_sign, self.reference_signs)
 
         # Reset variables
         self.recorded_results = []
         self.is_recording = False
 
-    def _get_sign_predicted(self, batch_size=4, threshold=0.5):
+    def _get_sign_predicted(self, batch_size=5, threshold=0.3):
         """
         Method that outputs the sign that appears the most in the list of closest
         reference signs, only if its proportion within the batch is greater than the threshold
@@ -87,6 +105,6 @@ class SignRecorder(object):
         sign_counter = Counter(sign_names).most_common()
 
         predicted_sign, count = sign_counter[0]
-        if count / batch_size < threshold:
-            return "Invalid Sign"
+        #if count / batch_size < threshold:
+            #return "Invalid Sign"
         return predicted_sign
