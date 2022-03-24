@@ -7,7 +7,7 @@ import sqlite3
 import pathlib,os,mediapipe,cv2
 from PyQt5.QtMultimedia import *
 from PyQt5.QtMultimediaWidgets import *
-from utils.dataset_utils import load_dataset, load_reference_signs,new_videos_load_dataset,new_load_reference_signs
+from utils.dataset_utils import load_dataset, load_reference_signs,new_videos_load_dataset,new_load_reference_signs,newer_load_reference_signs,load_embeds
 from utils.mediapipe_utils import mediapipe_detection
 from utils.landmark_utils import save_landmarks_from_new_video
 from sign_recorder import SignRecorder
@@ -19,6 +19,8 @@ import trim
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        self.sentences=[]
+        self.sentences_pass=0
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -349,6 +351,12 @@ class Ui_MainWindow(object):
         self.pushButton_15.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pushButton_15.setObjectName("pushButton_15")
         self.verticalLayout_9.addWidget(self.pushButton_15)
+
+        self.pushButton_22 = QtWidgets.QPushButton(self.frame_13)
+        self.pushButton_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor)) #Sentences button
+        self.pushButton_22.setObjectName("pushButton_15")
+        self.verticalLayout_9.addWidget(self.pushButton_22)
+
         spacerItem8 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_9.addItem(spacerItem8)
         self.pushButton_20 = QtWidgets.QPushButton(self.frame_13)
@@ -356,6 +364,8 @@ class Ui_MainWindow(object):
         self.pushButton_20.setObjectName("pushButton_20")
         self.verticalLayout_9.addWidget(self.pushButton_20)
         self.horizontalLayout_10.addWidget(self.frame_13)
+        
+        
         self.stackedWidget_2 = QtWidgets.QStackedWidget(self.frame_12)
         self.stackedWidget_2.setObjectName("stackedWidget_2")
         self.page_15 = QtWidgets.QWidget()
@@ -433,6 +443,77 @@ class Ui_MainWindow(object):
         self.page_7.setObjectName("page_7")
         self.verticalLayout_23 = QtWidgets.QVBoxLayout(self.page_7)
         self.verticalLayout_23.setObjectName("verticalLayout_23")
+
+
+
+
+        self.page_8 = QtWidgets.QWidget()
+        self.page_8.setObjectName("page_8")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.page_8)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.frame_18 = QtWidgets.QFrame(self.page_8)
+        self.frame_18.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_18.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_18.setObjectName("frame_18")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.frame_18)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+
+        #self.label_4 = QtWidgets.QLabel(self.frame_18)
+        #self.label_4.setObjectName("label_4")
+
+        self.label_4 = QtWidgets.QLabel(self.frame_18)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
+        self.label_4.setSizePolicy(sizePolicy)
+        self.label_4.setMinimumSize(QtCore.QSize(640, 480))
+        self.label_4.setObjectName("label_4")
+
+        self.gridLayout_3.addWidget(self.label_4, 1, 0, 1, 1)
+        spacerItem13 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_3.addItem(spacerItem13, 2, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.frame_18, 0, 0, 1, 5)
+        self.label_5 = QtWidgets.QLabel(self.page_8)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout_4.addWidget(self.label_5, 1, 0, 1, 1)
+        self.textEdit = QtWidgets.QTextEdit(self.page_8)
+        self.textEdit.setObjectName("textEdit")
+        self.gridLayout_4.addWidget(self.textEdit, 2, 0, 1, 5)
+        self.pushButton_24 = QtWidgets.QPushButton(self.page_8)
+        self.pushButton_24.setObjectName("pushButton_24")
+        self.gridLayout_4.addWidget(self.pushButton_24, 3, 1, 1, 1)
+        self.pushButton_23 = QtWidgets.QPushButton(self.page_8)
+        self.pushButton_23.setObjectName("pushButton_23")
+        self.gridLayout_4.addWidget(self.pushButton_23, 3, 2, 1, 1)
+        self.pushButton_224 = QtWidgets.QPushButton(self.page_8)
+        self.pushButton_224.setObjectName("pushButton_224")
+        self.gridLayout_4.addWidget(self.pushButton_224, 3, 3, 1, 1)
+        self.pushButton_225 = QtWidgets.QPushButton(self.page_8)
+        self.pushButton_225.setObjectName("pushButton_225")
+        self.gridLayout_4.addWidget(self.pushButton_225, 3, 4, 1, 1)
+        self.stackedWidget_2.addWidget(self.page_8)
+        self.horizontalLayout_10.addWidget(self.stackedWidget_2)
+
+        #self.label_181 = QtWidgets.QLabel(self.frame_19)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        #sizePolicy.setHeightForWidth(self.label_181.sizePolicy().hasHeightForWidth())
+        #self.label_181.setSizePolicy(sizePolicy)
+        #self.label_181.setMinimumSize(QtCore.QSize(640, 480))
+        #self.label_181.setObjectName("label_181")
+
+        self.stackedWidget_2.addWidget(self.page_8)
+        self.horizontalLayout_10.addWidget(self.stackedWidget_2)
+        
+        #self.horizontalLayout_10.addWidget(self.stackedWidget_2)
+
+
+
+
+
+
         self.frame_23 = QtWidgets.QFrame(self.page_7)
         self.frame_23.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_23.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -560,6 +641,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_16.addWidget(self.pushButton_21)
         self.verticalLayout_23.addWidget(self.frame_17)
         self.stackedWidget_2.addWidget(self.page_7)
+        self.stackedWidget_2.addWidget(self.page_8)
         self.horizontalLayout_10.addWidget(self.stackedWidget_2)
         self.verticalLayout_8.addWidget(self.frame_12)
         self.stackedWidget.addWidget(self.page_6)
@@ -612,6 +694,7 @@ class Ui_MainWindow(object):
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.passwordLineEdit.returnPressed.connect(self.pushButton.click)
         self.pushButton_20.clicked.connect(self.logout)
+        self.pushButton_22.clicked.connect(self.sentence_screen)
 
         self.current_folder=''
         self.user='Student'
@@ -682,6 +765,7 @@ class Ui_MainWindow(object):
         self.pushButton_10.setText(_translate("MainWindow", "Courses"))
         self.pushButton_13.setText(_translate("MainWindow", "Tests"))
         self.pushButton_15.setText(_translate("MainWindow", "Progress"))
+        self.pushButton_22.setText(_translate("MainWindow", "Sentences"))
         self.pushButton_11.setText(_translate("MainWindow", "Science"))
         self.pushButton_12.setText(_translate("MainWindow", "Computer"))
         self.pushButton_9.setText(_translate("MainWindow", "Alphabets"))
@@ -695,6 +779,10 @@ class Ui_MainWindow(object):
         #self.label_19.setText(_translate("MainWindow", "TextLabel"))
         self.pushButton_20.setText(_translate("MainWindow", "Log Out"))
         self.pushButton_21.setText(_translate("MainWindow", "Back"))
+        self.pushButton_24.setText(_translate("MainWindow", "Clear All"))
+        self.pushButton_23.setText(_translate("MainWindow", "BackSpace"))
+        self.pushButton_224.setText(_translate("MainWindow", "Add Space"))
+        self.pushButton_225.setText(_translate("MainWindow", "Back"))
         item = self.tableWidget_3.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "Actual: No"))
         item = self.tableWidget_3.verticalHeaderItem(1)
@@ -714,6 +802,10 @@ class Ui_MainWindow(object):
         item = self.tableWidget_3.item(1, 1)
         item.setText(_translate("MainWindow", "0"))
         self.tableWidget_3.setSortingEnabled(__sortingEnabled)
+        self.pushButton_24.clicked.connect(self.clear_sentences)
+        self.pushButton_23.clicked.connect(self.Back_sentences)
+        self.pushButton_224.clicked.connect(self.add_space)
+        self.pushButton_225.clicked.connect(self.sentence_back)
 
     def login(self):
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
@@ -755,6 +847,7 @@ class Ui_MainWindow(object):
                 self.stackedWidget.setCurrentIndex(5)
     def logout(self):
         self.stackedWidget.setCurrentIndex(0)
+        
     def New_User(self):
         self.stackedWidget.setCurrentIndex(4)
     def Create_New_User(self):
@@ -843,6 +936,22 @@ class Ui_MainWindow(object):
         self.stackedWidget_2.setCurrentIndex(1)
         self.frame_13.hide()
         self.current_folder='Computer'
+
+
+    def sentence_screen(self):
+        self.sentences=[]
+        self.camerathread = cameraThread()
+        self.camerathread.reference_signs=all_data_sentences
+        self.camerathread.acc_sign='A'
+        self.video='A'
+        self.camerathread.record=False
+        self.camerathread.start()
+        self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
+        self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+        self.stackedWidget_2.setCurrentIndex(3)
+        
+
     def select_video(self,index):
         video = self.fileModel.fileName(index)
         path=''
@@ -862,18 +971,20 @@ class Ui_MainWindow(object):
         
         if folder == "alphabets":
             self.camerathread = cameraThread()
-            self.camerathread.reference_signs=alphabet_signs
+            self.camerathread.reference_signs=Alphabets_signs
             self.camerathread.acc_sign=video[:-4]
             self.video=video[:-4]
+            self.camerathread.record=False
             try:
                 self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_alph)
             except:
                 pass
         elif folder == 'computer':
             self.camerathread = cameraThread()
-            self.camerathread.reference_signs=computer_signs
+            self.camerathread.reference_signs=Computer_signs
             self.camerathread.acc_sign=video[:-4]
             self.video=video[:-4]
+            self.camerathread.record=False
             try:
                 self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_comp)
             except:
@@ -881,9 +992,10 @@ class Ui_MainWindow(object):
             
         elif folder == 'science':
             self.camerathread = cameraThread()
-            self.camerathread.reference_signs=science_signs
+            self.camerathread.reference_signs=Science_signs
             self.camerathread.acc_sign=video[:-4]
             self.video=video[:-4]
+            self.camerathread.record=False
             try:
                 self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_sci)
             except:
@@ -892,6 +1004,7 @@ class Ui_MainWindow(object):
         self.camerathread.start()
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         self.stackedWidget_2.setCurrentIndex(2)
     
     def back_video(self):
@@ -915,6 +1028,10 @@ class Ui_MainWindow(object):
     def back_videos(self):
         self.stackedWidget_2.setCurrentIndex(0)
         self.frame_13.show()
+
+    def sentence_back(self):
+        self.camerathread.stop()
+        self.stackedWidget_2.setCurrentIndex(0)
         
     def new_account_cancel(self):
         self.stackedWidget.setCurrentIndex(0)
@@ -922,27 +1039,31 @@ class Ui_MainWindow(object):
         folder=self.current_folder
         folder_path=pathlib.Path(__file__).parent.absolute().joinpath('videos',folder)
         if folder == "Alphabets":
-            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data','alphabet_dataset')
+            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data','Alphabets_dataset')
         else:
             datapath=pathlib.Path(__file__).parent.absolute().joinpath('data',f'{folder}_dataset')
         fileName, _ = QFileDialog.getOpenFileName(None,"Delete Video",str(folder_path),filter="*.mp4")
         
-        # progress=QProgressDialog()
-        # progress.setLabelText("Video being Processed Please wait......")
-        progress=QMessageBox()
-        progress.setText("Video Has Been Added")
-        progress.setStandardButtons(QMessageBox.Ok)
-        progress.setIcon(QMessageBox.Information)
+        progress=QProgressDialog()
+        progress.setLabelText("Video being Processed Please wait......")
+        #progress=QMessageBox()
+        # progress.setText("Video Has Been Added")
+        # progress.setStandardButtons(QMessageBox.Ok)
+        # progress.setIcon(QMessageBox.Information)
         if fileName:
             #print(fileName)
             #print(self.path_video)
             #url = QUrl.fromLocalFile(fileName)
-            #progress.exec_()
+            progress.show()
             file=QFileInfo(fileName).fileName()
             video_path=fileName
             video_data_path=pathlib.Path(datapath).joinpath(file[:-4])
-            video_dest_path=pathlib.Path(folder_path).joinpath(file)
+            progress.setValue(0)
+            video_dest_path=pathlib.Path(folder_path).joinpath(file) ## Do changes to this because the patlib change to CWD was made in landmark_utils just send the file name not the entire path
             temp_vid_path=pathlib.Path(__file__).parent.absolute().joinpath('temp_videos')
+            progress.setValue(10)
+            progress.setValue(20)
+            progress.setValue(30)
             shutil.copyfile(video_path,video_dest_path)
             trim.trim(file[:-4],video_path,temp_vid_path)
             vid1=f'{file[:-4]}_1'
@@ -950,14 +1071,15 @@ class Ui_MainWindow(object):
             save_landmarks_from_new_video(vid1,temp_vid_path,video_data_path)
             save_landmarks_from_new_video(vid2,temp_vid_path,video_data_path)
             if folder == "Alphabets":
-                self.new_ref_alph=new_load_reference_signs([vid1,vid2],"alphabet")
-                #alphabet_signs.append(new_ref)
+                self.new_ref_alph=new_load_reference_signs([vid1,vid2],"Alphabets")
+                Alphabets_signs.append(new_ref)
             elif folder == 'Science':
-                self.new_ref_sci=new_load_reference_signs([vid1,vid2],'science')
-                #science_signs.append(new_ref)
+                self.new_ref_sci=new_load_reference_signs([vid1,vid2],'Science')
+                Science_signs.append(new_ref)
             elif folder == 'Computer':
-                self.new_ref_comp=new_load_reference_signs([vid1,vid2],'computer')
-                #computer_signs.append(new_ref)
+                self.new_ref_comp=new_load_reference_signs([vid1,vid2],'Computer')
+                Computer_signs.append(new_ref)
+            progress.setValue(100)
             
             #self.dirModel.modelReset()
             self.model.setRootPath((QtCore.QDir.rootPath()))
@@ -965,7 +1087,7 @@ class Ui_MainWindow(object):
             # self.treeview.setSortingEnabled(1)
             # self.treeview.sortByColumn(0,Qt.AscendingOrder)
             # self.treeview.setSortingEnabled(0)
-            progress.exec_()
+            #progress.exec_()
             #progress.cancel()
             
             
@@ -974,17 +1096,17 @@ class Ui_MainWindow(object):
         folder=self.current_folder
         folder_path=pathlib.Path(__file__).parent.absolute().joinpath('videos',folder)
         if folder == "Alphabets":
-            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data','alphabet_dataset')
+            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data','Alphabets_dataset')
         else:
             datapath=pathlib.Path(__file__).parent.absolute().joinpath('data',f'{folder}_dataset')
         
         fileName, _ = QFileDialog.getOpenFileName(None,"Delete Video",str(folder_path),filter="*.mp4")
         if folder == 'Alphabets':
-            signs=alphabet_signs
+            signs=Alphabets_signs
         elif folder == 'Computer':
-            signs=computer_signs
+            signs=Computer_signs
         elif folder == 'Science':
-            signs=science_signs
+            signs=Science_signs
         if fileName:
             #print(fileName)
             #print(self.path_video)
@@ -1007,6 +1129,9 @@ class Ui_MainWindow(object):
 
     def ImageUpdateSlot(self, Image):
         self.label_18.setPixmap(QPixmap.fromImage(Image))
+
+    def ImageUpdateSlot_sentences(self, Image):
+        self.label_4.setPixmap(QPixmap.fromImage(Image))
     # def accuracyUpdateSlot(self, text):
     #     self.label_2.setText(text)
     def accuracyUpdateSlot(self,predicted,sign,dist,acc):
@@ -1024,6 +1149,19 @@ class Ui_MainWindow(object):
         if len(sign)<2:
             pass
         else:
+            if self.sentences_pass==1:
+                if len(predicted) <2:
+                    self.sentences.append(predicted)
+                    self.textEdit.insertPlainText(str(predicted))
+                else:
+                    self.sentences.append(" ")
+                    self.sentences.append(predicted)
+                    self.textEdit.insertPlainText(str(" "))
+                    self.textEdit.insertPlainText(str(predicted))
+                print(self.sentences)
+                self.sentences_pass=0
+            else:
+                pass
             sign=sign[:4]
             dist=dist[:4]
             #acc=0
@@ -1086,7 +1224,7 @@ class Ui_MainWindow(object):
                 self.tableWidget_3.setSortingEnabled(__sortingEnabled)
             elif float(acc)<50 and predicted==self.video:
                 __sortingEnabled = self.tableWidget_3.isSortingEnabled()
-                self.tableWidge_3t.setSortingEnabled(False)
+                self.tableWidget_3.setSortingEnabled(False)
                 item = self.tableWidget_3.item(0, 0)
                 item.setText("0")
                 item = self.tableWidget_3.item(0, 1)
@@ -1095,7 +1233,7 @@ class Ui_MainWindow(object):
                 item.setText("0")
                 item = self.tableWidget_3.item(1, 1)
                 item.setText("0")
-                self.tableWidge_3t.setSortingEnabled(__sortingEnabled)
+                self.tableWidget_3.setSortingEnabled(__sortingEnabled)
             elif float(acc)<50 and predicted!=self.video:
                 __sortingEnabled = self.tableWidget_3.isSortingEnabled()
                 self.tableWidget_3.setSortingEnabled(False)
@@ -1122,8 +1260,10 @@ class Ui_MainWindow(object):
                 item = self.tableWidget_3.item(1, 1)
                 item.setText("0")
                 self.tableWidget_3.setSortingEnabled(__sortingEnabled)
-    def accuracy_zero(self):
-        self.label_17.setText('None')
+    def accuracy_reset(self):
+        self.label_16.setText('Recording Signs')
+        self.label_17.setText('')
+        self.sentences_pass=1
     
     def play(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -1145,38 +1285,62 @@ class Ui_MainWindow(object):
 
     def setPosition(self, position):
         self.mediaPlayer.setPosition(position)
+
+    def clear_sentences(self):
+        self.textEdit.clear()
+    def Back_sentences(self):
+        if len(self.sentences) <1:
+            pass
+        else:
+            new_sentence=self.sentences[-1]
+            self.sentences.remove(new_sentence)
+            self.textEdit.clear()
+            for i in self.sentences:
+                self.textEdit.insertPlainText(str(i))
+    def add_space(self):
+        self.sentences.append(" ")
+        self.textEdit.insertPlainText(str(" "))
+
         
  
 class cameraThread(QThread):
     reference_signs=''
     acc_sign=''
+    record=False
     matrix_sign_predicted=''
     matrix_sign_accuracy_predicted=''
+    accuracy_reset=pyqtSignal(str)
     ImageUpdate = pyqtSignal(QImage)
     accuracyUpdate=pyqtSignal(str,list,list,str)
-    accuracy_zero=pyqtSignal(str)
-    def on_release(self,key):
+    
+    
+    def on_release(self,record):
         try:
-            if key.char == 'r':
-                self.accuracy_zero.emit('')
-                self.sign_recorder.record()
+            if record == False:
+                pass
+            else:
+                self.accuracy_reset.emit('')
+            self.sign_recorder.record(record)     
+                
         except:
             pass
-
+        
 
     def run(self):
         self.sign_recorder = SignRecorder(self.reference_signs)
         self.ThreadActive = True
         webcam_manager = WebcamManager()
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-        listener = keyboard.Listener(
-                    on_release=self.on_release)
-        listener.start()
+        #listener = keyboard.Listener(
+                    #on_release=self.on_release)
+        #listener.start()
+
+
         with mediapipe.solutions.holistic.Holistic(
             min_detection_confidence=0.3, min_tracking_confidence=0.3
         ) as holistic:
             while self.ThreadActive:
-
+                
                 # Read feed
                 ret, frame = cap.read()
 
@@ -1193,8 +1357,14 @@ class cameraThread(QThread):
                 #self.ImageUpdate.emit(ConvertToQtFormat)
                 self.ImageUpdate.emit(Pic)
                 self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc))
-
-
+                
+                if results.left_hand_landmarks:
+                   self.on_release(True)
+                elif results.right_hand_landmarks:
+                    self.on_release(True)  
+                else:
+                    self.on_release(False)
+                    
 
                 # pressedKey = cv2.waitKey(1) & 0xFF
                 # if pressedKey == ord("r"):  # Record pressing r
@@ -1207,32 +1377,92 @@ class cameraThread(QThread):
     def stop(self):
         self.ThreadActive = False
         self.quit()
-                
+
+
+    
+
+
+def param_capture(n):
+    n = [
+        file_name.replace(".pickle", "").replace("lh_", "")
+        for root, dirs, files in os.walk(os.path.join("data", f'{n}'))
+        for file_name in files
+        if file_name.endswith(".pickle") and file_name.startswith("lh_")
+    ]
+    #all_data_vid=[root for root,dirs,files in os.walk('data') if not dirs] #Collecting All data of the 6000+ signs
+    return n
+
+def load_param(np,all_data_sentences):
+    np1,all_data_sentences=newer_load_reference_signs(np,all_data_sentences)
+    return np1,all_data_sentences
+#def thread3():
+
+
 if __name__ == "__main__":
     import sys
-
-    alphabet_dataset = [
-        file_name.replace(".pickle", "").replace("lh_", "")
-        for root, dirs, files in os.walk(os.path.join("data", "alphabet_dataset"))
-        for file_name in files
-        if file_name.endswith(".pickle") and file_name.startswith("lh_")
-    ]
-    computer_dataset = [
-        file_name.replace(".pickle", "").replace("lh_", "")
-        for root, dirs, files in os.walk(os.path.join("data", "computer_dataset"))
-        for file_name in files
-        if file_name.endswith(".pickle") and file_name.startswith("lh_")
-    ]
-    science_dataset = [
-        file_name.replace(".pickle", "").replace("lh_", "")
-        for root, dirs, files in os.walk(os.path.join("data", "science_dataset"))
-        for file_name in files
-        if file_name.endswith(".pickle") and file_name.startswith("lh_")
-    ]
+    import time
+    import pandas as pd
+    dataset=pathlib.Path.cwd().joinpath('data')
+    data_len=os.listdir(dataset)
+    start_time = time.time()
     
-    alphabet_signs=new_load_reference_signs(alphabet_dataset,"alphabet")
-    computer_signs=new_load_reference_signs(computer_dataset,'computer')
-    science_signs=new_load_reference_signs(science_dataset,'science')
+    all_data_sentences=pd.DataFrame(columns=["name", "sign_model", "distance"])
+    for i in data_len:
+        if i=="Science_dataset" or i=="Alphabets_dataset" or i=="Computer_dataset":
+            temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
+            temp1,all_data_sentences=load_param(temp,all_data_sentences)
+            temp3=i.replace("dataset","signs")
+            temp3=temp3.replace(" ","_")
+            temp3=temp3.replace("&","and")
+            temp3=temp3.replace("(","")
+            temp3=temp3.replace(")","")
+            temp3=temp3.replace(",","_")
+            print(i)
+            exec(f'{temp3}=temp1')
+        else:
+            pass    
+    #temp=[root for root,dirs,files in os.walk(f'data') if not dirs]       
+    #all_data_sentences=load_param(temp)
+        
+    #print(dataset_load_dictonary['Alphabet_dataset'])
+    #temp=pool.apply_async(all_data_load, (temp.get(),i)) #Collecting All data of the 6000+ signs
+    #all_data_sentences=pool.apply_async(all_data_load, (temp.get(),i))
+   
+    
+    
+
+    
+    
+    #alphabet_dataset = [
+    #    file_name.replace(".pickle", "").replace("lh_", "")
+    #    for root, dirs, files in os.walk(os.path.join("data", "Alphabets_dataset"))
+    #    for file_name in files
+    #    if file_name.endswith(".pickle") and file_name.startswith("lh_")
+    #]
+    #computer_dataset = [
+    #    file_name.replace(".pickle", "").replace("lh_", "")
+    #    for root, dirs, files in os.walk(os.path.join("data", "Computer_dataset"))
+    #    for file_name in files
+    #    if file_name.endswith(".pickle") and file_name.startswith("lh_")
+    #]
+    #science_dataset = [
+    #    file_name.replace(".pickle", "").replace("lh_", "")
+    #    for root, dirs, files in os.walk(os.path.join("data", "Science_dataset"))
+    #    for file_name in files
+    #    if file_name.endswith(".pickle") and file_name.startswith("lh_")
+    #]
+    
+    #all_data_vid=[root for root,dirs,files in os.walk('data') if not dirs] #Collecting All data of the 6000+ signs
+
+
+    #alphabet_signs=new_load_reference_signs(alphabet_dataset,"Alphabets")
+    #computer_signs=new_load_reference_signs(computer_dataset,'Computer')
+    #science_signs=new_load_reference_signs(science_dataset,'Science')
+    #all_data_sentences=newer_load_reference_signs(all_data_vid) #This line send the parameters to a different function in dataset_utls
+    end_time = time.time()
+
+    print(f"The execution time for loading is: {end_time-start_time}")
+
 
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
