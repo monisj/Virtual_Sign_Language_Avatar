@@ -41,6 +41,7 @@ class HandModel(object):
                     angles_list.append(angle)
                 else:
                     angles_list.append(0)
+        
         return angles_list
 
     def _get_connections_from_landmarks(
@@ -71,4 +72,5 @@ class HandModel(object):
             return 0
         dot_product = np.dot(u, v)
         norm = np.linalg.norm(u) * np.linalg.norm(v)
+        #print("Angles between u={} and v={} vectors are ={}".format(u,v,np.arccos(dot_product / norm)))
         return np.arccos(dot_product / norm)

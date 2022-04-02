@@ -21,6 +21,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.sentences=[]
         self.sentences_pass=0
+        self.sentences_record=0
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -949,6 +950,7 @@ class Ui_MainWindow(object):
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+        self.camerathread.accuracy_reset_2.connect(self.accuracy_reset_2)
         self.stackedWidget_2.setCurrentIndex(3)
         
 
@@ -1005,6 +1007,7 @@ class Ui_MainWindow(object):
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+        self.camerathread.accuracy_reset_2.connect(self.accuracy_reset_2)
         self.stackedWidget_2.setCurrentIndex(2)
     
     def back_video(self):
@@ -1150,18 +1153,25 @@ class Ui_MainWindow(object):
             pass
         else:
             if self.sentences_pass==1:
-                if len(predicted) <2:
-                    self.sentences.append(predicted)
-                    self.textEdit.insertPlainText(str(predicted))
-                else:
-                    self.sentences.append(" ")
-                    self.sentences.append(predicted)
-                    self.textEdit.insertPlainText(str(" "))
-                    self.textEdit.insertPlainText(str(predicted))
-                print(self.sentences)
+                if self.sentences_record==2:
+                    if len(predicted) <2:
+                        self.sentences.append(predicted)
+                    else:
+                        self.sentences.append(" ")
+                        self.sentences.append(predicted)
                 self.sentences_pass=0
             else:
-                pass
+                if self.sentences_record==1:
+                    if self.sentences==[]:
+                        pass
+                    else:
+                        for i in self.sentences:
+                            self.textEdit.insertPlainText(str(i))
+                        print(self.sentences)
+                        self.sentences=[]
+                self.sentences_pass=0
+                
+            
             sign=sign[:4]
             dist=dist[:4]
             #acc=0
@@ -1264,6 +1274,15 @@ class Ui_MainWindow(object):
         self.label_16.setText('Recording Signs')
         self.label_17.setText('')
         self.sentences_pass=1
+
+    def accuracy_reset_2(self,sentence_check):
+        print(sentence_check)
+        
+        if sentence_check==True:
+            self.sentences_record=2
+        else:
+            self.sentences_record=1
+        
     
     def play(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -1297,6 +1316,7 @@ class Ui_MainWindow(object):
             self.textEdit.clear()
             for i in self.sentences:
                 self.textEdit.insertPlainText(str(i))
+        self.sentences_pass=0
     def add_space(self):
         self.sentences.append(" ")
         self.textEdit.insertPlainText(str(" "))
@@ -1307,9 +1327,11 @@ class cameraThread(QThread):
     reference_signs=''
     acc_sign=''
     record=False
+    sentence_key=False
     matrix_sign_predicted=''
     matrix_sign_accuracy_predicted=''
     accuracy_reset=pyqtSignal(str)
+    accuracy_reset_2=pyqtSignal(bool)
     ImageUpdate = pyqtSignal(QImage)
     accuracyUpdate=pyqtSignal(str,list,list,str)
     
@@ -1320,8 +1342,18 @@ class cameraThread(QThread):
                 pass
             else:
                 self.accuracy_reset.emit('')
-            self.sign_recorder.record(record)     
-                
+            self.sign_recorder.record(record)          
+        except:
+            pass
+
+    def sentences_record(self,key):
+        try:
+            if key.char=='r':
+                if self.sentence_key==False:
+                    self.sentence_key=True
+                else:
+                    self.sentence_key=False
+                self.accuracy_reset_2.emit(self.sentence_key)
         except:
             pass
         
@@ -1331,9 +1363,9 @@ class cameraThread(QThread):
         self.ThreadActive = True
         webcam_manager = WebcamManager()
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-        #listener = keyboard.Listener(
-                    #on_release=self.on_release)
-        #listener.start()
+        listener = keyboard.Listener(
+                    on_release=self.sentences_record)
+        listener.start()
 
 
         with mediapipe.solutions.holistic.Holistic(

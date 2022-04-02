@@ -49,7 +49,7 @@ class SignRecorder(object):
                 self.recorded_results.append(results)
                 self.temp=True
             else:
-                if self.num_temp<10 and self.temp==True:
+                if self.num_temp<5 and self.temp==True:
                     self.num_temp+=1
                     self.recorded_results.append(results)
                 else:

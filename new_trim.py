@@ -12,6 +12,11 @@ import os.path
 root=pathlib.Path.cwd()
 dataset=pathlib.Path.cwd().joinpath('data')
 path_video=pathlib.Path.cwd().joinpath('PSL Videos')
+try:
+    os.remove(str(path_video)+'\\'+'~$Amy Master File - 08-04-14.xlsx')
+    os.remove(str(path_video)+'\\'+'~$Dan Master File -18-03-14 t.xlsx')
+except:
+    pass
 print(path_video)
 b=os.listdir(path_video)
 for i in b:
@@ -28,8 +33,28 @@ for i in b:
     vid=os.listdir(video_path)
     for v in vid:
         v=v.replace('.mp4','')
-        if os.path.isdir(str(dataset)+'\\'+i+'_dataset'+'\\'+v+'\\'+f'{v}_1') and os.path.isdir(str(dataset)+'\\'+i+'_dataset'+'\\'+v+'\\'+f'{v}_2'):
-            pass
+        if os.path.isdir(str(dataset)+'\\'+i+'_dataset'+'\\'+v+'\\'+f'{v}_1') or os.path.isdir(str(dataset)+'\\'+i+'_dataset'+'\\'+v+'\\'+f'{v}_2'):
+            size=os.stat(str(dataset)+'\\'+i+'_dataset'+'\\'+v+'\\'+f'{v}_1'+'\\'+f'embeddings_{v}_1.pickle')
+            size2=os.stat(str(dataset)+'\\'+i+'_dataset'+'\\'+v+'\\'+f'{v}_2'+'\\'+f'embeddings_{v}_2.pickle')
+            if size.st_size//1024 < 2 and size2.st_size//1024 < 2:
+                print("Sign= {} Has no Embeddings ".format(str(dataset)+'\\'+i+'_dataset'+'\\'+v))
+                shutil.rmtree(str(dataset)+'\\'+i+'_dataset'+'\\'+v)
+                if os.path.exists(str(root)+'\\'+'temp_'+i+'\\'+f'{v}_1.mp4') and os.path.exists(str(root)+'\\'+'temp_'+i+'\\'+f'{v}_2.mp4'):
+                    pass
+                else:
+                    original_video=VideoFileClip(str(video_path)+'\\'+v+'.mp4')
+                    duration=original_video.duration
+                    print(duration)
+                    clip1=original_video.subclip(0,(duration/2))
+                    #try:
+                        #os.remove(pathlib.Path(__file__).parent.absolute().joinpath(video_path,f'{v}_1.mp4'))
+                        #os.remove(pathlib.Path(__file__).parent.absolute().joinpath(video_path,f'{v}_2.mp4'))
+                    #except:
+                        #pass
+                    clip1.write_videofile(str(pathlib.Path(__file__).parent.absolute().joinpath(str(root)+'\\'+'temp_'+i,f'{v}_1.mp4')))
+                    clip2=original_video.subclip((duration/2),duration)
+                    clip2.write_videofile(str(pathlib.Path(__file__).parent.absolute().joinpath(str(root)+'\\'+'temp_'+i,f'{v}_2.mp4')))
+                
         else:
             if os.path.exists(str(root)+'\\'+'temp_'+i+'\\'+f'{v}_1.mp4') and os.path.exists(str(root)+'\\'+'temp_'+i+'\\'+f'{v}_2.mp4'):
                 pass
