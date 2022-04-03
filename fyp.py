@@ -950,7 +950,6 @@ class Ui_MainWindow(object):
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-        self.camerathread.accuracy_reset_2.connect(self.accuracy_reset_2)
         self.stackedWidget_2.setCurrentIndex(3)
         
 
@@ -1007,7 +1006,6 @@ class Ui_MainWindow(object):
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-        self.camerathread.accuracy_reset_2.connect(self.accuracy_reset_2)
         self.stackedWidget_2.setCurrentIndex(2)
     
     def back_video(self):
@@ -1153,22 +1151,14 @@ class Ui_MainWindow(object):
             pass
         else:
             if self.sentences_pass==1:
-                if self.sentences_record==2:
-                    if len(predicted) <2:
-                        self.sentences.append(predicted)
-                    else:
-                        self.sentences.append(" ")
-                        self.sentences.append(predicted)
-                self.sentences_pass=0
-            else:
-                if self.sentences_record==1:
-                    if self.sentences==[]:
-                        pass
-                    else:
-                        for i in self.sentences:
-                            self.textEdit.insertPlainText(str(i))
-                        print(self.sentences)
-                        self.sentences=[]
+                if len(predicted) <2:
+                    self.sentences.append(predicted)
+                    self.textEdit.insertPlainText(str(predicted))
+                else:
+                    self.sentences.append(" ")
+                    self.sentences.append(predicted)
+                    self.textEdit.insertPlainText(str(" "))
+                    self.textEdit.insertPlainText(str(predicted))
                 self.sentences_pass=0
                 
             
@@ -1274,14 +1264,6 @@ class Ui_MainWindow(object):
         self.label_16.setText('Recording Signs')
         self.label_17.setText('')
         self.sentences_pass=1
-
-    def accuracy_reset_2(self,sentence_check):
-        print(sentence_check)
-        
-        if sentence_check==True:
-            self.sentences_record=2
-        else:
-            self.sentences_record=1
         
     
     def play(self):
@@ -1307,12 +1289,13 @@ class Ui_MainWindow(object):
 
     def clear_sentences(self):
         self.textEdit.clear()
+        self.sentences=[]
     def Back_sentences(self):
         if len(self.sentences) <1:
             pass
         else:
-            new_sentence=self.sentences[-1]
-            self.sentences.remove(new_sentence)
+            self.sentences.remove(self.sentences[-1])
+            print(self.sentences)
             self.textEdit.clear()
             for i in self.sentences:
                 self.textEdit.insertPlainText(str(i))
@@ -1331,7 +1314,6 @@ class cameraThread(QThread):
     matrix_sign_predicted=''
     matrix_sign_accuracy_predicted=''
     accuracy_reset=pyqtSignal(str)
-    accuracy_reset_2=pyqtSignal(bool)
     ImageUpdate = pyqtSignal(QImage)
     accuracyUpdate=pyqtSignal(str,list,list,str)
     
@@ -1346,16 +1328,7 @@ class cameraThread(QThread):
         except:
             pass
 
-    def sentences_record(self,key):
-        try:
-            if key.char=='r':
-                if self.sentence_key==False:
-                    self.sentence_key=True
-                else:
-                    self.sentence_key=False
-                self.accuracy_reset_2.emit(self.sentence_key)
-        except:
-            pass
+    
         
 
     def run(self):
@@ -1363,9 +1336,6 @@ class cameraThread(QThread):
         self.ThreadActive = True
         webcam_manager = WebcamManager()
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-        listener = keyboard.Listener(
-                    on_release=self.sentences_record)
-        listener.start()
 
 
         with mediapipe.solutions.holistic.Holistic(
