@@ -20,14 +20,16 @@ class WebcamManager(object):
         self.sign=[" "]
         self.dist=[" "]
         self.val=""
+        self.sentences_pass_on=False
 
     def update(
-        self, frame: np.ndarray, results, sign_detected, is_recording,sign,dist,val
+        self, frame: np.ndarray, results, sign_detected, is_recording,sign,dist,val,sentences_pass_on
     ):
         self.sign_detected = sign_detected
         self.sign=sign
         self.dist=dist
         self.val=val
+        self.sentences_pass_on=sentences_pass_on
         # Draw landmarks
         self.draw_landmarks(frame, results)
 
@@ -63,63 +65,65 @@ class WebcamManager(object):
         acc2=0
         window_w = int(HEIGHT * len(frame[0]) / len(frame))
         list1=[]
-        self.sign_detected=f'Predicted Sign ={self.sign_detected}'
-        if self.sign_detected==self.val:
-            #self.sign_detected=f'Predicted Correctly With Accuracy ={self.dist[0]}'
-            for i in range(len(self.sign)):
-                if self.sign[i]==self.val:
-                    list1.append(self.dist[i])
-                    if len(list1)==2:
-                        if list1[0] == float('inf') or list1[1] ==float('inf'):
-                            pass
-                        else:
-                            acc1=int(list1[0])
-                            acc2=int(list1[1])
-                            acc1=((acc1-500)/500)*100
-                            acc2=((acc2-500)/500)*100
-                            if int(list1[0])<500 or int(list1[1])<500:
-                                #self.sign_detected='Predicted correctly With Accuracy =95'
-                                acc2=95
-                                break
+        if self.sentences_pass_on==True:
+            self.sign_detected=f'Predicted Sign ={self.sign_detected}'
+        else:
+            if self.sign_detected==self.val:
+                self.sign_detected=f'Predicted Correctly With Accuracy ={self.dist[0]}'
+                for i in range(len(self.sign)):
+                    if self.sign[i]==self.val:
+                        list1.append(self.dist[i])
+                        if len(list1)==2:
+                            if list1[0] == float('inf') or list1[1] ==float('inf'):
+                                pass
                             else:
-                                if acc1>100 or acc2>100:
-                                    acc=((acc1+acc2)/2)//100
-                                    #self.sign_detected=f'Predicted correctly With Accuracy ={acc}'
-                                    acc2=acc
+                                acc1=int(list1[0])
+                                acc2=int(list1[1])
+                                acc1=((acc1-500)/500)*100
+                                acc2=((acc2-500)/500)*100
+                                if int(list1[0])<500 or int(list1[1])<500:
+                                    self.sign_detected='Predicted correctly With Accuracy =95'
+                                    acc2=95
                                     break
                                 else:
-                                    acc=(acc1+acc2)/2
-                                    #self.sign_detected=f'Predicted correctly With Accuracy ={100-acc}'
-                                    acc2=100-acc
-                                    break
-        elif self.sign_detected !=self.val:
-            for i in range(len(self.sign)):
-                if self.sign[i]==self.val:
-                    list1.append(self.dist[i])
-                    if len(list1)==2:
-                        if list1[0]==float('inf') and list1[1]==float('inf'):
-                            #self.sign_detected='No Sign Detected'
-                            acc2=0
-                        else:    
-                            acc1=int(list1[0])
-                            acc2=int(list1[1])
-                            acc1=((acc1-500)/500)*100
-                            acc2=((acc2-500)/500)*100
-                            if int(list1[0])<500 or int(list1[1])<500:
-                                #self.sign_detected='Predicted Incorrectly With Accuracy =95'
-                                acc2=95
-                                break
-                            else:
-                                if acc1>100 or acc2>100:
-                                    acc=((acc1+acc2)/2)//100
-                                    #self.sign_detected=f'Predicted Incorrectly With Accuracy ={acc}'
-                                    acc2=acc
+                                    if acc1>100 or acc2>100:
+                                        acc=((acc1+acc2)/2)//100
+                                        self.sign_detected=f'Predicted correctly With Accuracy ={acc}'
+                                        acc2=acc
+                                        break
+                                    else:
+                                        acc=(acc1+acc2)/2
+                                        self.sign_detected=f'Predicted correctly With Accuracy ={100-acc}'
+                                        acc2=100-acc
+                                        break
+            elif self.sign_detected !=self.val:
+                for i in range(len(self.sign)):
+                    if self.sign[i]==self.val:
+                        list1.append(self.dist[i])
+                        if len(list1)==2:
+                            if list1[0]==float('inf') and list1[1]==float('inf'):
+                                self.sign_detected='No Sign Detected'
+                                acc2=0
+                            else:    
+                                acc1=int(list1[0])
+                                acc2=int(list1[1])
+                                acc1=((acc1-500)/500)*100
+                                acc2=((acc2-500)/500)*100
+                                if int(list1[0])<500 or int(list1[1])<500:
+                                    self.sign_detected='Predicted Incorrectly With Accuracy =95'
+                                    acc2=95
                                     break
                                 else:
-                                    acc=(acc1+acc2)//2
-                                    #self.sign_detected=f'Predicted Incorrectly With Accuracy ={100-acc}'
-                                    acc2=100-acc
-                                    break
+                                    if acc1>100 or acc2>100:
+                                        acc=((acc1+acc2)/2)//100
+                                        self.sign_detected=f'Predicted Incorrectly With Accuracy ={acc}'
+                                        acc2=acc
+                                        break
+                                    else:
+                                        acc=(acc1+acc2)//2
+                                        self.sign_detected=f'Predicted Incorrectly With Accuracy ={100-acc}'
+                                        acc2=100-acc
+                                        break
 
         (text_w, text_h), _ = cv2.getTextSize(
             self.sign_detected, font, font_size, font_thickness

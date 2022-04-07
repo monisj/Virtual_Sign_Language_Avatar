@@ -1007,6 +1007,7 @@ class Ui_MainWindow(object):
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         self.stackedWidget_2.setCurrentIndex(2)
+        self.camerathread.sentences_pass_on=False
     
     def back_video(self):
         self.playlist.clear()
@@ -1029,10 +1030,16 @@ class Ui_MainWindow(object):
     def back_videos(self):
         self.stackedWidget_2.setCurrentIndex(0)
         self.frame_13.show()
+        self.sentences_pass=0
+        self.sentences=[]
+        self.camerathread.sentences_pass_on=False
 
     def sentence_back(self):
         self.camerathread.stop()
         self.stackedWidget_2.setCurrentIndex(0)
+        self.sentences_pass=0
+        self.sentences=[]
+        self.camerathread.sentences_pass_on=False
         
     def new_account_cancel(self):
         self.stackedWidget.setCurrentIndex(0)
@@ -1130,8 +1137,10 @@ class Ui_MainWindow(object):
 
     def ImageUpdateSlot(self, Image):
         self.label_18.setPixmap(QPixmap.fromImage(Image))
+        self.camerathread.sentences_pass_on=False
 
     def ImageUpdateSlot_sentences(self, Image):
+        self.camerathread.sentences_pass_on=True
         self.label_4.setPixmap(QPixmap.fromImage(Image))
     # def accuracyUpdateSlot(self, text):
     #     self.label_2.setText(text)
@@ -1309,6 +1318,7 @@ class Ui_MainWindow(object):
 class cameraThread(QThread):
     reference_signs=''
     acc_sign=''
+    sentences_pass_on=False
     record=False
     sentence_key=False
     matrix_sign_predicted=''
@@ -1353,7 +1363,7 @@ class cameraThread(QThread):
                 sign_detected, is_recording,sign,dist = self.sign_recorder.process_results(results)
 
                 # Update the frame (draw landmarks & display result)
-                FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign)
+                FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on)
                 ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
                 Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
                 #self.ImageUpdate.emit(ConvertToQtFormat)
