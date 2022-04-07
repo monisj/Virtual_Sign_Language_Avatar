@@ -888,22 +888,22 @@ class Ui_MainWindow(object):
             passw=cur.fetchone()
             
             print(passw)
+            import subprocess
             if passw==None:
-                pass
-                # cur.execute(sql,data)
-                # conn.commit()
-                # conn.close()
-                # passw=subprocess.check_output([sys.executable, "Password.py"])
-                # passw=str(passw.decode("utf-8"))
-                # passw=passw[:-2]
-                # conn1 = sqlite3.connect(f"{data_path}/Login.db")
-                # cur2 = conn1.cursor()
-                # sql2=''' INSERT INTO LOGIN_s (Roll_No,Password) VALUES (?,?) '''
-                # task2=(roll_no,passw)
-                # cur2.execute(sql2,task2)
-                # conn1.commit()
-                # conn1.close()
-                # print("Data has been Entered")
+                cur.execute(sql,data)
+                conn.commit()
+                conn.close()
+                passw=subprocess.check_output([sys.executable, "Password.py"])
+                passw=str(passw.decode("utf-8"))
+                passw=passw[:-2]
+                conn1 = sqlite3.connect(f"{data_path}/Login.db")
+                cur2 = conn1.cursor()
+                sql2=''' INSERT INTO LOGIN_s (Roll_No,Password) VALUES (?,?) '''
+                task2=(roll_no,passw)
+                cur2.execute(sql2,task2)
+                conn1.commit()
+                conn1.close()
+                #print("Data has been Entered")
                 
                 # MainWindow.close()
                 # call(["python","Login.py"])
