@@ -79,20 +79,22 @@ class WebcamManager(object):
                             else:
                                 acc1=int(list1[0])
                                 acc2=int(list1[1])
-                                acc1=((acc1-500)/500)*100
-                                acc2=((acc2-500)/500)*100
-                                if int(list1[0])<500 or int(list1[1])<500:
+                                acc1=((acc1-65)/65)*100
+                                acc2=((acc2-65)/65)*100
+                                if int(list1[0])<65 or int(list1[1])<65:
                                     self.sign_detected='Predicted correctly With Accuracy =95'
                                     acc2=95
                                     break
                                 else:
                                     if acc1>100 or acc2>100:
                                         acc=((acc1+acc2)/2)//100
+                                        acc=round(acc,2)
                                         self.sign_detected=f'Predicted correctly With Accuracy ={acc}'
                                         acc2=acc
                                         break
                                     else:
                                         acc=(acc1+acc2)/2
+                                        acc=round(acc,2)
                                         self.sign_detected=f'Predicted correctly With Accuracy ={100-acc}'
                                         acc2=100-acc
                                         break
@@ -107,20 +109,22 @@ class WebcamManager(object):
                             else:    
                                 acc1=int(list1[0])
                                 acc2=int(list1[1])
-                                acc1=((acc1-500)/500)*100
-                                acc2=((acc2-500)/500)*100
-                                if int(list1[0])<500 or int(list1[1])<500:
+                                acc1=((acc1-65)/65)*100
+                                acc2=((acc2-65)/65)*100
+                                if int(list1[0])<65 or int(list1[1])<65:
                                     self.sign_detected='Predicted Incorrectly With Accuracy =95'
                                     acc2=95
                                     break
                                 else:
                                     if acc1>100 or acc2>100:
                                         acc=((acc1+acc2)/2)//100
+                                        acc=round(acc,2)
                                         self.sign_detected=f'Predicted Incorrectly With Accuracy ={acc}'
                                         acc2=acc
                                         break
                                     else:
                                         acc=(acc1+acc2)//2
+                                        acc=round(acc,2)
                                         self.sign_detected=f'Predicted Incorrectly With Accuracy ={100-acc}'
                                         acc2=100-acc
                                         break

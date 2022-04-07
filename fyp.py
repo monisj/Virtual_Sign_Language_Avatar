@@ -1187,24 +1187,24 @@ class Ui_MainWindow(object):
                         self.label_16.setText('No Close Signs Predicted')
                         self.label_17.setText('')
                     else:
-                        acc1=((int(dist[i])-500)/500)*100
-                        if int(dist[i])<500:
+                        acc1=((int(dist[i])-65)/65)*100
+                        if int(dist[i])<65:
+                            acc1=round(acc1,2)
                             self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
                             self.label_17.setText(str('95'))
-                            pre_val=95
                             break
                         else:
                             if acc1>100:
                                 acc1=(acc1)//100
-                                self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                self.label_17.setText(str(acc1))
-                                pre_val=acc1
-                                break
-                            else:
+                                acc1=round(acc1,2)
                                 self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
                                 self.label_17.setText(str(100-acc1))
-                                pre_val=100-acc1
-                                break 
+                                break
+                            else:
+                                acc1=round(acc1,2)
+                                self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
+                                self.label_17.setText(str(100-acc1))
+                                break
 
             
             if float(acc)>50 and predicted==self.video:
