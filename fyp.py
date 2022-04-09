@@ -20,6 +20,7 @@ import trim
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.sentences=[]
+        self.onlyInt = QtGui.QIntValidator()
         self.sentences_pass=0
         self.sentences_record=0
         MainWindow.setObjectName("MainWindow")
@@ -67,6 +68,7 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.usernameLabel)
         self.usernameLineEdit = QtWidgets.QLineEdit(self.frame)
         self.usernameLineEdit.setObjectName("usernameLineEdit")
+        self.usernameLineEdit.setValidator(self.onlyInt)
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.usernameLineEdit)
         self.passwordLabel = QtWidgets.QLabel(self.frame)
         self.passwordLabel.setObjectName("passwordLabel")
@@ -227,12 +229,14 @@ class Ui_MainWindow(object):
         self.formLayout_3.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.rollNumberLabel)
         self.rollNumberLineEdit = QtWidgets.QLineEdit(self.frame_6)
         self.rollNumberLineEdit.setObjectName("rollNumberLineEdit")
+        self.rollNumberLineEdit.setValidator(self.onlyInt)
         self.formLayout_3.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.rollNumberLineEdit)
         self.phoneNumberLabel = QtWidgets.QLabel(self.frame_6)
         self.phoneNumberLabel.setObjectName("phoneNumberLabel")
         self.formLayout_3.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.phoneNumberLabel)
         self.phoneNumberLineEdit = QtWidgets.QLineEdit(self.frame_6)
         self.phoneNumberLineEdit.setObjectName("phoneNumberLineEdit")
+        self.phoneNumberLineEdit.setValidator(self.onlyInt)
         self.formLayout_3.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.phoneNumberLineEdit)
         self.genderLabel = QtWidgets.QLabel(self.frame_6)
         self.genderLabel.setObjectName("genderLabel")
@@ -250,27 +254,14 @@ class Ui_MainWindow(object):
         self.radioButton_2.setObjectName("radioButton_2")
         self.horizontalLayout_6.addWidget(self.radioButton_2)
         self.formLayout_3.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.frame_8)
-        self.dateOfBirthLabel = QtWidgets.QLabel(self.frame_6)
-        self.dateOfBirthLabel.setObjectName("dateOfBirthLabel")
-        self.formLayout_3.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.dateOfBirthLabel)
+        
         self.frame_7 = QtWidgets.QFrame(self.frame_6)
         self.frame_7.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_7.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_7.setObjectName("frame_7")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.frame_7)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.comboBox = QtWidgets.QComboBox(self.frame_7)
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.horizontalLayout_5.addWidget(self.comboBox)
-        self.comboBox_2 = QtWidgets.QComboBox(self.frame_7)
-        self.comboBox_2.setObjectName("comboBox_2")
-        self.comboBox_2.addItem("")
-        self.horizontalLayout_5.addWidget(self.comboBox_2)
-        self.comboBox_3 = QtWidgets.QComboBox(self.frame_7)
-        self.comboBox_3.setObjectName("comboBox_3")
-        self.comboBox_3.addItem("")
-        self.horizontalLayout_5.addWidget(self.comboBox_3)
+        
         self.formLayout_3.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.frame_7)
         self.gradeLabel = QtWidgets.QLabel(self.frame_6)
         self.gradeLabel.setObjectName("gradeLabel")
@@ -291,6 +282,7 @@ class Ui_MainWindow(object):
         self.formLayout_3.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.fatherSPhoneNumberLabel)
         self.fatherSPhoneNumberLineEdit = QtWidgets.QLineEdit(self.frame_6)
         self.fatherSPhoneNumberLineEdit.setObjectName("fatherSPhoneNumberLineEdit")
+        self.fatherSPhoneNumberLineEdit.setValidator(self.onlyInt)
         self.formLayout_3.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.fatherSPhoneNumberLineEdit)
         self.horizontalLayout_4.addLayout(self.formLayout_3)
         self.verticalLayout_6.addWidget(self.frame_6)
@@ -445,7 +437,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_23 = QtWidgets.QVBoxLayout(self.page_7)
         self.verticalLayout_23.setObjectName("verticalLayout_23")
 
-
+        
 
 
         self.page_8 = QtWidgets.QWidget()
@@ -743,25 +735,27 @@ class Ui_MainWindow(object):
         self.fatherSNameLabel.setText(_translate("MainWindow", "Father\'s Name"))
         self.rollNumberLabel.setText(_translate("MainWindow", "Roll Number"))
         self.phoneNumberLabel.setText(_translate("MainWindow", "Phone Number"))
-        self.phoneNumberLineEdit.setPlaceholderText(_translate("MainWindow", "###########"))
+        self.phoneNumberLineEdit.setPlaceholderText(_translate("MainWindow", "Phone-No"))
         self.genderLabel.setText(_translate("MainWindow", "Gender"))
         self.radioButton.setText(_translate("MainWindow", "Male"))
         self.radioButton_2.setText(_translate("MainWindow", "Female"))
-        self.dateOfBirthLabel.setText(_translate("MainWindow", "Date of Birth: "))
-        self.comboBox.setItemText(0, _translate("MainWindow", "Day"))
-        self.comboBox_2.setItemText(0, _translate("MainWindow", "Month"))
-        self.comboBox_3.setItemText(0, _translate("MainWindow", "Year"))
+        
+       
         self.gradeLabel.setText(_translate("MainWindow", "Class"))
         self.gradeComboBox.setItemText(1, _translate("MainWindow", "1"))
         self.gradeComboBox.setItemText(2, _translate("MainWindow", "2"))
         self.gradeComboBox.setItemText(3, _translate("MainWindow", "3"))
         self.gradeComboBox.setItemText(4, _translate("MainWindow", "4"))
         self.gradeComboBox.setItemText(5, _translate("MainWindow", "5"))
+        
         self.fatherSPhoneNumberLabel.setText(_translate("MainWindow", "Father\'s Phone \n"
 "Number"))
-        self.fatherSPhoneNumberLineEdit.setPlaceholderText(_translate("MainWindow", "###########"))
+        self.fatherSPhoneNumberLineEdit.setPlaceholderText(_translate("MainWindow", "Phone-No"))
         self.pushButton_8.setText(_translate("MainWindow", "Cancel"))
         self.pushButton_7.setText(_translate("MainWindow", "Done"))
+
+        self.pushButton_7.clicked.connect(self.Create_New_User)
+        self.pushButton_8.clicked.connect(self.logout)
         self.label_20.setText(_translate("MainWindow", "Student"))
         self.pushButton_10.setText(_translate("MainWindow", "Courses"))
         self.pushButton_13.setText(_translate("MainWindow", "Tests"))
@@ -852,66 +846,75 @@ class Ui_MainWindow(object):
     def New_User(self):
         self.stackedWidget.setCurrentIndex(4)
     def Create_New_User(self):
-        std_name=self.studentNameLineEdit.text()
-        fath_name=self.fatherSNameLineEdit.text()
-        roll_no=int(self.rollNumberLineEdit.text())
-        phone=int(self.phoneNumberLineEdit.text())
-        fath_phone=int(self.fatherSPhoneNumberLineEdit.text())
-        class_enroll=int(self.gradeComboBox.currentText())
         popup=QMessageBox()
-        if self.radioButton.isChecked():
-            gender="Male"
-        elif self.radioButton_2.isChecked():
-            gender='Female'
-        else:
-            popup.setText("Please Enter All Fields")
-            popup.setStandardButtons(QMessageBox.Ok)
-            popup.setIcon(QMessageBox.Critical)
-            popup.exec_()
-
-
-
-        data=(roll_no,std_name,fath_name,phone,fath_phone,gender,class_enroll)
-
-        if std_name == '' or fath_name == '' or roll_no =='' or phone == '':
+        if self.studentNameLineEdit.text()=="" or self.fatherSNameLineEdit.text()=="" or self.rollNumberLineEdit.text()=="" or self.phoneNumberLineEdit.text()=="" or self.fatherSPhoneNumberLineEdit.text()=="" or self.gradeComboBox.currentText()=="":
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Critical)
             popup.exec_()
         else:
-            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-            conn = sqlite3.connect(f"{data_path}/Student_info.db")
-            cur = conn.cursor()
-            sql=''' INSERT INTO STD_IN (Roll_no,Student_Name,Father_Name,Phone,
-                Fathers_Phone,Gender,Class_Enroll) VALUES (?,?,?,?,?,?,?) '''
-            cur.execute(f'SELECT Roll_no  FROM STD_IN where Roll_no == {roll_no} ;')
-            passw=cur.fetchone()
+            std_name=self.studentNameLineEdit.text()
+            fath_name=self.fatherSNameLineEdit.text()
+            roll_no=int(self.rollNumberLineEdit.text())
+            phone=int(self.phoneNumberLineEdit.text())
+            fath_phone=int(self.fatherSPhoneNumberLineEdit.text())
+            class_enroll=int(self.gradeComboBox.currentText())
             
-            print(passw)
-            import subprocess
-            if passw==None:
-                cur.execute(sql,data)
-                conn.commit()
-                conn.close()
-                passw=subprocess.check_output([sys.executable, "Password.py"])
-                passw=str(passw.decode("utf-8"))
-                passw=passw[:-2]
-                conn1 = sqlite3.connect(f"{data_path}/Login.db")
-                cur2 = conn1.cursor()
-                sql2=''' INSERT INTO LOGIN_s (Roll_No,Password) VALUES (?,?) '''
-                task2=(roll_no,passw)
-                cur2.execute(sql2,task2)
-                conn1.commit()
-                conn1.close()
-                #print("Data has been Entered")
-                
-                # MainWindow.close()
-                # call(["python","Login.py"])
+            if self.radioButton.isChecked():
+                gender="Male"
+            elif self.radioButton_2.isChecked():
+                gender='Female'
             else:
-                popup.setText("Roll Number Already Exists!")
+                popup.setText("Please Enter All Fields")
                 popup.setStandardButtons(QMessageBox.Ok)
                 popup.setIcon(QMessageBox.Critical)
                 popup.exec_()
+
+
+
+            data=(roll_no,std_name,fath_name,phone,fath_phone,gender,class_enroll)
+
+            if std_name == '' or fath_name == '' or roll_no =='' or phone == '':
+                popup.setText("Please Enter All Fields")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Critical)
+                popup.exec_()
+            else:
+                data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                cur = conn.cursor()
+                sql=''' INSERT INTO STD_IN (Roll_no,Student_Name,Father_Name,Phone,
+                    Fathers_Phone,Gender,Class_Enroll) VALUES (?,?,?,?,?,?,?) '''
+                cur.execute(f'SELECT Roll_no  FROM STD_IN where Roll_no == {roll_no} ;')
+                passw=cur.fetchone()
+                
+                print(passw)
+                import subprocess
+                if passw==None:
+                    cur.execute(sql,data)
+                    conn.commit()
+                    conn.close()
+                    passw=subprocess.check_output([sys.executable, "Password.py"])
+                    passw=str(passw.decode("utf-8"))
+                    passw=passw[:-2]
+                    conn1 = sqlite3.connect(f"{data_path}/Login.db")
+                    cur2 = conn1.cursor()
+                    sql2=''' INSERT INTO LOGIN_s (Roll_No,Password) VALUES (?,?) '''
+                    task2=(roll_no,passw)
+                    cur2.execute(sql2,task2)
+                    conn1.commit()
+                    conn1.close()
+                    self.stackedWidget_2.setCurrentIndex(0)
+                    self.stackedWidget.setCurrentIndex(0)
+                    #print("Data has been Entered")
+                    
+                    # MainWindow.close()
+                    # call(["python","Login.py"])
+                else:
+                    popup.setText("Roll Number Already Exists!")
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Critical)
+                    popup.exec_()
     
     def aphabets_folder(self):
         path=pathlib.Path(__file__).parent.absolute().joinpath('videos','Alphabets')
