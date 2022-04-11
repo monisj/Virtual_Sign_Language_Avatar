@@ -21,10 +21,11 @@ import trim
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.sentences=[]
+        self.std_roll_number=0
         self.onlyInt = QtGui.QIntValidator()
         self.sentences_pass=0
         self.sentences_record=0
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("Virtual Sign Language Avatar")
         MainWindow.resize(1280, 720)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -150,7 +151,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addWidget(self.label_2)
         self.tableWidget_2 = QtWidgets.QTableWidget(self.page_3)
         self.tableWidget_2.setGridStyle(QtCore.Qt.SolidLine)
-        self.tableWidget_2.setRowCount(10)
+        
         self.tableWidget_2.setColumnCount(3)
         self.tableWidget_2.setObjectName("tableWidget_2")
         item = QtWidgets.QTableWidgetItem()
@@ -195,25 +196,26 @@ class Ui_MainWindow(object):
         self.lineEdit_3 = QtWidgets.QLineEdit(self.frame_4)
         self.lineEdit_3.setObjectName("lineEdit_3")
         self.verticalLayout_4.addWidget(self.lineEdit_3)
-        self.tableWidget = QtWidgets.QTableWidget(self.frame_4)
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(6)
-        self.tableWidget.setRowCount(50)
+        self.tablewidget = QtWidgets.QTableWidget(self.frame_4)
+        self.tablewidget.setObjectName("tablewidget")
+        self.tablewidget.setColumnCount(7)
+
         item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(0, item)
+        self.tablewidget.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, item)
+        self.tablewidget.setHorizontalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, item)
+        self.tablewidget.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, item)
+        self.tablewidget.setHorizontalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, item)
+        self.tablewidget.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(4, item)
+        self.tablewidget.setHorizontalHeaderItem(5, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(5, item)
-        self.verticalLayout_5.addWidget(self.tableWidget)
+        self.tablewidget.setHorizontalHeaderItem(6, item)
+
+        self.verticalLayout_5.addWidget(self.tablewidget)
         self.verticalLayout_4.addWidget(self.frame_4)
         self.stackedWidget.addWidget(self.page_4)
 
@@ -521,6 +523,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.addWidget(self.stackedWidget_2)
         
 
+
+
+
+
+
+
         self.frame_23 = QtWidgets.QFrame(self.page_7)
         self.frame_23.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_23.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -680,15 +688,23 @@ class Ui_MainWindow(object):
         spacerItem14 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_6.addItem(spacerItem14, 2, 0, 1, 1)
         self.gridLayout_7.addWidget(self.frame_19, 0, 0, 1, 2)
-        self.pushButton_29 = QtWidgets.QPushButton(self.page_9)
-        self.pushButton_29.setObjectName("pushButton_29")
-        self.gridLayout_7.addWidget(self.pushButton_29, 3, 1, 1, 1)
+        
         self.label_8 = QtWidgets.QLabel(self.page_9)
         self.label_8.setObjectName("label_8")
         self.gridLayout_7.addWidget(self.label_8, 1, 0, 1, 1)
+        
         self.lineEdit_4 = QtWidgets.QLineEdit(self.page_9)
         self.lineEdit_4.setObjectName("lineEdit_4")
         self.gridLayout_7.addWidget(self.lineEdit_4, 2, 0, 1, 1)
+
+        self.pushButton_334 = QtWidgets.QPushButton(self.page_9)
+        self.pushButton_334.setObjectName("pushButton_334")
+        self.gridLayout_7.addWidget(self.pushButton_334, 3, 1, 1, 1)
+
+        self.pushButton_29 = QtWidgets.QPushButton(self.page_9)
+        self.pushButton_29.setObjectName("pushButton_29")
+        self.gridLayout_7.addWidget(self.pushButton_29, 3, 2, 1, 1)
+
         self.stackedWidget_2.addWidget(self.page_9)
         self.page_10 = QtWidgets.QWidget()
         self.page_10.setObjectName("page_10")
@@ -696,7 +712,8 @@ class Ui_MainWindow(object):
         self.gridLayout_8.setObjectName("gridLayout_8")
         self.treeWidget_2 = QtWidgets.QTreeWidget(self.page_10)
         self.treeWidget_2.setObjectName("treeWidget_2")
-        self.treeWidget_2.headerItem().setText(0, "1")
+        self.treeWidget_2.setColumnCount(1)
+        self.treeWidget_2.setHeaderLabel("Assigned Tests")
         self.gridLayout_8.addWidget(self.treeWidget_2, 0, 0, 1, 1)
         self.frame_20 = QtWidgets.QFrame(self.page_10)
         self.frame_20.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -712,6 +729,48 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.addWidget(self.pushButton_35)
         self.gridLayout_8.addWidget(self.frame_20, 1, 0, 1, 1)
         self.stackedWidget_2.addWidget(self.page_10)
+        self.horizontalLayout_10.addWidget(self.stackedWidget_2)
+        self.verticalLayout_8.addWidget(self.frame_12)
+        self.stackedWidget.addWidget(self.page_6)
+        self.verticalLayout.addWidget(self.stackedWidget)
+
+        #Students Progress
+        self.page_11 = QtWidgets.QWidget()
+        self.page_11.setObjectName("page_11")
+        self.gridLayout_9 = QtWidgets.QGridLayout(self.page_11)
+        self.gridLayout_9.setObjectName("gridLayout_9")
+        self.frame_21 = QtWidgets.QFrame(self.page_11)
+        self.frame_21.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_21.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_21.setObjectName("frame_21")
+        self.gridLayout_10 = QtWidgets.QGridLayout(self.frame_21)
+        self.gridLayout_10.setObjectName("gridLayout_10")
+        self.pushButton_34 = QtWidgets.QPushButton(self.frame_21)
+        self.pushButton_34.setObjectName("pushButton_34")
+        self.gridLayout_10.addWidget(self.pushButton_34, 1, 1, 1, 1)
+        spacerItem16 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_10.addItem(spacerItem16, 1, 0, 1, 1)
+        self.frame_22 = QtWidgets.QFrame(self.frame_21)
+        self.frame_22.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_22.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_22.setObjectName("frame_22")
+        self.formLayout_2 = QtWidgets.QFormLayout(self.frame_22)
+        self.formLayout_2.setObjectName("formLayout_2")
+        self.tableWidget_4 = QtWidgets.QTableWidget(self.frame_22)
+        self.tableWidget_4.setObjectName("tableWidget_4")
+        self.tableWidget_4.setColumnCount(4)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_4.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_4.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_4.setHorizontalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_4.setHorizontalHeaderItem(3, item)
+        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.tableWidget_4)
+        self.gridLayout_10.addWidget(self.frame_22, 0, 0, 1, 2)
+        self.gridLayout_9.addWidget(self.frame_21, 0, 0, 1, 1)
+        self.stackedWidget_2.addWidget(self.page_11)
         self.horizontalLayout_10.addWidget(self.stackedWidget_2)
         self.verticalLayout_8.addWidget(self.frame_12)
         self.stackedWidget.addWidget(self.page_6)
@@ -795,30 +854,27 @@ class Ui_MainWindow(object):
         self.lineEdit_2.setValidator(self.onlyInt)
         self.lineEdit_3.setValidator(self.onlyInt)
 
+        self.lineEdit_2.textChanged.connect(self.teachers_search)
+        self.lineEdit_3.textChanged.connect(self.students_search)
+
+
         self.pushButton_2.clicked.connect(self.manage_teachers)
         self.pushButton_3.clicked.connect(self.manage_students)
         self.pushButton_4.clicked.connect(self.manage_tests)
         self.pushButton_5.clicked.connect(self.manage_courses)
 
+
         self.label_2.setText(_translate("MainWindow", "Teachers"))
         item = self.tableWidget_2.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Name"))
+        item.setText(_translate("MainWindow", "ID"))
         item = self.tableWidget_2.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Assigned Subject"))
-        item = self.tableWidget.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "New Row"))
-        item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Roll Number"))
-        item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "Name"))
-        item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Father\'s Name"))
-        item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Gender"))
-        item = self.tableWidget.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "Class"))
-        item = self.tableWidget.horizontalHeaderItem(5)
-        item.setText(_translate("MainWindow", "Age"))
+        item = self.tableWidget_2.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Assigned Subject"))
+
+
+        
+
         self.label.setText(_translate("MainWindow", "New Account"))
         self.label_6.setText(_translate("MainWindow", "Points Information"))
         self.studentNameLabel.setText(_translate("MainWindow", "Student Name"))
@@ -829,6 +885,31 @@ class Ui_MainWindow(object):
         self.genderLabel.setText(_translate("MainWindow", "Gender"))
         self.radioButton.setText(_translate("MainWindow", "Male"))
         self.radioButton_2.setText(_translate("MainWindow", "Female"))
+
+        item = self.tableWidget_4.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "ID"))
+        item = self.tableWidget_4.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Sign Name"))
+        item = self.tableWidget_4.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Marks Obtained"))
+        item = self.tableWidget_4.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "Test Completed"))
+
+        item = self.tablewidget.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "Roll_No"))
+        item = self.tablewidget.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Student_Name"))
+        item = self.tablewidget.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Fathers_Name"))
+        item = self.tablewidget.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "Phone"))
+        item = self.tablewidget.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "Fathers_Phone"))
+        item = self.tablewidget.horizontalHeaderItem(5)
+        item.setText(_translate("MainWindow", "Gender"))
+        item = self.tablewidget.horizontalHeaderItem(6)
+        item.setText(_translate("MainWindow", "Class_Enroll"))
+        
         
        
         self.gradeLabel.setText(_translate("MainWindow", "Class"))
@@ -864,6 +945,7 @@ class Ui_MainWindow(object):
         self.label_17.setText(_translate("MainWindow", "None"))
         #self.label_18.setText(_translate("MainWindow", "TextLabel"))
         #self.label_19.setText(_translate("MainWindow", "TextLabel"))
+        self.label_8.setText(_translate("MainWindow","Attempt Number"))
         self.pushButton_20.setText(_translate("MainWindow", "Log Out"))
         self.pushButton_21.setText(_translate("MainWindow", "Back"))
         self.pushButton_24.setText(_translate("MainWindow", "Clear All"))
@@ -871,6 +953,8 @@ class Ui_MainWindow(object):
         self.pushButton_26.setText(_translate("MainWindow","Back"))
         self.pushButton_29.setText(_translate("MainWindow", "Back"))
         self.pushButton_35.setText(_translate("MainWindow", "Back"))
+        self.pushButton_334.setText(_translate("MainWindow", "Submit"))
+        self.pushButton_34.setText(_translate("MainWindow", "Back"))
         self.pushButton_224.setText(_translate("MainWindow", "Add Space"))
         self.pushButton_225.setText(_translate("MainWindow", "Back"))
         self.pushButton_66.setText(_translate("MainWindow","Remove Student"))
@@ -901,26 +985,158 @@ class Ui_MainWindow(object):
         self.pushButton_27.clicked.connect(self.logout)
         self.pushButton_26.clicked.connect(self.teachers_back)
         self.pushButton_66.clicked.connect(self.remove_student)
-        self.pushButton_67.clicked.connect(self.teachers_back)
+        self.pushButton_67.clicked.connect(self.students_info_back)
         self.pushButton_29.clicked.connect(self.test_back)
         self.pushButton_35.clicked.connect(self.test_back_screen)
         self.pushButton_13.clicked.connect(self.test_screen)
+        self.pushButton_334.clicked.connect(self.submit_test)
+        self.pushButton_34.clicked.connect(self.back_progress)
+        self.pushButton_15.clicked.connect(self.progress)
 
     def test_screen(self):
         self.stackedWidget_2.setCurrentIndex(5)
+        self.treeWidget_2.clear()
+        parent=QtWidgets.QTreeWidgetItem(1)
+        parent.setText(0,"runway")
+        self.treeWidget_2.addTopLevelItem(parent)
+
+
+        self.treeWidget_2.expandAll()
+        self.treeWidget_2.itemClicked.connect(self.perform_test)
     def test_back_screen(self):
         self.stackedWidget_2.setCurrentIndex(0)
 
+    def progress(self):
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        cur.execute(f'SELECT * FROM Student_Tests where ID == {self.std_roll_number};')
+        passw=cur.fetchall()
+        conn.close()
+        for details in passw:
+            row_number = self.tableWidget_4.rowCount()
+            if row_number == len(passw):
+                pass
+            else:
+                self.tableWidget_4.insertRow(row_number)
+            for column_number, data in enumerate(details):
+                self.tableWidget_4.setItem(
+                row_number, column_number, QTableWidgetItem(str(data)))
+        self.stackedWidget_2.setCurrentIndex(6)
+        
+        
+
+    def perform_test(self):
+        self.stackedWidget_2.setCurrentIndex(4)
+        
     def test_back(self):
         self.stackedWidget_2.setCurrentIndex(5)
 
     def teachers_back(self):
         self.stackedWidget.setCurrentIndex(1)
+        self.tableWidget_2.setRowCount(0)
+
+    def students_info_back(self):
+        self.stackedWidget.setCurrentIndex(1)
+        self.tablewidget.setRowCount(0)
+
     def manage_teachers(self):
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+        cur = conn.cursor()
+        cur.execute(f'SELECT * FROM Teacher_Info;')
+        passw=cur.fetchall()
+        conn.close()
+        for details in passw:
+            row_number = self.tableWidget_2.rowCount()
+            if row_number == len(passw):
+                pass
+            else:
+                self.tableWidget_2.insertRow(row_number)
+            for column_number, data in enumerate(details):
+                self.tableWidget_2.setItem(
+                row_number, column_number, QTableWidgetItem(str(data)))
+
         self.stackedWidget.setCurrentIndex(2)
 
+    def teachers_search(self):
+        self.tableWidget_2.setRowCount(0)
+        data=self.lineEdit_2.text()
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+        cur = conn.cursor()
+        if data:
+            cur.execute(f'SELECT * FROM Teacher_Info WHERE ID LIKE {data};')
+            passw=cur.fetchall()
+            conn.close()
+            for details in passw:
+                row_number = self.tableWidget_2.rowCount()
+                if row_number == len(passw):
+                    pass
+                else:
+                    self.tableWidget_2.insertRow(row_number)
+                for column_number, data in enumerate(details):
+                    self.tableWidget_2.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
+        else:
+            conn.close()
+            self.manage_teachers()
+
     def manage_students(self):
+        data=self.lineEdit_3.text()
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        cur.execute(f'SELECT * FROM Std_In ;')
+        passw=cur.fetchall()
+        conn.close()
+        for details in passw:
+            row_number = self.tablewidget.rowCount()
+            if row_number == len(passw):
+                pass
+            else:
+                self.tablewidget.insertRow(row_number)
+            for column_number, data in enumerate(details):
+                self.tablewidget.setItem(
+                row_number, column_number, QTableWidgetItem(str(data)))
+
         self.stackedWidget.setCurrentIndex(3)
+
+    def students_search(self):
+        self.tablewidget.setRowCount(0)
+        data=self.lineEdit_3.text()
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        if data:
+            cur.execute(f'SELECT * FROM Std_In WHERE Roll_No LIKE {data};')
+            passw=cur.fetchall()
+            conn.close()
+            for details in passw:
+                row_number = self.tablewidget.rowCount()
+                if row_number == len(passw):
+                    pass
+                else:
+                    self.tablewidget.insertRow(row_number)
+                for column_number, data in enumerate(details):
+                    self.tablewidget.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
+
+        else:
+            conn.close()
+            self.manage_students()
+
+    def back_progress(self):
+        self.stackedWidget_2.setCurrentIndex(0)
+        self.tableWidget_4.setRowCount(0)
+
+    def submit_test(self):
+        popup=QMessageBox()
+        popup.setText(f"Test has been Submitted")
+        popup.setStandardButtons(QMessageBox.Ok)
+        popup.setIcon(QMessageBox.Information)
+        popup.exec_()
+        self.stackedWidget_2.setCurrentIndex(5)
 
     def manage_tests(self):
         pass
@@ -968,13 +1184,18 @@ class Ui_MainWindow(object):
                     self.stackedWidget.setCurrentIndex(1)
                 else:
                     self.user='Student'
+                    self.std_roll_number=a
                     self.tableWidget_3.hide()
                     self.pushButton_10.hide()
                     self.pushButton_18.hide()
+                    self.pushButton_13.show()
+                    self.pushButton_15.show()
                     self.pushButton_17.hide()
                     self.label_20.setText('Student')
                     self.stackedWidget.setCurrentIndex(5)
+                    self.stackedWidget_2.setCurrentIndex(0)
     def logout(self):
+        self.std_roll_number=0
         self.stackedWidget.setCurrentIndex(0)
         self.stackedWidget_2.setCurrentIndex(0)
         
@@ -1364,7 +1585,7 @@ class Ui_MainWindow(object):
                 self.tableWidget_3.setSortingEnabled(__sortingEnabled)
             elif float(acc)>50 and predicted!=self.video:
                 __sortingEnabled = self.tableWidget_3.isSortingEnabled()
-                self.tableWidget.setSortingEnabled(False)
+                self.tableWidget_3.setSortingEnabled(False)
                 item = self.tableWidget_3.item(0, 0)
                 item.setText("0")
                 item = self.tableWidget_3.item(0, 1)
