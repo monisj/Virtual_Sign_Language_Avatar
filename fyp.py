@@ -20,8 +20,11 @@ import trim
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        self.test_roll_no=0
         self.sentences=[]
         self.std_roll_number=0
+        self.test_sign=''
+        self.test_path=''
         self.onlyInt = QtGui.QIntValidator()
         self.sentences_pass=0
         self.sentences_record=0
@@ -776,6 +779,82 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_6)
         self.verticalLayout.addWidget(self.stackedWidget)
 
+        #Teacher's Test Screen
+        self.page_12 = QtWidgets.QWidget()
+        self.page_12.setObjectName("page_12")
+        self.gridLayout_11 = QtWidgets.QGridLayout(self.page_12)
+        self.gridLayout_11.setObjectName("gridLayout_11")
+        self.frame_26 = QtWidgets.QFrame(self.page_12)
+        self.frame_26.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_26.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_26.setObjectName("frame_26")
+        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.frame_26)
+        self.verticalLayout_13.setObjectName("verticalLayout_13")
+        self.tableWidget_5 = QtWidgets.QTableWidget(self.frame_26)
+        self.tableWidget_5.setObjectName("tableWidget_5")
+        self.tableWidget_5.setColumnCount(7)
+        self.tableWidget_5.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_5.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_5.setHorizontalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_5.setHorizontalHeaderItem(3, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_5.setHorizontalHeaderItem(4, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_5.setHorizontalHeaderItem(5, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_5.setHorizontalHeaderItem(6, item)
+
+        self.verticalLayout_13.addWidget(self.tableWidget_5)
+        self.frame_24 = QtWidgets.QFrame(self.frame_26)
+        self.frame_24.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_24.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_24.setObjectName("frame_24")
+        self.horizontalLayout_18 = QtWidgets.QHBoxLayout(self.frame_24)
+        self.horizontalLayout_18.setObjectName("horizontalLayout_18")
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_18.addItem(spacerItem7)
+        self.pushButton_38 = QtWidgets.QPushButton(self.frame_24)
+        self.pushButton_38.setObjectName("pushButton_38")
+        self.horizontalLayout_18.addWidget(self.pushButton_38)
+        self.verticalLayout_13.addWidget(self.frame_24)
+        self.gridLayout_11.addWidget(self.frame_26, 4, 0, 1, 1)
+        self.lineEdit_5 = QtWidgets.QLineEdit(self.page_12)
+        self.lineEdit_5.setObjectName("lineEdit_5")
+        self.gridLayout_11.addWidget(self.lineEdit_5, 2, 0, 1, 1)
+        self.label_9 = QtWidgets.QLabel(self.page_12)
+        self.label_9.setObjectName("label_9")
+        self.gridLayout_11.addWidget(self.label_9, 3, 0, 1, 1)
+        self.stackedWidget.addWidget(self.page_12)
+
+        #Teacher's 2nd Test Screen 
+        self.page_13 = QtWidgets.QWidget()
+        self.page_13.setObjectName("page_13")
+        self.gridLayout_12 = QtWidgets.QGridLayout(self.page_13)
+        self.gridLayout_12.setObjectName("gridLayout_12")
+        self.treeview_3 = QtWidgets.QTreeView(self.page_13)
+        self.treeview_3.setObjectName("treeview_3")
+        self.gridLayout_12.addWidget(self.treeview_3, 1, 0, 1, 1)
+        self.frame_27 = QtWidgets.QFrame(self.page_13)
+        self.frame_27.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_27.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_27.setObjectName("frame_27")
+        self.horizontalLayout_19 = QtWidgets.QHBoxLayout(self.frame_27)
+        self.horizontalLayout_19.setObjectName("horizontalLayout_19")
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_19.addItem(spacerItem8)
+        self.pushButton_40 = QtWidgets.QPushButton(self.frame_27)
+        self.pushButton_40.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton_40.setObjectName("pushButton_40")
+        self.horizontalLayout_19.addWidget(self.pushButton_40)
+        self.gridLayout_12.addWidget(self.frame_27, 2, 0, 1, 1)
+        self.label_10 = QtWidgets.QLabel(self.page_13)
+        self.label_10.setObjectName("label_10")
+        self.gridLayout_12.addWidget(self.label_10, 0, 0, 1, 1)
+        self.stackedWidget.addWidget(self.page_13)
+
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -802,6 +881,14 @@ class Ui_MainWindow(object):
         self.treeview.hideColumn(2)
         self.treeview.hideColumn(3)
         self.treeview.doubleClicked.connect(self.select_video)
+
+        
+        
+        self.treeview_3.setModel(self.model)
+        self.treeview_3.hideColumn(1)
+        self.treeview_3.hideColumn(2)
+        self.treeview_3.hideColumn(3)
+        self.treeview_3.doubleClicked.connect(self.select_video_test)
         
         self.playlist = QMediaPlaylist()
         #self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile('videos/alphabet/a.mp4')))
@@ -848,14 +935,17 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(_translate("MainWindow", "Manage students"))
         self.pushButton_4.setText(_translate("MainWindow", "Manage Tests"))
         self.pushButton_5.setText(_translate("MainWindow", "Manage Courses"))
+        self.label_9.setText(_translate("MainWindow", "Select Student For Test Assignment"))
         self.lineEdit_2.setPlaceholderText(_translate("MainWindow", "Search Id"))
         self.lineEdit_3.setPlaceholderText(_translate("MainWindow", "Search Id"))
+        self.lineEdit_5.setPlaceholderText(_translate("MainWindow", "Search Id"))
 
         self.lineEdit_2.setValidator(self.onlyInt)
         self.lineEdit_3.setValidator(self.onlyInt)
 
         self.lineEdit_2.textChanged.connect(self.teachers_search)
         self.lineEdit_3.textChanged.connect(self.students_search)
+        self.lineEdit_5.textChanged.connect(self.search_manage_tests)
 
 
         self.pushButton_2.clicked.connect(self.manage_teachers)
@@ -909,6 +999,23 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Gender"))
         item = self.tablewidget.horizontalHeaderItem(6)
         item.setText(_translate("MainWindow", "Class_Enroll"))
+
+        item = self.tableWidget_5.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "Roll_No"))
+        item = self.tableWidget_5.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Student_Name"))
+        item = self.tableWidget_5.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Fathers_Name"))
+        item = self.tableWidget_5.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "Phone"))
+        item = self.tableWidget_5.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "Fathers_Phone"))
+        item = self.tableWidget_5.horizontalHeaderItem(5)
+        item.setText(_translate("MainWindow", "Gender"))
+        item = self.tableWidget_5.horizontalHeaderItem(6)
+        item.setText(_translate("MainWindow", "Class_Enroll"))
+
+        self.tableWidget_5.cellDoubleClicked.connect(self.std_data)
         
         
        
@@ -959,6 +1066,8 @@ class Ui_MainWindow(object):
         self.pushButton_225.setText(_translate("MainWindow", "Back"))
         self.pushButton_66.setText(_translate("MainWindow","Remove Student"))
         self.pushButton_67.setText(_translate("MainWindow","Back"))
+        self.pushButton_38.setText(_translate("MainWindow", "Back")) #Teacher's Test Screen Buttons
+        self.pushButton_40.setText(_translate("MainWindow", "Back")) #Teacher's Test Screen Buttons
         item = self.tableWidget_3.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "Actual: No"))
         item = self.tableWidget_3.verticalHeaderItem(1)
@@ -992,17 +1101,50 @@ class Ui_MainWindow(object):
         self.pushButton_334.clicked.connect(self.submit_test)
         self.pushButton_34.clicked.connect(self.back_progress)
         self.pushButton_15.clicked.connect(self.progress)
+        self.pushButton_38.clicked.connect(self.back_manage_test)
+        self.pushButton_40.clicked.connect(self.back_assign_test)
 
     def test_screen(self):
+        #self.std_roll_number
         self.stackedWidget_2.setCurrentIndex(5)
         self.treeWidget_2.clear()
-        parent=QtWidgets.QTreeWidgetItem(1)
-        parent.setText(0,"runway")
-        self.treeWidget_2.addTopLevelItem(parent)
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
+        passw=cur.fetchall()
+        
+        if passw==None:
+            parent=QtWidgets.QTreeWidgetItem(1)
+            parent.setText(0,"No Tests Are Assigned #Winning")
+            self.treeWidget_2.addTopLevelItem(parent)
+        else:
+            for i in passw:
+                if i[2]=="No":
+                    parent=QtWidgets.QTreeWidgetItem(1)
+                    parent.setText(0,f"{i[0]}")
+                    self.treeWidget_2.addTopLevelItem(parent)
+
+            
+            self.treeWidget_2.itemClicked.connect(self.perform_test)
+        
+        #     pass
+        # elif passw[2]=="No":
+        #     sign=passw[1]
+        #     parent=QtWidgets.QTreeWidgetItem(1)
+        #     parent.setText(0,sign)
+        #     self.treeWidget_2.addTopLevelItem(parent)
+
+        conn.close()
+        
 
 
-        self.treeWidget_2.expandAll()
-        self.treeWidget_2.itemClicked.connect(self.perform_test)
+        
+        
+
+
+        #self.treeWidget_2.expandAll()
+        #self.treeWidget_2.itemClicked.connect(self.perform_test)
     def test_back_screen(self):
         self.stackedWidget_2.setCurrentIndex(0)
 
@@ -1010,7 +1152,7 @@ class Ui_MainWindow(object):
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
         cur = conn.cursor()
-        cur.execute(f'SELECT * FROM Student_Tests where ID == {self.std_roll_number};')
+        cur.execute(f'SELECT ID,Sign_Name,Marks_Obtained,Test_Completed FROM Student_Tests where ID == {self.std_roll_number};')
         passw=cur.fetchall()
         conn.close()
         for details in passw:
@@ -1024,10 +1166,35 @@ class Ui_MainWindow(object):
                 row_number, column_number, QTableWidgetItem(str(data)))
         self.stackedWidget_2.setCurrentIndex(6)
         
-        
+    def std_data(self):
+        current_row = self.tableWidget_5.currentRow()
+        current_column = self.tableWidget_5.currentColumn()
+        if current_column!=0:
+            pass
+        else:
+            self.test_roll_no = self.tableWidget_5.item(current_row, current_column).text()
+            path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
+            path=str(path)
+            self.dirModel.setRootPath(path)
+            self.treeview_3.setRootIndex(self.model.index(path))
+            self.stackedWidget.setCurrentIndex(7)
+
 
     def perform_test(self):
         self.stackedWidget_2.setCurrentIndex(4)
+        self.sentences=[]
+        self.camerathread = cameraThread()
+        self.camerathread.reference_signs=all_data_sentences
+        self.camerathread.acc_sign='A'
+        self.video='A'
+        self.camerathread.record=False
+        self.camerathread.start()
+        self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
+        self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+
+        
+
         
     def test_back(self):
         self.stackedWidget_2.setCurrentIndex(5)
@@ -1139,7 +1306,54 @@ class Ui_MainWindow(object):
         self.stackedWidget_2.setCurrentIndex(5)
 
     def manage_tests(self):
-        pass
+        data=self.lineEdit_5.text()
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        cur.execute(f'SELECT * FROM Std_In ;')
+        passw=cur.fetchall()
+        conn.close()
+        for details in passw:
+            row_number = self.tableWidget_5.rowCount()
+            if row_number == len(passw):
+                pass
+            else:
+                self.tableWidget_5.insertRow(row_number)
+            for column_number, data in enumerate(details):
+                 self.tableWidget_5.setItem(
+                row_number, column_number, QTableWidgetItem(str(data)))
+        self.stackedWidget.setCurrentIndex(6)
+
+    def search_manage_tests(self):
+        self.tableWidget_5.setRowCount(0)
+        data=self.lineEdit_5.text()
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        if data:
+            cur.execute(f'SELECT * FROM Std_In WHERE Roll_No LIKE {data};')
+            passw=cur.fetchall()
+            conn.close()
+            for details in passw:
+                row_number = self.tableWidget_5.rowCount()
+                if row_number == len(passw):
+                    pass
+                else:
+                    self.tableWidget_5.insertRow(row_number)
+                for column_number, data in enumerate(details):
+                    self.tableWidget_5.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
+
+        else:
+            conn.close()
+            self.manage_tests()
+
+
+    def back_manage_test(self):
+        self.stackedWidget.setCurrentIndex(1)
+
+    def back_assign_test(self):
+        self.stackedWidget.setCurrentIndex(6)
 
     def manage_courses(self):
         self.stackedWidget.setCurrentIndex(5)
@@ -1172,7 +1386,7 @@ class Ui_MainWindow(object):
             else:
                 #print("Credentails Accepted")
                 #print(pathlib.Path.cwd().joinpath('videos\Alphabets'))
-                if int(a)>=900:
+                if int(a)==900:
                     self.user='Teacher'
                     self.tableWidget_3.show()
                     self.pushButton_18.show()
@@ -1316,18 +1530,103 @@ class Ui_MainWindow(object):
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         self.stackedWidget_2.setCurrentIndex(3)
         
+    def select_video_test(self,index): #For Student Video Assignment
+        path=pathlib.Path.cwd().joinpath('videos')
+        video = self.fileModel.fileName(index)
+        folder=''
+        folders=os.listdir(path)
+        if ".mp4" in video:
+            for i in folders:
+                folders_2=os.listdir(str(path)+'\\'+i)
+                if video in folders_2:
+                    folder=str(path)+'\\'+i
+                    break
+
+        # sql=''' INSERT INTO STD_IN (Roll_no,Student_Name,Father_Name,Phone,
+        #             Fathers_Phone,Gender,Class_Enroll) VALUES (?,?,?,?,?,?,?) '''
+        #         cur.execute(f'SELECT Roll_no  FROM STD_IN where Roll_no == {roll_no} ;')
+        #         passw=cur.fetchone()
+                
+        #         print(passw)
+        #         import subprocess
+        #         if passw==None:
+        #             cur.execute(sql,data)
+        #             conn.commit()
+        #             conn.close()
+
+        # data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        # conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        # cur = conn.cursor()
+        # cur.execute(f'SELECT ID,Sign_Name,Marks_Obtained_Test_Completed FROM Student_Tests where ID == {self.std_roll_number};')
+        # passw=cur.fetchall()
+        # conn.close()
+
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        path2=video.replace(".mp4","")
+        sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
+                Test_Completed,Path) VALUES (?,?,?,?,?)'''
+        # sql=''' UPDATE Student_Tests
+        #         SET  Sign_Name=(?), Path =(?)
+        #         WHERE ID =(?) '''
+        data=(self.test_roll_no,path2,0,'No',folder)
+
+
+        cur.execute(f"SELECT Test_Completed from Student_Tests WHERE ID=={self.test_roll_no} AND Sign_Name=='{path2}' ;")
+        passw=cur.fetchone()
+        if passw==None:
+            cur.execute(sql,data)
+            conn.commit()
+            conn.close()
+            popup=QMessageBox()
+            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {self.test_roll_no}")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+            self.stackedWidget.setCurrentIndex(6)
+        elif passw[0]=="No":
+            popup=QMessageBox()
+            popup.setText(f"Test of Sign={path2} has Already been Assigned to Roll_No {self.test_roll_no}")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        else:
+            cur.execute(sql,data)
+            conn.commit()
+            conn.close()
+            popup=QMessageBox()
+            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {self.test_roll_no}")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+            self.stackedWidget.setCurrentIndex(6)
+            
+
+
+
+
+
+
+
+
+            
+
+        
+
 
     def select_video(self,index):
         video = self.fileModel.fileName(index)
         path=''
         folders=['alphabets','computer','science']
         folder=''
+        
         for i in folders:
             path=pathlib.Path(__file__).parent.absolute().joinpath('videos',i,video)
             if path.is_file():
                 folder=i
                 break
-        
+
         self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile(str(path))))
         self.mediaPlayer.play()
         #self.mediaPlayer.pause()
@@ -1506,6 +1805,8 @@ class Ui_MainWindow(object):
     def ImageUpdateSlot_sentences(self, Image):
         self.camerathread.sentences_pass_on=True
         self.label_4.setPixmap(QPixmap.fromImage(Image))
+        self.label_7.setPixmap(QPixmap.fromImage(Image))
+    
     # def accuracyUpdateSlot(self, text):
     #     self.label_2.setText(text)
     def accuracyUpdateSlot(self,predicted,sign,dist,acc):
