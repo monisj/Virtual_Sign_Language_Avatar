@@ -1,4 +1,5 @@
 from fileinput import filename
+from telnetlib import LOGOUT
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -106,6 +107,8 @@ class Ui_MainWindow(object):
         spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem5)
         self.stackedWidget.addWidget(self.page)
+
+        #Main Teachers Page
         self.page_2 = QtWidgets.QWidget()
         self.page_2.setObjectName("page_2")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.page_2)
@@ -116,37 +119,54 @@ class Ui_MainWindow(object):
         self.frame_3.setObjectName("frame_3")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.frame_3)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.pushButton_2 = QtWidgets.QPushButton(self.frame_3)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.gridLayout_2.addWidget(self.pushButton_2, 0, 0, 1, 1)
         self.pushButton_3 = QtWidgets.QPushButton(self.frame_3)
         self.pushButton_3.setObjectName("pushButton_3")
         self.gridLayout_2.addWidget(self.pushButton_3, 0, 1, 1, 1)
-        self.pushButton_4 = QtWidgets.QPushButton(self.frame_3)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.gridLayout_2.addWidget(self.pushButton_4, 1, 0, 1, 1)
         self.pushButton_5 = QtWidgets.QPushButton(self.frame_3)
         self.pushButton_5.setObjectName("pushButton_5")
         self.gridLayout_2.addWidget(self.pushButton_5, 1, 1, 1, 1)
+        self.pushButton_2 = QtWidgets.QPushButton(self.frame_3)
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.gridLayout_2.addWidget(self.pushButton_2, 0, 0, 1, 1)
+        self.pushButton_4 = QtWidgets.QPushButton(self.frame_3)
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.gridLayout_2.addWidget(self.pushButton_4, 1, 0, 1, 1)
+        self.pushButton_27 = QtWidgets.QPushButton(self.frame_3)
+        self.pushButton_27.setObjectName("pushButton_27")
+        self.gridLayout_2.addWidget(self.pushButton_27, 2, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.frame_3)
         self.stackedWidget.addWidget(self.page_2)
+
+        #Teachers Info Page
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.page_3)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.lineEdit_2 = QtWidgets.QLineEdit(self.page_3)
+        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.verticalLayout_7.addWidget(self.lineEdit_2)
         self.label_2 = QtWidgets.QLabel(self.page_3)
         self.label_2.setObjectName("label_2")
         self.verticalLayout_7.addWidget(self.label_2)
         self.tableWidget_2 = QtWidgets.QTableWidget(self.page_3)
+        self.tableWidget_2.setGridStyle(QtCore.Qt.SolidLine)
+        self.tableWidget_2.setRowCount(10)
+        self.tableWidget_2.setColumnCount(3)
         self.tableWidget_2.setObjectName("tableWidget_2")
-        self.tableWidget_2.setColumnCount(2)
-        self.tableWidget_2.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_2.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_2.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_2.setHorizontalHeaderItem(2, item)
         self.verticalLayout_7.addWidget(self.tableWidget_2)
+        self.pushButton_26 = QtWidgets.QPushButton(self.page_3)
+        self.pushButton_26.setObjectName("pushButton_26")
+        self.verticalLayout_7.addWidget(self.pushButton_26)
         self.stackedWidget.addWidget(self.page_3)
+
+
+        #Students Info Page
         self.page_4 = QtWidgets.QWidget()
         self.page_4.setObjectName("page_4")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.page_4)
@@ -159,9 +179,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem6)
-        self.pushButton_6 = QtWidgets.QPushButton(self.frame_5)
-        self.pushButton_6.setObjectName("pushButton_6")
-        self.horizontalLayout_3.addWidget(self.pushButton_6)
+        self.pushButton_66 = QtWidgets.QPushButton(self.frame_5)
+        self.pushButton_66.setObjectName("pushButton_66")
+        self.horizontalLayout_3.addWidget(self.pushButton_66)
+        self.pushButton_67 = QtWidgets.QPushButton(self.frame_5)
+        self.pushButton_67.setObjectName("pushButton_67")
+        self.horizontalLayout_3.addWidget(self.pushButton_67)
         self.verticalLayout_4.addWidget(self.frame_5)
         self.frame_4 = QtWidgets.QFrame(self.page_4)
         self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -169,10 +192,13 @@ class Ui_MainWindow(object):
         self.frame_4.setObjectName("frame_4")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.frame_4)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.lineEdit_3 = QtWidgets.QLineEdit(self.frame_4)
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        self.verticalLayout_4.addWidget(self.lineEdit_3)
         self.tableWidget = QtWidgets.QTableWidget(self.frame_4)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(6)
-        self.tableWidget.setRowCount(1)
+        self.tableWidget.setRowCount(50)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
@@ -190,6 +216,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.tableWidget)
         self.verticalLayout_4.addWidget(self.frame_4)
         self.stackedWidget.addWidget(self.page_4)
+
+
         self.page_5 = QtWidgets.QWidget()
         self.page_5.setObjectName("page_5")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_5)
@@ -488,24 +516,10 @@ class Ui_MainWindow(object):
         self.stackedWidget_2.addWidget(self.page_8)
         self.horizontalLayout_10.addWidget(self.stackedWidget_2)
 
-        #self.label_181 = QtWidgets.QLabel(self.frame_19)
-        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        #sizePolicy.setHorizontalStretch(0)
-        #sizePolicy.setVerticalStretch(0)
-        #sizePolicy.setHeightForWidth(self.label_181.sizePolicy().hasHeightForWidth())
-        #self.label_181.setSizePolicy(sizePolicy)
-        #self.label_181.setMinimumSize(QtCore.QSize(640, 480))
-        #self.label_181.setObjectName("label_181")
 
         self.stackedWidget_2.addWidget(self.page_8)
         self.horizontalLayout_10.addWidget(self.stackedWidget_2)
         
-        #self.horizontalLayout_10.addWidget(self.stackedWidget_2)
-
-
-
-
-
 
         self.frame_23 = QtWidgets.QFrame(self.page_7)
         self.frame_23.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -562,6 +576,13 @@ class Ui_MainWindow(object):
         self.label_17.setObjectName("label_17")
         self.formLayout_6.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_17)
         self.verticalLayout_29.addWidget(self.frame_30)
+        self.horizontalLayout_17.addWidget(self.frame_25)
+        self.label_6 = QtWidgets.QLabel(self.frame_25)
+        self.label_6.setObjectName("label_6")
+        self.verticalLayout_29.addWidget(self.label_6)
+        self.textEdit_2 = QtWidgets.QTextEdit(self.frame_25)
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.verticalLayout_29.addWidget(self.textEdit_2)
         self.horizontalLayout_17.addWidget(self.frame_25)
         self.frame_31 = QtWidgets.QFrame(self.frame_23)
         self.frame_31.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -634,11 +655,69 @@ class Ui_MainWindow(object):
         self.horizontalLayout_16.addWidget(self.pushButton_21)
         self.verticalLayout_23.addWidget(self.frame_17)
         self.stackedWidget_2.addWidget(self.page_7)
+
+        
         self.stackedWidget_2.addWidget(self.page_8)
         self.horizontalLayout_10.addWidget(self.stackedWidget_2)
         self.verticalLayout_8.addWidget(self.frame_12)
         self.stackedWidget.addWidget(self.page_6)
         self.verticalLayout.addWidget(self.stackedWidget)
+
+        #Test Screen
+        self.page_9 = QtWidgets.QWidget()
+        self.page_9.setObjectName("page_9")
+        self.gridLayout_7 = QtWidgets.QGridLayout(self.page_9)
+        self.gridLayout_7.setObjectName("gridLayout_7")
+        self.frame_19 = QtWidgets.QFrame(self.page_9)
+        self.frame_19.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_19.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_19.setObjectName("frame_19")
+        self.gridLayout_6 = QtWidgets.QGridLayout(self.frame_19)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.label_7 = QtWidgets.QLabel(self.frame_19)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_6.addWidget(self.label_7, 1, 0, 1, 1)
+        spacerItem14 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem14, 2, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.frame_19, 0, 0, 1, 2)
+        self.pushButton_29 = QtWidgets.QPushButton(self.page_9)
+        self.pushButton_29.setObjectName("pushButton_29")
+        self.gridLayout_7.addWidget(self.pushButton_29, 3, 1, 1, 1)
+        self.label_8 = QtWidgets.QLabel(self.page_9)
+        self.label_8.setObjectName("label_8")
+        self.gridLayout_7.addWidget(self.label_8, 1, 0, 1, 1)
+        self.lineEdit_4 = QtWidgets.QLineEdit(self.page_9)
+        self.lineEdit_4.setObjectName("lineEdit_4")
+        self.gridLayout_7.addWidget(self.lineEdit_4, 2, 0, 1, 1)
+        self.stackedWidget_2.addWidget(self.page_9)
+        self.page_10 = QtWidgets.QWidget()
+        self.page_10.setObjectName("page_10")
+        self.gridLayout_8 = QtWidgets.QGridLayout(self.page_10)
+        self.gridLayout_8.setObjectName("gridLayout_8")
+        self.treeWidget_2 = QtWidgets.QTreeWidget(self.page_10)
+        self.treeWidget_2.setObjectName("treeWidget_2")
+        self.treeWidget_2.headerItem().setText(0, "1")
+        self.gridLayout_8.addWidget(self.treeWidget_2, 0, 0, 1, 1)
+        self.frame_20 = QtWidgets.QFrame(self.page_10)
+        self.frame_20.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_20.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_20.setObjectName("frame_20")
+        self.horizontalLayout_13 = QtWidgets.QHBoxLayout(self.frame_20)
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_13.addItem(spacerItem15)
+        self.pushButton_35 = QtWidgets.QPushButton(self.frame_20)
+        self.pushButton_35.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton_35.setObjectName("pushButton_35")
+        self.horizontalLayout_13.addWidget(self.pushButton_35)
+        self.gridLayout_8.addWidget(self.frame_20, 1, 0, 1, 1)
+        self.stackedWidget_2.addWidget(self.page_10)
+        self.horizontalLayout_10.addWidget(self.stackedWidget_2)
+        self.verticalLayout_8.addWidget(self.frame_12)
+        self.stackedWidget.addWidget(self.page_6)
+        self.verticalLayout.addWidget(self.stackedWidget)
+
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -708,14 +787,24 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Sign In"))
         self.pushButton_2.setText(_translate("MainWindow", "Manage Teachers"))
         self.pushButton_3.setText(_translate("MainWindow", "Manage students"))
-        self.pushButton_4.setText(_translate("MainWindow", "Manage"))
+        self.pushButton_4.setText(_translate("MainWindow", "Manage Tests"))
         self.pushButton_5.setText(_translate("MainWindow", "Manage Courses"))
+        self.lineEdit_2.setPlaceholderText(_translate("MainWindow", "Search Id"))
+        self.lineEdit_3.setPlaceholderText(_translate("MainWindow", "Search Id"))
+
+        self.lineEdit_2.setValidator(self.onlyInt)
+        self.lineEdit_3.setValidator(self.onlyInt)
+
+        self.pushButton_2.clicked.connect(self.manage_teachers)
+        self.pushButton_3.clicked.connect(self.manage_students)
+        self.pushButton_4.clicked.connect(self.manage_tests)
+        self.pushButton_5.clicked.connect(self.manage_courses)
+
         self.label_2.setText(_translate("MainWindow", "Teachers"))
         item = self.tableWidget_2.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Name"))
         item = self.tableWidget_2.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "Assigned Subject"))
-        self.pushButton_6.setText(_translate("MainWindow", "Add Student"))
         item = self.tableWidget.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "New Row"))
         item = self.tableWidget.horizontalHeaderItem(0)
@@ -731,6 +820,7 @@ class Ui_MainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "Age"))
         self.label.setText(_translate("MainWindow", "New Account"))
+        self.label_6.setText(_translate("MainWindow", "Points Information"))
         self.studentNameLabel.setText(_translate("MainWindow", "Student Name"))
         self.fatherSNameLabel.setText(_translate("MainWindow", "Father\'s Name"))
         self.rollNumberLabel.setText(_translate("MainWindow", "Roll Number"))
@@ -767,7 +857,9 @@ class Ui_MainWindow(object):
         self.pushButton_16.setText(_translate("MainWindow", "Back"))
         self.pushButton_18.setText(_translate("MainWindow", "Add Video"))
         self.pushButton_17.setText(_translate("MainWindow", "Delete Video"))
+        self.pushButton_27.setText(_translate("MainWindow","Logout"))
         #self.pushButton_19.setText(_translate("MainWindow", "PushButton"))
+        self.textEdit_2.setPlaceholderText(_translate("MainWindow", "If any Error in Gesture is made it will be displayed Here"))
         self.label_16.setText(_translate("MainWindow", "Closest Sign:"))
         self.label_17.setText(_translate("MainWindow", "None"))
         #self.label_18.setText(_translate("MainWindow", "TextLabel"))
@@ -776,8 +868,13 @@ class Ui_MainWindow(object):
         self.pushButton_21.setText(_translate("MainWindow", "Back"))
         self.pushButton_24.setText(_translate("MainWindow", "Clear All"))
         self.pushButton_23.setText(_translate("MainWindow", "BackSpace"))
+        self.pushButton_26.setText(_translate("MainWindow","Back"))
+        self.pushButton_29.setText(_translate("MainWindow", "Back"))
+        self.pushButton_35.setText(_translate("MainWindow", "Back"))
         self.pushButton_224.setText(_translate("MainWindow", "Add Space"))
         self.pushButton_225.setText(_translate("MainWindow", "Back"))
+        self.pushButton_66.setText(_translate("MainWindow","Remove Student"))
+        self.pushButton_67.setText(_translate("MainWindow","Back"))
         item = self.tableWidget_3.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "Actual: No"))
         item = self.tableWidget_3.verticalHeaderItem(1)
@@ -801,6 +898,38 @@ class Ui_MainWindow(object):
         self.pushButton_23.clicked.connect(self.Back_sentences)
         self.pushButton_224.clicked.connect(self.add_space)
         self.pushButton_225.clicked.connect(self.sentence_back)
+        self.pushButton_27.clicked.connect(self.logout)
+        self.pushButton_26.clicked.connect(self.teachers_back)
+        self.pushButton_66.clicked.connect(self.remove_student)
+        self.pushButton_67.clicked.connect(self.teachers_back)
+        self.pushButton_29.clicked.connect(self.test_back)
+        self.pushButton_35.clicked.connect(self.test_back_screen)
+        self.pushButton_13.clicked.connect(self.test_screen)
+
+    def test_screen(self):
+        self.stackedWidget_2.setCurrentIndex(5)
+    def test_back_screen(self):
+        self.stackedWidget_2.setCurrentIndex(0)
+
+    def test_back(self):
+        self.stackedWidget_2.setCurrentIndex(5)
+
+    def teachers_back(self):
+        self.stackedWidget.setCurrentIndex(1)
+    def manage_teachers(self):
+        self.stackedWidget.setCurrentIndex(2)
+
+    def manage_students(self):
+        self.stackedWidget.setCurrentIndex(3)
+
+    def manage_tests(self):
+        pass
+
+    def manage_courses(self):
+        self.stackedWidget.setCurrentIndex(5)
+        
+    def remove_student(self):
+        pass
 
     def login(self):
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
@@ -832,19 +961,26 @@ class Ui_MainWindow(object):
                     self.tableWidget_3.show()
                     self.pushButton_18.show()
                     self.pushButton_17.show()
+                    self.pushButton_10.hide()
+                    self.pushButton_13.hide()
+                    self.pushButton_15.hide()
                     self.label_20.setText('Teacher')
+                    self.stackedWidget.setCurrentIndex(1)
                 else:
                     self.user='Student'
                     self.tableWidget_3.hide()
+                    self.pushButton_10.hide()
                     self.pushButton_18.hide()
                     self.pushButton_17.hide()
                     self.label_20.setText('Student')
-                self.stackedWidget.setCurrentIndex(5)
+                    self.stackedWidget.setCurrentIndex(5)
     def logout(self):
         self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget_2.setCurrentIndex(0)
         
     def New_User(self):
         self.stackedWidget.setCurrentIndex(4)
+
     def Create_New_User(self):
         popup=QMessageBox()
         if self.studentNameLineEdit.text()=="" or self.fatherSNameLineEdit.text()=="" or self.rollNumberLineEdit.text()=="" or self.phoneNumberLineEdit.text()=="" or self.fatherSPhoneNumberLineEdit.text()=="" or self.gradeComboBox.currentText()=="":
@@ -904,6 +1040,10 @@ class Ui_MainWindow(object):
                     cur2.execute(sql2,task2)
                     conn1.commit()
                     conn1.close()
+                    popup.setText(f"Information of Person {std_name} has been Added")
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Information)
+                    popup.exec_()
                     self.stackedWidget_2.setCurrentIndex(0)
                     self.stackedWidget.setCurrentIndex(0)
                     #print("Data has been Entered")
@@ -1035,7 +1175,7 @@ class Ui_MainWindow(object):
         self.frame_13.show()
         self.sentences_pass=0
         self.sentences=[]
-        self.camerathread.sentences_pass_on=False
+        #self.camerathread.sentences_pass_on=False
 
     def sentence_back(self):
         self.camerathread.stop()
