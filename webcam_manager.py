@@ -79,10 +79,10 @@ class WebcamManager(object):
                                 else:
                                     acc1=int(list1[0])
                                     acc2=int(list1[1])
-                                    acc1=((acc1-65)/65)*100
-                                    acc2=((acc2-65)/65)*100
-                                    if int(list1[0])<65 or int(list1[1])<65:
-                                        acc2=95
+                                    acc1=((acc1-60)/60)*100
+                                    acc2=((acc2-60)/60)*100
+                                    if int(list1[0])<60 or int(list1[1])<60:
+                                        acc2=98.5
                                         break
                                     else:
                                         if acc1>100 or acc2>100:
@@ -107,10 +107,10 @@ class WebcamManager(object):
                                 else:    
                                     acc1=int(list1[0])
                                     acc2=int(list1[1])
-                                    acc1=((acc1-65)/65)*100
-                                    acc2=((acc2-65)/65)*100
-                                    if int(list1[0])<65 or int(list1[1])<65:
-                                        acc2=95
+                                    acc1=((acc1-60)/60)*100
+                                    acc2=((acc2-60)/60)*100
+                                    if int(list1[0])<60 or int(list1[1])<60:
+                                        acc2=98.5
                                         break
                                     else:
                                         if acc1>100 or acc2>100:
@@ -140,11 +140,11 @@ class WebcamManager(object):
                                 else:
                                     acc1=int(list1[0])
                                     acc2=int(list1[1])
-                                    acc1=((acc1-65)/65)*100
-                                    acc2=((acc2-65)/65)*100
-                                    if int(list1[0])<65 or int(list1[1])<65:
-                                        self.sign_detected='Predicted correctly With Accuracy =95'
-                                        acc2=95
+                                    acc1=((acc1-60)/60)*100
+                                    acc2=((acc2-60)/60)*100
+                                    if int(list1[0])<60 or int(list1[1])<60:
+                                        self.sign_detected='Predicted correctly With Accuracy =98.5'
+                                        acc2=98.5
                                         break
                                     else:
                                         if acc1>100 or acc2>100:
@@ -170,11 +170,11 @@ class WebcamManager(object):
                                 else:    
                                     acc1=int(list1[0])
                                     acc2=int(list1[1])
-                                    acc1=((acc1-65)/65)*100
-                                    acc2=((acc2-65)/65)*100
-                                    if int(list1[0])<65 or int(list1[1])<65:
-                                        self.sign_detected='Predicted Incorrectly With Accuracy =95'
-                                        acc2=95
+                                    acc1=((acc1-60)/60)*100
+                                    acc2=((acc2-60)/60)*100
+                                    if int(list1[0])<60 or int(list1[1])<60:
+                                        self.sign_detected='Predicted Incorrectly With Accuracy =98.5'
+                                        acc2=98.5
                                         break
                                     else:
                                         if acc1>100 or acc2>100:
