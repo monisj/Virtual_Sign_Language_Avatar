@@ -696,13 +696,9 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addItem(spacerItem14, 2, 0, 1, 1)
         self.gridLayout_7.addWidget(self.frame_19, 0, 0, 1, 2)
         
-        self.label_8 = QtWidgets.QLabel(self.page_9)
-        self.label_8.setObjectName("label_8")
-        self.gridLayout_7.addWidget(self.label_8, 1, 0, 1, 1)
         
-        self.lineEdit_4 = QtWidgets.QLineEdit(self.page_9)
-        self.lineEdit_4.setObjectName("lineEdit_4")
-        self.gridLayout_7.addWidget(self.lineEdit_4, 2, 0, 1, 1)
+        
+        
 
         self.pushButton_334 = QtWidgets.QPushButton(self.page_9)
         self.pushButton_334.setObjectName("pushButton_334")
@@ -975,8 +971,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_3.setText(_translate("MainWindow", "Virtual Sign Teacher"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Virtual Sign Language Teacher"))
+        self.label_3.setText(_translate("MainWindow", "Virtual Sign Language Teacher"))
         self.usernameLabel.setText(_translate("MainWindow", "Username"))
         self.passwordLabel.setText(_translate("MainWindow", "Password"))
         self.pushButton_14.setText(_translate("MainWindow", "New User"))
@@ -1105,7 +1101,7 @@ class Ui_MainWindow(object):
         self.label_17.setText(_translate("MainWindow", "None"))
         #self.label_18.setText(_translate("MainWindow", "TextLabel"))
         #self.label_19.setText(_translate("MainWindow", "TextLabel"))
-        self.label_8.setText(_translate("MainWindow","Attempt Number"))
+        
         self.pushButton_20.setText(_translate("MainWindow", "Log Out"))
         self.pushButton_21.setText(_translate("MainWindow", "Back"))
         self.pushButton_24.setText(_translate("MainWindow", "Clear All"))
@@ -1289,6 +1285,7 @@ class Ui_MainWindow(object):
 
     def perform_test(self):
         popup=QMessageBox()
+        popup.setWindowTitle("Perform Test")
         popup.setText(f"Please Put your hands down before the Camera is Turned On Press Ok When Ready")
         popup.setStandardButtons(QMessageBox.Ok)
         popup.setIcon(QMessageBox.Information)
@@ -1342,6 +1339,7 @@ class Ui_MainWindow(object):
     def test_back(self):
         if self.test_attempt<3:
             popup=QMessageBox()
+            popup.setWindowTitle("Test Incompleted")
             popup.setText(f"You Have not the completed the test Pressing Ok will not record the test marks")
             popup.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             popup.setIcon(QMessageBox.Information)
@@ -1349,6 +1347,7 @@ class Ui_MainWindow(object):
             popup.exec_()
         elif self.test_attempt==3:
             popup=QMessageBox()
+            popup.setWindowTitle("Test Completed")
             popup.setText(f"Press the Submit Button to record the marks the test is completed")
             popup.setStandardButtons(QMessageBox.Ok )
             popup.setIcon(QMessageBox.Information)
@@ -1456,6 +1455,7 @@ class Ui_MainWindow(object):
     def submit_test(self):
         if self.test_attempt==3:
             popup=QMessageBox()
+            popup.setWindowTitle("Test Submission")
             popup.setText(f"Test has been Submitted")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Information)
@@ -1484,6 +1484,7 @@ class Ui_MainWindow(object):
             self.stackedWidget_2.setCurrentIndex(0)
         else:
             popup=QMessageBox()
+            popup.setWindowTitle("Test Submission")
             popup.setText(f"First Attempt the Test")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Information)
@@ -1555,6 +1556,7 @@ class Ui_MainWindow(object):
         b=self.passwordLineEdit.text()
         popup=QMessageBox()
         if a=="" or b=="":
+            popup.setWindowTitle("Login Credientials")
             popup.setText("Username or Password not entered!")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Critical)
@@ -1564,6 +1566,7 @@ class Ui_MainWindow(object):
             passw=cur.fetchone()
             conn.close()
             if passw==None:
+                popup.setWindowTitle("Login Credientials")
                 popup.setText("Incorrect Username or Password!")
                 popup.setStandardButtons(QMessageBox.Ok)
                 popup.setIcon(QMessageBox.Critical)
@@ -1604,6 +1607,7 @@ class Ui_MainWindow(object):
     def Create_New_User(self):
         popup=QMessageBox()
         if self.studentNameLineEdit.text()=="" or self.fatherSNameLineEdit.text()=="" or self.rollNumberLineEdit.text()=="" or self.phoneNumberLineEdit.text()=="" or self.fatherSPhoneNumberLineEdit.text()=="" or self.gradeComboBox.currentText()=="":
+            popup.setWindowTitle("Create User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Critical)
@@ -1621,6 +1625,7 @@ class Ui_MainWindow(object):
             elif self.radioButton_2.isChecked():
                 gender='Female'
             else:
+                popup.setWindowTitle("Create User")
                 popup.setText("Please Enter All Fields")
                 popup.setStandardButtons(QMessageBox.Ok)
                 popup.setIcon(QMessageBox.Critical)
@@ -1631,6 +1636,7 @@ class Ui_MainWindow(object):
             data=(roll_no,std_name,fath_name,phone,fath_phone,gender,class_enroll)
 
             if std_name == '' or fath_name == '' or roll_no =='' or phone == '':
+                popup.setWindowTitle("Create User")
                 popup.setText("Please Enter All Fields")
                 popup.setStandardButtons(QMessageBox.Ok)
                 popup.setIcon(QMessageBox.Critical)
@@ -1660,6 +1666,7 @@ class Ui_MainWindow(object):
                     cur2.execute(sql2,task2)
                     conn1.commit()
                     conn1.close()
+                    popup.setWindowTitle("Create User")
                     popup.setText(f"Information of Person {std_name} has been Added")
                     popup.setStandardButtons(QMessageBox.Ok)
                     popup.setIcon(QMessageBox.Information)
@@ -1671,6 +1678,7 @@ class Ui_MainWindow(object):
                     # MainWindow.close()
                     # call(["python","Login.py"])
                 else:
+                    popup.setWindowTitle("Create User")
                     popup.setText("Roll Number Already Exists!")
                     popup.setStandardButtons(QMessageBox.Ok)
                     popup.setIcon(QMessageBox.Critical)
@@ -1746,6 +1754,7 @@ class Ui_MainWindow(object):
             conn.commit()
             conn.close()
             popup=QMessageBox()
+            popup.setWindowTitle("Assign Test")
             popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {self.test_roll_no}")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Information)
@@ -1753,6 +1762,7 @@ class Ui_MainWindow(object):
             self.stackedWidget.setCurrentIndex(6)
         elif passw[0]=="No":
             popup=QMessageBox()
+            popup.setWindowTitle("Assign Test")
             popup.setText(f"Test of Sign={path2} has Already been Assigned to Roll_No {self.test_roll_no}")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Critical)
@@ -1762,6 +1772,7 @@ class Ui_MainWindow(object):
             conn.commit()
             conn.close()
             popup=QMessageBox()
+            popup.setWindowTitle("Assign Test")
             popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {self.test_roll_no}")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Information)
@@ -1888,14 +1899,7 @@ class Ui_MainWindow(object):
         
         progress=QProgressDialog()
         progress.setLabelText("Video being Processed Please wait......")
-        #progress=QMessageBox()
-        # progress.setText("Video Has Been Added")
-        # progress.setStandardButtons(QMessageBox.Ok)
-        # progress.setIcon(QMessageBox.Information)
         if fileName:
-            #print(fileName)
-            #print(self.path_video)
-            #url = QUrl.fromLocalFile(fileName)
             progress.show()
             file=QFileInfo(fileName).fileName()
             video_path=fileName
@@ -1923,14 +1927,8 @@ class Ui_MainWindow(object):
                 Computer_signs.append(new_ref)
             progress.setValue(100)
             
-            #self.dirModel.modelReset()
             self.model.setRootPath((QtCore.QDir.rootPath()))
             self.treeview.setRootIndex(self.model.index(str(folder_path)))
-            # self.treeview.setSortingEnabled(1)
-            # self.treeview.sortByColumn(0,Qt.AscendingOrder)
-            # self.treeview.setSortingEnabled(0)
-            #progress.exec_()
-            #progress.cancel()
             
             
             
@@ -1950,9 +1948,6 @@ class Ui_MainWindow(object):
         elif folder == 'Science':
             signs=Science_signs
         if fileName:
-            #print(fileName)
-            #print(self.path_video)
-            #url = QUrl.fromLocalFile(fileName)
             file=QFileInfo(fileName).fileName()
             print(file,fileName)
             video_path=pathlib.Path(folder_path).joinpath(file)
@@ -2018,7 +2013,6 @@ class Ui_MainWindow(object):
                 dist=dist[:4]
                 pre_val=0
                 list1=[]
-                #self.label_17.setText(str(acc1))
                 for i in range(len(sign)):
                     if sign[i]==self.video:
                         pass            
@@ -2219,14 +2213,7 @@ class cameraThread(QThread):
                     self.on_release(False)
                     
 
-                # pressedKey = cv2.waitKey(1) & 0xFF
-                # if pressedKey == ord("r"):  # Record pressing r
-                #     sign_recorder.record()
-        
-                # try:
-                #     self.accuracyUpdate.emit(accuracy)
-                # except:
-                #     pass
+                
     def stop(self):
         self.ThreadActive = False
         self.quit()
@@ -2242,13 +2229,11 @@ def param_capture(n):
         for file_name in files
         if file_name.endswith(".pickle") and file_name.startswith("lh_")
     ]
-    #all_data_vid=[root for root,dirs,files in os.walk('data') if not dirs] #Collecting All data of the 6000+ signs
     return n
 
 def load_param(np,all_data_sentences):
     np1,all_data_sentences=newer_load_reference_signs(np,all_data_sentences)
     return np1,all_data_sentences
-#def thread3():
 
 
 if __name__ == "__main__":
@@ -2274,44 +2259,7 @@ if __name__ == "__main__":
             exec(f'{temp3}=temp1')
         else:
             pass    
-    #temp=[root for root,dirs,files in os.walk(f'data') if not dirs]       
-    #all_data_sentences=load_param(temp)
-        
-    #print(dataset_load_dictonary['Alphabet_dataset'])
-    #temp=pool.apply_async(all_data_load, (temp.get(),i)) #Collecting All data of the 6000+ signs
-    #all_data_sentences=pool.apply_async(all_data_load, (temp.get(),i))
-   
     
-    
-
-    
-    
-    #alphabet_dataset = [
-    #    file_name.replace(".pickle", "").replace("lh_", "")
-    #    for root, dirs, files in os.walk(os.path.join("data", "Alphabets_dataset"))
-    #    for file_name in files
-    #    if file_name.endswith(".pickle") and file_name.startswith("lh_")
-    #]
-    #computer_dataset = [
-    #    file_name.replace(".pickle", "").replace("lh_", "")
-    #    for root, dirs, files in os.walk(os.path.join("data", "Computer_dataset"))
-    #    for file_name in files
-    #    if file_name.endswith(".pickle") and file_name.startswith("lh_")
-    #]
-    #science_dataset = [
-    #    file_name.replace(".pickle", "").replace("lh_", "")
-    #    for root, dirs, files in os.walk(os.path.join("data", "Science_dataset"))
-    #    for file_name in files
-    #    if file_name.endswith(".pickle") and file_name.startswith("lh_")
-    #]
-    
-    #all_data_vid=[root for root,dirs,files in os.walk('data') if not dirs] #Collecting All data of the 6000+ signs
-
-
-    #alphabet_signs=new_load_reference_signs(alphabet_dataset,"Alphabets")
-    #computer_signs=new_load_reference_signs(computer_dataset,'Computer')
-    #science_signs=new_load_reference_signs(science_dataset,'Science')
-    #all_data_sentences=newer_load_reference_signs(all_data_vid) #This line send the parameters to a different function in dataset_utls
     end_time = time.time()
 
     print(f"The execution time for loading is: {end_time-start_time}")
