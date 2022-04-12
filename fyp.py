@@ -1,3 +1,4 @@
+from cmath import inf
 from fileinput import filename
 from telnetlib import LOGOUT
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -25,6 +26,9 @@ class Ui_MainWindow(object):
         self.std_roll_number=0
         self.test_sign=''
         self.test_path=''
+        self.test_attempt=4
+        self.test_accuracy=0
+        self.acc2=0
         self.onlyInt = QtGui.QIntValidator()
         self.sentences_pass=0
         self.sentences_record=0
@@ -855,6 +859,52 @@ class Ui_MainWindow(object):
         self.gridLayout_12.addWidget(self.label_10, 0, 0, 1, 1)
         self.stackedWidget.addWidget(self.page_13)
 
+        #Student Progress (User Teacher)
+        self.page_14 = QtWidgets.QWidget()
+        self.page_14.setObjectName("page_14")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.page_14)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.frame_33 = QtWidgets.QFrame(self.page_14)
+        self.frame_33.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_33.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_33.setObjectName("frame_33")
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout(self.frame_33)
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        spacerItem19 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem19)
+        self.pushButton_31 = QtWidgets.QPushButton(self.frame_33)
+        self.pushButton_31.setObjectName("pushButton_31")
+        self.horizontalLayout_12.addWidget(self.pushButton_31)
+        self.gridLayout_5.addWidget(self.frame_33, 0, 0, 1, 1)
+        
+        self.frame_29 = QtWidgets.QFrame(self.page_14)
+        self.frame_29.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_29.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_29.setObjectName("frame_29")
+        self.verticalLayout_14 = QtWidgets.QVBoxLayout(self.frame_29)
+        self.verticalLayout_14.setObjectName("verticalLayout_14")
+        self.tableWidget_6 = QtWidgets.QTableWidget(self.frame_29)
+        self.tableWidget_6.setObjectName("tableWidget_6")
+        self.tableWidget_6.setColumnCount(4)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_6.setVerticalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_6.setVerticalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_6.setVerticalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_6.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_6.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_6.setHorizontalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_6.setHorizontalHeaderItem(3, item)
+        self.verticalLayout_14.addWidget(self.tableWidget_6)
+        self.gridLayout_5.addWidget(self.frame_29, 2, 0, 1, 1)
+        self.stackedWidget.addWidget(self.page_14)
+        self.verticalLayout.addWidget(self.stackedWidget)
+
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -946,6 +996,7 @@ class Ui_MainWindow(object):
         self.lineEdit_2.textChanged.connect(self.teachers_search)
         self.lineEdit_3.textChanged.connect(self.students_search)
         self.lineEdit_5.textChanged.connect(self.search_manage_tests)
+        
 
 
         self.pushButton_2.clicked.connect(self.manage_teachers)
@@ -999,6 +1050,8 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Gender"))
         item = self.tablewidget.horizontalHeaderItem(6)
         item.setText(_translate("MainWindow", "Class_Enroll"))
+        self.tablewidget.cellDoubleClicked.connect(self.std_data_progress)
+
 
         item = self.tableWidget_5.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Roll_No"))
@@ -1068,6 +1121,21 @@ class Ui_MainWindow(object):
         self.pushButton_67.setText(_translate("MainWindow","Back"))
         self.pushButton_38.setText(_translate("MainWindow", "Back")) #Teacher's Test Screen Buttons
         self.pushButton_40.setText(_translate("MainWindow", "Back")) #Teacher's Test Screen Buttons
+
+        self.pushButton_31.setText(_translate("MainWindow", "Back"))
+        
+        
+        item = self.tableWidget_6.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "ID"))
+        item = self.tableWidget_6.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Sign"))
+        item = self.tableWidget_6.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Marks_Obtained"))
+        item = self.tableWidget_6.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "Test_Completed"))
+
+        self.pushButton_31.clicked.connect(self.std_teach_back)
+
         item = self.tableWidget_3.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "Actual: No"))
         item = self.tableWidget_3.verticalHeaderItem(1)
@@ -1124,9 +1192,11 @@ class Ui_MainWindow(object):
                     parent=QtWidgets.QTreeWidgetItem(1)
                     parent.setText(0,f"{i[0]}")
                     self.treeWidget_2.addTopLevelItem(parent)
-
+                    
+                    conn.close()
+            self.treeWidget_2.itemDoubleClicked.connect(self.perform_test)
             
-            self.treeWidget_2.itemClicked.connect(self.perform_test)
+            
         
         #     pass
         # elif passw[2]=="No":
@@ -1135,7 +1205,7 @@ class Ui_MainWindow(object):
         #     parent.setText(0,sign)
         #     self.treeWidget_2.addTopLevelItem(parent)
 
-        conn.close()
+        
         
 
 
@@ -1179,14 +1249,75 @@ class Ui_MainWindow(object):
             self.treeview_3.setRootIndex(self.model.index(path))
             self.stackedWidget.setCurrentIndex(7)
 
+    def std_teach_back(self):
+        self.tableWidget_6.setRowCount(0)
+        self.stackedWidget.setCurrentIndex(3)
+
+    def std_data_progress(self):
+        current_row = self.tablewidget.currentRow()
+        current_column = self.tablewidget.currentColumn()
+        
+        if current_column!=0:
+            pass
+        else:
+            self.test_roll_no = self.tablewidget.item(current_row, current_column).text()
+            self.stackedWidget.setCurrentIndex(3)
+            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+            conn = sqlite3.connect(f"{data_path}/Student_info.db")
+            cur = conn.cursor()
+            cur.execute(f'SELECT * FROM Student_Tests Where ID = {self.test_roll_no};')
+            passw=cur.fetchall()
+            conn.close()
+            for details in passw:
+                row_number = self.tableWidget_6.rowCount()
+                if row_number == len(passw):
+                    pass
+                else:
+                    self.tableWidget_6.insertRow(row_number)
+                for column_number, data in enumerate(details):
+                    self.tableWidget_6.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
+            self.stackedWidget.setCurrentIndex(8)
+
+    
+
+                
+            
+    
+        
+
 
     def perform_test(self):
+        popup=QMessageBox()
+        popup.setText(f"Please Put your hands down before the Camera is Turned On Press Ok When Ready")
+        popup.setStandardButtons(QMessageBox.Ok)
+        popup.setIcon(QMessageBox.Information)
+        popup.exec_()
+        sign=''
+        for ix in self.treeWidget_2.selectedIndexes():
+            sign = ix.data(Qt.DisplayRole) # or ix.data()
+        self.test_sign=sign
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        cur.execute(f"SELECT path FROM Student_Tests where ID == {self.std_roll_number} AND Sign_Name == '{sign}' AND Test_Completed == 'No';")
+        passw=cur.fetchall()
+        conn.close()
+        reference_sign=''
+        for i in passw:
+            reference_sign=i[0]
+
+        reference_sign=globals()[reference_sign]
         self.stackedWidget_2.setCurrentIndex(4)
         self.sentences=[]
         self.camerathread = cameraThread()
-        self.camerathread.reference_signs=all_data_sentences
-        self.camerathread.acc_sign='A'
-        self.video='A'
+        self.camerathread.attempt_no=0
+        self.test_accuracy=0
+        self.test_attempt=0
+        self.camerathread.reference_signs=reference_sign
+        self.camerathread.acc_sign=sign
+        self.video=sign
+
         self.camerathread.record=False
         self.camerathread.start()
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
@@ -1194,10 +1325,35 @@ class Ui_MainWindow(object):
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
 
         
+    def test_back_button(self,i):
+        if i.text() == 'OK' :
+            self.acc2=0
+            self.camerathread.stop()
+            self.sentences_pass=0
+            self.sentences=[]
+            self.camerathread.sentences_pass_on=False
+            self.stackedWidget_2.setCurrentIndex(5)
+            self.test_accuracy=0
+            self.test_attempt=0
+        else:
+            pass
 
         
     def test_back(self):
-        self.stackedWidget_2.setCurrentIndex(5)
+        if self.test_attempt<3:
+            popup=QMessageBox()
+            popup.setText(f"You Have not the completed the test Pressing Ok will not record the test marks")
+            popup.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            popup.setIcon(QMessageBox.Information)
+            popup.buttonClicked.connect(self.test_back_button)
+            popup.exec_()
+        elif self.test_attempt==3:
+            popup=QMessageBox()
+            popup.setText(f"Press the Submit Button to record the marks the test is completed")
+            popup.setStandardButtons(QMessageBox.Ok )
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+
 
     def teachers_back(self):
         self.stackedWidget.setCurrentIndex(1)
@@ -1298,12 +1454,41 @@ class Ui_MainWindow(object):
         self.tableWidget_4.setRowCount(0)
 
     def submit_test(self):
-        popup=QMessageBox()
-        popup.setText(f"Test has been Submitted")
-        popup.setStandardButtons(QMessageBox.Ok)
-        popup.setIcon(QMessageBox.Information)
-        popup.exec_()
-        self.stackedWidget_2.setCurrentIndex(5)
+        if self.test_attempt==3:
+            popup=QMessageBox()
+            popup.setText(f"Test has been Submitted")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+            self.camerathread.stop()
+            self.camerathread.sentences_pass_on=False
+
+            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+            conn = sqlite3.connect(f"{data_path}/Student_info.db")
+            cur = conn.cursor()
+            sql='''UPDATE Student_Tests
+                SET Marks_Obtained = (?), Test_Completed = (?)
+                WHERE ID = (?) AND Sign_Name = (?);'''
+            data=(self.test_accuracy,"Yes",self.std_roll_number,self.test_sign)
+            cur.execute(sql,data)
+            conn.commit()
+            conn.close()
+            self.sentences_pass=0
+            self.sentences=[]
+            self.acc2=0
+            self.test_attempt=0
+            self.test_accuracy=0
+            
+
+
+            self.stackedWidget_2.setCurrentIndex(0)
+        else:
+            popup=QMessageBox()
+            popup.setText(f"First Attempt the Test")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+        
 
     def manage_tests(self):
         data=self.lineEdit_5.text()
@@ -1524,6 +1709,8 @@ class Ui_MainWindow(object):
         self.camerathread.acc_sign='A'
         self.video='A'
         self.camerathread.record=False
+        self.test_attempt=4
+        self.camerathread.attempt_no=4
         self.camerathread.start()
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
@@ -1539,37 +1726,16 @@ class Ui_MainWindow(object):
             for i in folders:
                 folders_2=os.listdir(str(path)+'\\'+i)
                 if video in folders_2:
-                    folder=str(path)+'\\'+i
+                    folder=i
                     break
-
-        # sql=''' INSERT INTO STD_IN (Roll_no,Student_Name,Father_Name,Phone,
-        #             Fathers_Phone,Gender,Class_Enroll) VALUES (?,?,?,?,?,?,?) '''
-        #         cur.execute(f'SELECT Roll_no  FROM STD_IN where Roll_no == {roll_no} ;')
-        #         passw=cur.fetchone()
-                
-        #         print(passw)
-        #         import subprocess
-        #         if passw==None:
-        #             cur.execute(sql,data)
-        #             conn.commit()
-        #             conn.close()
-
-        # data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        # conn = sqlite3.connect(f"{data_path}/Student_info.db")
-        # cur = conn.cursor()
-        # cur.execute(f'SELECT ID,Sign_Name,Marks_Obtained_Test_Completed FROM Student_Tests where ID == {self.std_roll_number};')
-        # passw=cur.fetchall()
-        # conn.close()
-
+        folder=folder+'_signs'
+        
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
         cur = conn.cursor()
         path2=video.replace(".mp4","")
         sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
                 Test_Completed,Path) VALUES (?,?,?,?,?)'''
-        # sql=''' UPDATE Student_Tests
-        #         SET  Sign_Name=(?), Path =(?)
-        #         WHERE ID =(?) '''
         data=(self.test_roll_no,path2,0,'No',folder)
 
 
@@ -1639,6 +1805,7 @@ class Ui_MainWindow(object):
             self.camerathread.acc_sign=video[:-4]
             self.video=video[:-4]
             self.camerathread.record=False
+            
             try:
                 self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_alph)
             except:
@@ -1666,10 +1833,13 @@ class Ui_MainWindow(object):
                 pass
             
         self.camerathread.start()
+        self.camerathread.attempt_no=4
+        self.test_attempt=4
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         self.stackedWidget_2.setCurrentIndex(2)
+        self.sentences_pass=0
         self.camerathread.sentences_pass_on=False
     
     def back_video(self):
@@ -1690,17 +1860,18 @@ class Ui_MainWindow(object):
         item.setText("0")
         self.tableWidget_3.setSortingEnabled(__sortingEnabled)
         self.stackedWidget_2.setCurrentIndex(1)
+        self.test_attempt=4
     def back_videos(self):
         self.stackedWidget_2.setCurrentIndex(0)
         self.frame_13.show()
         self.sentences_pass=0
         self.sentences=[]
-        #self.camerathread.sentences_pass_on=False
 
     def sentence_back(self):
         self.camerathread.stop()
         self.stackedWidget_2.setCurrentIndex(0)
         self.sentences_pass=0
+        self.test_attempt=4
         self.sentences=[]
         self.camerathread.sentences_pass_on=False
         
@@ -1807,133 +1978,137 @@ class Ui_MainWindow(object):
         self.label_4.setPixmap(QPixmap.fromImage(Image))
         self.label_7.setPixmap(QPixmap.fromImage(Image))
     
-    # def accuracyUpdateSlot(self, text):
-    #     self.label_2.setText(text)
     def accuracyUpdateSlot(self,predicted,sign,dist,acc):
-        #print(self.pathv)
-        #data_path=pathlib.Path.cwd().joinpath('utils\Acc')
-        #f=open(f'{data_path}\{self.pathv}.txt','r')
-        #for x in f:
-          #pass
-        #f.close()
-        #print(x)
-        #print(sign)
-        #print(dist)
-        #self.label_16.setText(str())
         acc=float(acc)
-        if len(sign)<2:
-            pass
-        else:
-            if self.sentences_pass==1:
-                if len(predicted) <2:
-                    self.sentences.append(predicted)
-                    self.textEdit.insertPlainText(str(predicted))
-                else:
-                    self.sentences.append(" ")
-                    self.sentences.append(predicted)
-                    self.textEdit.insertPlainText(str(" "))
-                    self.textEdit.insertPlainText(str(predicted))
-                self.sentences_pass=0
-                
-            
-            sign=sign[:4]
-            dist=dist[:4]
-            #acc=0
-            #mat_val=acc
-            pre_val=0
-            
-            list1=[]
-            #self.label_17.setText(str(acc1))
-            for i in range(len(sign)):
-                if sign[i]==self.video:
-                    pass            
-                else:
-                    if dist[0]==float('inf'):
-                        self.label_16.setText('No Close Signs Predicted')
-                        self.label_17.setText('')
+        if self.test_attempt<3:
+            if self.test_accuracy==0:
+                if acc!=0:
+                    self.test_accuracy=acc
+                    self.test_attempt=0
+            else:
+                if dist[0]!=self.acc2 and acc!=0:
+                    if self.acc2==0:
+                        self.test_attempt=0
+                        self.camerathread.attempt_no=self.test_attempt
+                        self.acc2=dist[0]
+                        self.test_accuracy=acc
+                    
                     else:
-                        acc1=((int(dist[i])-65)/65)*100
-                        if int(dist[i])<65:
-                            acc1=round(acc1,2)
-                            self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                            self.label_17.setText(str('95'))
-                            break
+                        self.acc2=dist[0]
+                        self.test_accuracy=acc
+                        self.test_attempt+=1
+                        self.camerathread.attempt_no=self.test_attempt
+        else:
+            if len(sign)<2:
+                pass
+            else:
+                if self.sentences_pass==1:
+                    if len(predicted) <2:
+                        self.sentences.append(predicted)
+                        self.textEdit.insertPlainText(str(predicted))
+                    else:
+                        self.sentences.append(" ")
+                        self.sentences.append(predicted)
+                        self.textEdit.insertPlainText(str(" "))
+                        self.textEdit.insertPlainText(str(predicted))
+                    self.sentences_pass=0
+                    
+                
+                sign=sign[:4]
+                dist=dist[:4]
+                pre_val=0
+                list1=[]
+                #self.label_17.setText(str(acc1))
+                for i in range(len(sign)):
+                    if sign[i]==self.video:
+                        pass            
+                    else:
+                        if dist[0]==float('inf'):
+                            self.label_16.setText('No Close Signs Predicted')
+                            self.label_17.setText('')
                         else:
-                            if acc1>100:
-                                acc1=(acc1)//100
+                            acc1=((int(dist[i])-65)/65)*100
+                            if int(dist[i])<65:
                                 acc1=round(acc1,2)
                                 self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                self.label_17.setText(str(100-acc1))
+                                self.label_17.setText(str('95'))
                                 break
                             else:
-                                acc1=round(acc1,2)
-                                self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                self.label_17.setText(str(100-acc1))
-                                break
+                                if acc1>100:
+                                    acc1=(acc1)//100
+                                    acc1=round(acc1,2)
+                                    self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
+                                    self.label_17.setText(str(100-acc1))
+                                    break
+                                else:
+                                    acc1=round(acc1,2)
+                                    self.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
+                                    self.label_17.setText(str(100-acc1))
+                                    break
 
-            
-            if float(acc)>50 and predicted==self.video:
-                __sortingEnabled = self.tableWidget_3.isSortingEnabled()
-                self.tableWidget_3.setSortingEnabled(False)
-                item = self.tableWidget_3.item(0, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(0, 1)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 1)
-                item.setText("1")
-                self.tableWidget_3.setSortingEnabled(__sortingEnabled)
-            elif float(acc)>50 and predicted!=self.video:
-                __sortingEnabled = self.tableWidget_3.isSortingEnabled()
-                self.tableWidget_3.setSortingEnabled(False)
-                item = self.tableWidget_3.item(0, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(0, 1)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 0)
-                item.setText("1")
-                item = self.tableWidget_3.item(1, 1)
-                item.setText("0")
-                self.tableWidget_3.setSortingEnabled(__sortingEnabled)
-            elif float(acc)<50 and predicted==self.video:
-                __sortingEnabled = self.tableWidget_3.isSortingEnabled()
-                self.tableWidget_3.setSortingEnabled(False)
-                item = self.tableWidget_3.item(0, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(0, 1)
-                item.setText("1")
-                item = self.tableWidget_3.item(1, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 1)
-                item.setText("0")
-                self.tableWidget_3.setSortingEnabled(__sortingEnabled)
-            elif float(acc)<50 and predicted!=self.video:
-                __sortingEnabled = self.tableWidget_3.isSortingEnabled()
-                self.tableWidget_3.setSortingEnabled(False)
-                item = self.tableWidget_3.item(0, 0)
-                item.setText("1")
-                item = self.tableWidget_3.item(0, 1)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 1)
-                item.setText("0")
-                self.tableWidget_3.setSortingEnabled(__sortingEnabled)
+                
+                if float(acc)>50 and predicted==self.video:
+                    __sortingEnabled = self.tableWidget_3.isSortingEnabled()
+                    self.tableWidget_3.setSortingEnabled(False)
+                    item = self.tableWidget_3.item(0, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(0, 1)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 1)
+                    item.setText("1")
+                    self.tableWidget_3.setSortingEnabled(__sortingEnabled)
+                elif float(acc)>50 and predicted!=self.video:
+                    __sortingEnabled = self.tableWidget_3.isSortingEnabled()
+                    self.tableWidget_3.setSortingEnabled(False)
+                    item = self.tableWidget_3.item(0, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(0, 1)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 0)
+                    item.setText("1")
+                    item = self.tableWidget_3.item(1, 1)
+                    item.setText("0")
+                    self.tableWidget_3.setSortingEnabled(__sortingEnabled)
+                elif float(acc)<50 and predicted==self.video:
+                    __sortingEnabled = self.tableWidget_3.isSortingEnabled()
+                    self.tableWidget_3.setSortingEnabled(False)
+                    item = self.tableWidget_3.item(0, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(0, 1)
+                    item.setText("1")
+                    item = self.tableWidget_3.item(1, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 1)
+                    item.setText("0")
+                    self.tableWidget_3.setSortingEnabled(__sortingEnabled)
+                elif float(acc)<50 and predicted!=self.video:
+                    __sortingEnabled = self.tableWidget_3.isSortingEnabled()
+                    self.tableWidget_3.setSortingEnabled(False)
+                    item = self.tableWidget_3.item(0, 0)
+                    item.setText("1")
+                    item = self.tableWidget_3.item(0, 1)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 1)
+                    item.setText("0")
+                    self.tableWidget_3.setSortingEnabled(__sortingEnabled)
 
-            else:
-                __sortingEnabled = self.tableWidget_3.isSortingEnabled()
-                self.tableWidget_3.setSortingEnabled(False)
-                item = self.tableWidget_3.item(1, 1)
-                item = self.tableWidget_3.item(0, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(0, 1)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 0)
-                item.setText("0")
-                item = self.tableWidget_3.item(1, 1)
-                item.setText("0")
-                self.tableWidget_3.setSortingEnabled(__sortingEnabled)
+                else:
+                    __sortingEnabled = self.tableWidget_3.isSortingEnabled()
+                    self.tableWidget_3.setSortingEnabled(False)
+                    item = self.tableWidget_3.item(1, 1)
+                    item = self.tableWidget_3.item(0, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(0, 1)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 0)
+                    item.setText("0")
+                    item = self.tableWidget_3.item(1, 1)
+                    item.setText("0")
+                    self.tableWidget_3.setSortingEnabled(__sortingEnabled)
     def accuracy_reset(self):
         self.label_16.setText('Recording Signs')
         self.label_17.setText('')
@@ -1983,6 +2158,7 @@ class Ui_MainWindow(object):
 class cameraThread(QThread):
     reference_signs=''
     acc_sign=''
+    attempt_no=4
     sentences_pass_on=False
     record=False
     sentence_key=False
@@ -2028,7 +2204,7 @@ class cameraThread(QThread):
                 sign_detected, is_recording,sign,dist = self.sign_recorder.process_results(results)
 
                 # Update the frame (draw landmarks & display result)
-                FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on)
+                FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on,self.attempt_no)
                 ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
                 Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
                 #self.ImageUpdate.emit(ConvertToQtFormat)
