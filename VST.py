@@ -122,6 +122,8 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_39.clicked.connect(self.Add_Teacher)
         self.ui.pushButton_36.clicked.connect(self.Update_Teacher)
         self.ui.pushButton_37.clicked.connect(self.Remove_Teacher)
+        self.ui.pushButton_41.clicked.connect(self.Add_Student)
+        self.ui.pushButton_42.clicked.connect(self.Update_Student)
         self.ui.tableWidget.cellDoubleClicked.connect(self.std_data_progress)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
@@ -230,6 +232,12 @@ class window(QtWidgets.QMainWindow):
         pass
 
     def Remove_Teacher(self):
+        pass
+
+    def Add_Student(self):
+        pass
+
+    def Update_Student(self):
         pass
 
     def perform_test(self):
