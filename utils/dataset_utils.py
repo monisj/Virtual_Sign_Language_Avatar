@@ -185,14 +185,7 @@ def newer_load_reference_signs(videos,all_data_sentences):
             },
             ignore_index=True,
         )
-        # vend=time.time()
-    #     print(f'{video_name} time=',(vend-vstart))
-    # tend=time.time()
-    # print('total time=',(tend-tstart))
-    # print(
-    #     f'Dictionary count: {reference_signs[["name", "sign_model"]].groupby(["name"]).count()}'
-    # )
-    #print(reference_signs)
+        
     return reference_signs,all_data_sentences
 
 
