@@ -119,6 +119,9 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_40.clicked.connect(self.back_assign_test)
         self.ui.pushButton_28.clicked.connect(self.students_info_back)
         self.ui.pushButton_31.clicked.connect(self.std_teach_back)
+        self.ui.pushButton_39.clicked.connect(self.Add_Teacher)
+        self.ui.pushButton_36.clicked.connect(self.Update_Teacher)
+        self.ui.pushButton_37.clicked.connect(self.Remove_Teacher)
         self.ui.tableWidget.cellDoubleClicked.connect(self.std_data_progress)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
@@ -219,6 +222,15 @@ class window(QtWidgets.QMainWindow):
                     self.ui.tableWidget_6.setItem(
                     row_number, column_number, QTableWidgetItem(str(data)))
             self.ui.stackedWidget.setCurrentIndex(8)
+
+    def Add_Teacher(self):
+        pass
+
+    def Update_Teacher(self):
+        pass
+
+    def Remove_Teacher(self):
+        pass
 
     def perform_test(self):
         popup=QMessageBox()
@@ -593,8 +605,8 @@ class window(QtWidgets.QMainWindow):
                     passw=passw[:-2]
                     conn1 = sqlite3.connect(f"{data_path}/Login.db")
                     cur2 = conn1.cursor()
-                    sql2=''' INSERT INTO LOGIN_s (Roll_No,Password) VALUES (?,?) '''
-                    task2=(roll_no,passw)
+                    sql2=''' INSERT INTO LOGIN_s (Roll_No,Password,Type) VALUES (?,?,?) '''
+                    task2=(roll_no,passw,"S")
                     cur2.execute(sql2,task2)
                     conn1.commit()
                     conn1.close()
