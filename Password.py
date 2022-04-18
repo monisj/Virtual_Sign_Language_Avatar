@@ -1,5 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -36,8 +38,24 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Submit"))
         self.pushButton.clicked.connect(self.passw)
     def passw(self):
-        MainWindow.close()
-        print(str(self.lineEdit.text()))
+        #MainWindow.close()
+        if str(self.lineEdit.text())=="":
+            popup=QMessageBox()
+            popup.setWindowTitle("Enter Password")
+            popup.setText("Please Enter a Password")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        elif len(str(self.lineEdit.text()))<2:
+            popup=QMessageBox()
+            popup.setWindowTitle("Enter Password")
+            popup.setText("Password Length Should be More than two characters")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        else:
+            MainWindow.close()  
+            print(str(self.lineEdit.text()))
 
 
 if __name__ == "__main__":
