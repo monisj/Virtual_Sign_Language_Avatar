@@ -199,6 +199,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.tableWidget = QtWidgets.QTableWidget(self.frame_4)
         self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setSortingEnabled(True)
         self.tableWidget.setColumnCount(7)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -221,7 +222,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.frame_4)
         self.stackedWidget.addWidget(self.page_4)
 
-
         self.page_12 = QtWidgets.QWidget()
         self.page_12.setObjectName("page_12")
         self.gridLayout_11 = QtWidgets.QGridLayout(self.page_12)
@@ -233,11 +233,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.frame_26)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
         self.tableWidget_5 = QtWidgets.QTableWidget(self.frame_26)
-        
         self.tableWidget_5.setObjectName("tableWidget_5")
-        self.tableWidget_5.setColumnCount(6)
+        self.tableWidget_5.setSortingEnabled(True)
+        self.tableWidget_5.setColumnCount(7)
         item = QtWidgets.QTableWidgetItem()
-       
         self.tableWidget_5.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_5.setHorizontalHeaderItem(1, item)
@@ -249,6 +248,8 @@ class Ui_MainWindow(object):
         self.tableWidget_5.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_5.setHorizontalHeaderItem(5, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_5.setHorizontalHeaderItem(6, item)
         self.verticalLayout_13.addWidget(self.tableWidget_5)
         self.frame_24 = QtWidgets.QFrame(self.frame_26)
         self.frame_24.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -256,8 +257,14 @@ class Ui_MainWindow(object):
         self.frame_24.setObjectName("frame_24")
         self.horizontalLayout_18 = QtWidgets.QHBoxLayout(self.frame_24)
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_18.addItem(spacerItem7)
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_18.addItem(spacerItem8)
+        self.pushButton_54 = QtWidgets.QPushButton(self.frame_24)
+        self.pushButton_54.setObjectName("pushButton_54")
+        self.horizontalLayout_18.addWidget(self.pushButton_54)
+        self.pushButton_53 = QtWidgets.QPushButton(self.frame_24)
+        self.pushButton_53.setObjectName("pushButton_53")
+        self.horizontalLayout_18.addWidget(self.pushButton_53)
         self.pushButton_38 = QtWidgets.QPushButton(self.frame_24)
         self.pushButton_38.setObjectName("pushButton_38")
         self.horizontalLayout_18.addWidget(self.pushButton_38)
@@ -270,6 +277,8 @@ class Ui_MainWindow(object):
         self.label_9.setObjectName("label_9")
         self.gridLayout_11.addWidget(self.label_9, 3, 0, 1, 1)
         self.stackedWidget.addWidget(self.page_12)
+        
+
         self.page_13 = QtWidgets.QWidget()
         self.page_13.setObjectName("page_13")
         self.gridLayout_12 = QtWidgets.QGridLayout(self.page_13)
@@ -1252,7 +1261,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Virtual Sign Language Teacher"))
-        self.label_3.setText(_translate("MainWindow", "Virtual Sign Language Avatar"))
+        self.label_3.setText(_translate("MainWindow", "Virtual Sign Language Teacher"))
         self.usernameLabel.setText(_translate("MainWindow", "Username"))
         self.passwordLabel.setText(_translate("MainWindow", "Password"))
         self.pushButton_14.setText(_translate("MainWindow", "New User"))
@@ -1295,11 +1304,15 @@ class Ui_MainWindow(object):
         item = self.tableWidget_5.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Father\'s Name"))
         item = self.tableWidget_5.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Gender"))
+        item.setText(_translate("MainWindow", "Phone"))
         item = self.tableWidget_5.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "Class"))
+        item.setText(_translate("MainWindow", "Fathers_Phone"))
         item = self.tableWidget_5.horizontalHeaderItem(5)
-        item.setText(_translate("MainWindow", "Age"))
+        item.setText(_translate("MainWindow", "Gender"))
+        item = self.tableWidget_5.horizontalHeaderItem(6)
+        item.setText(_translate("MainWindow", "Class_Enroll"))
+
+
         self.pushButton_38.setText(_translate("MainWindow", "Back"))
         self.lineEdit_5.setPlaceholderText(_translate("MainWindow", "Search Id"))
         self.label_9.setText(_translate("MainWindow", "Select Student For Test Assignment"))
@@ -1342,6 +1355,8 @@ class Ui_MainWindow(object):
         self.pushButton_37.setText(_translate("MainWindow", "Remove Teacher"))
         self.pushButton_41.setText(_translate("MainWindow", "Add Student"))
         self.pushButton_42.setText(_translate("MainWindow", "Update Student"))
+        self.pushButton_54.setText(_translate("MainWindow", "Assign Test"))  
+        self.pushButton_53.setText(_translate("MainWindow", "Assign Test By Class"))
 
 
         self.TeachersNameLabel_4.setText(_translate("MainWindow", "Teacher\'s Name"))

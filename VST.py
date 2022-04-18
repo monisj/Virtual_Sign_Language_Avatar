@@ -29,9 +29,10 @@ class window(QtWidgets.QMainWindow):
         super(window,self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+        self.test_users=[]
         self.user_remove=''
         self.test_roll_no=0
+        self.class_assign=0
         self.sentences=[]
         self.std_roll_number=0
         self.test_sign=''
@@ -96,7 +97,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_3.clicked.connect(self.manage_students)
         self.ui.pushButton_4.clicked.connect(self.manage_tests)
         self.ui.pushButton_5.clicked.connect(self.manage_courses)
-        self.ui.tableWidget_5.cellDoubleClicked.connect(self.std_data)
+        # self.ui.tableWidget_5.cellDoubleClicked.connect(self.std_data)
         self.ui.pushButton_7.clicked.connect(self.Create_New_User)
         self.ui.pushButton_8.clicked.connect(self.logout)
         self.ui.pushButton_23.clicked.connect(self.Back_sentences)
@@ -133,6 +134,9 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_48.clicked.connect(self.Add_Student_Credentials)
         self.ui.pushButton_51.clicked.connect(self.Back_Update_Student)
         self.ui.pushButton_52.clicked.connect(self.Update_Student_Credentials_Submit)
+        self.ui.pushButton_53.clicked.connect(self.Assign_Test_By_Class)
+        self.ui.pushButton_54.clicked.connect(self.std_data)
+        
 
         self.ui.tableWidget.cellDoubleClicked.connect(self.std_data_progress)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
@@ -204,17 +208,60 @@ class window(QtWidgets.QMainWindow):
         self.ui.stackedWidget_2.setCurrentIndex(6)
     
     def std_data(self):
-        current_row = self.ui.tableWidget_5.currentRow()
-        current_column = self.ui.tableWidget_5.currentColumn()
-        if current_column!=0:
+        b=self.retrieveTestinfoValue()
+        if len(b)==0:
+            popup=QMessageBox()
+            popup.setWindowTitle("Assign Tests")
+            popup.setText("Please Select One or More Students to Assign Tests")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_() 
+        else:
+            if len(b)==1:
+                temp=b[0]
+                current_row = self.ui.tableWidget_5.currentRow()
+                current_column = self.ui.tableWidget_5.currentColumn()
+                if current_column!=0:
+                    pass
+                else:
+                    self.test_roll_no = temp[0]
+                    path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
+                    path=str(path)
+                    self.dirModel.setRootPath(path)
+                    self.ui.treeview_3.setRootIndex(self.model.index(path))
+                    self.test_users.append(temp[0])
+                    self.ui.stackedWidget.setCurrentIndex(5)
+            else:
+                temp=b[0]
+                current_row = self.ui.tableWidget_5.currentRow()
+                current_column = self.ui.tableWidget_5.currentColumn()
+                if current_column!=0:
+                    pass
+                else:
+                    for i in range(len(b)):
+                        temp=b[i]
+                        self.test_users.append(temp[0])
+                    path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
+                    path=str(path)
+                    self.dirModel.setRootPath(path)
+                    self.ui.treeview_3.setRootIndex(self.model.index(path))
+                    
+                    self.ui.stackedWidget.setCurrentIndex(5)
+    def Assign_Test_By_Class(self):
+        passw=subprocess.check_output([sys.executable, "Test_By_Class.py"])
+        passw=str(passw.decode("utf-8"))
+        passw=passw[:-2]
+        if passw==None:
             pass
         else:
-            self.test_roll_no = self.ui.tableWidget_5.item(current_row, current_column).text()
+            self.class_assign=passw
             path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
             path=str(path)
             self.dirModel.setRootPath(path)
             self.ui.treeview_3.setRootIndex(self.model.index(path))
             self.ui.stackedWidget.setCurrentIndex(5)
+        
+
     def std_teach_back(self):
         self.ui.tableWidget_6.setRowCount(0)
         self.ui.stackedWidget.setCurrentIndex(3)
@@ -939,6 +986,13 @@ class window(QtWidgets.QMainWindow):
                 list1.append([self.ui.tableWidget.item(row,col).text() for col in range(self.ui.tableWidget.columnCount())])
         return list1
 
+    def retrieveTestinfoValue(self):
+        list1=[]
+        for row in range(self.ui.tableWidget_5.rowCount()):
+            if self.ui.tableWidget_5.item(row,0).checkState()==Qt.CheckState.Checked:
+                list1.append([self.ui.tableWidget_5.item(row,col).text() for col in range(self.ui.tableWidget_5.columnCount())])
+        return list1
+
         
     def teachers_search(self):
         self.ui.tableWidget_2.setRowCount(0)
@@ -1082,8 +1136,14 @@ class window(QtWidgets.QMainWindow):
             else:
                 self.ui.tableWidget_5.insertRow(row_number)
             for column_number, data in enumerate(details):
-                 self.ui.tableWidget_5.setItem(
-                row_number, column_number, QTableWidgetItem(str(data)))
+                if column_number==0:
+                    chkBoxItem =QTableWidgetItem(str(data))
+                    chkBoxItem.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                    chkBoxItem.setCheckState(QtCore.Qt.Unchecked)       
+                    self.ui.tableWidget_5.setItem(row_number,column_number,chkBoxItem)
+                else:
+                    self.ui.tableWidget_5.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
         self.ui.stackedWidget.setCurrentIndex(4)
 
     def search_manage_tests(self):
@@ -1093,7 +1153,7 @@ class window(QtWidgets.QMainWindow):
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
         cur = conn.cursor()
         if data:
-            cur.execute(f'SELECT * FROM Std_In WHERE Roll_No LIKE {data};')
+            cur.execute("SELECT * FROM Std_In WHERE Roll_No LIKE ?",(data+'%',))
             passw=cur.fetchall()
             conn.close()
             for details in passw:
@@ -1103,8 +1163,14 @@ class window(QtWidgets.QMainWindow):
                 else:
                     self.ui.tableWidget_5.insertRow(row_number)
                 for column_number, data in enumerate(details):
-                    self.ui.tableWidget_5.setItem(
-                    row_number, column_number, QTableWidgetItem(str(data)))
+                    if column_number==0:
+                        chkBoxItem =QTableWidgetItem(str(data))
+                        chkBoxItem.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                        chkBoxItem.setCheckState(QtCore.Qt.Unchecked)       
+                        self.ui.tableWidget_5.setItem(row_number,column_number,chkBoxItem)
+                    else:
+                        self.ui.tableWidget_5.setItem(
+                        row_number, column_number, QTableWidgetItem(str(data)))
 
         else:
             conn.close()
@@ -1329,57 +1395,125 @@ class window(QtWidgets.QMainWindow):
         self.ui.stackedWidget_2.setCurrentIndex(3)
     
     def select_video_test(self,index): #For Student Video Assignment
-        path=pathlib.Path.cwd().joinpath('videos')
-        video = self.fileModel.fileName(index)
-        folder=''
-        folders=os.listdir(path)
-        if ".mp4" in video:
-            for i in folders:
-                folders_2=os.listdir(str(path)+'\\'+i)
-                if video in folders_2:
-                    folder=i
-                    break
-        folder=folder+'_signs'
-        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        conn = sqlite3.connect(f"{data_path}/Student_info.db")
-        cur = conn.cursor()
-        path2=video.replace(".mp4","")
-        sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
-                Test_Completed,Path) VALUES (?,?,?,?,?)'''
-        data=(self.test_roll_no,path2,0,'No',folder)
-
-
-        cur.execute(f"SELECT Test_Completed from Student_Tests WHERE ID=={self.test_roll_no} AND Sign_Name=='{path2}' ;")
-        passw=cur.fetchone()
-        if passw==None:
-            cur.execute(sql,data)
-            conn.commit()
-            conn.close()
-            popup=QMessageBox()
-            popup.setWindowTitle("Assign Test")
-            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {self.test_roll_no}")
-            popup.setStandardButtons(QMessageBox.Ok)
-            popup.setIcon(QMessageBox.Information)
-            popup.exec_()
-            self.ui.stackedWidget.setCurrentIndex(1)
-        elif passw[0]=="No":
-            popup=QMessageBox()
-            popup.setWindowTitle("Assign Test")
-            popup.setText(f"Test of Sign={path2} has Already been Assigned to Roll_No {self.test_roll_no}")
-            popup.setStandardButtons(QMessageBox.Ok)
-            popup.setIcon(QMessageBox.Critical)
-            popup.exec_()
-        else:
-            cur.execute(sql,data)
-            conn.commit()
-            conn.close()
-            popup=QMessageBox()
-            popup.setWindowTitle("Assign Test")
-            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {self.test_roll_no}")
-            popup.setStandardButtons(QMessageBox.Ok)
-            popup.setIcon(QMessageBox.Information)
-            popup.exec_()
-            self.ui.stackedWidget.setCurrentIndex(1)
+            if self.class_assign==0:
+                path=pathlib.Path.cwd().joinpath('videos')
+                video = self.fileModel.fileName(index)
+                folder=''
+                folders=os.listdir(path)
+                if ".mp4" in video:
+                    for i in folders:
+                        folders_2=os.listdir(str(path)+'\\'+i)
+                        if video in folders_2:
+                            folder=i
+                            break
+                folder=folder+'_signs'
+                data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                cur = conn.cursor()
+                path2=video.replace(".mp4","")
+                sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
+                        Test_Completed,Path) VALUES (?,?,?,?,?)'''
+                for users in self.test_users:
+                    repeat_tests=0
+                    data=(users,path2,0,'No',folder)
+                    cur.execute(f"SELECT Test_Completed from Student_Tests WHERE ID=={users} AND Sign_Name=='{path2}' ;")
+                    passw=cur.fetchall()
+                    for i in range(len(passw)):
+                        temp=passw[i]
+                        if temp[0]=="No":
+                            repeat_tests=1
+                    if passw==None:
+                        cur.execute(sql,data)
+                        conn.commit()
+                        popup=QMessageBox()
+                        popup.setWindowTitle("Assign Test")
+                        popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users}")
+                        popup.setStandardButtons(QMessageBox.Ok)
+                        popup.setIcon(QMessageBox.Information)
+                        popup.exec_()
+                        
+                        
+                    else:
+                        if repeat_tests==1:
+                            popup=QMessageBox()
+                            popup.setWindowTitle("Assign Test")
+                            popup.setText(f"Test of Sign={path2} has Already been Assigned to Roll_No {users}")
+                            popup.setStandardButtons(QMessageBox.Ok)
+                            popup.setIcon(QMessageBox.Critical)
+                            popup.exec_()
+                        else:
+                            cur.execute(sql,data)
+                            conn.commit()
+                            popup=QMessageBox()
+                            popup.setWindowTitle("Assign Test")
+                            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users}")
+                            popup.setStandardButtons(QMessageBox.Ok)
+                            popup.setIcon(QMessageBox.Information)
+                            popup.exec_()
+                conn.close()
+                self.test_users=[]
+                self.ui.stackedWidget.setCurrentIndex(4)
+            else:
+                path=pathlib.Path.cwd().joinpath('videos')
+                video = self.fileModel.fileName(index)
+                folder=''
+                folders=os.listdir(path)
+                if ".mp4" in video:
+                    for i in folders:
+                        folders_2=os.listdir(str(path)+'\\'+i)
+                        if video in folders_2:
+                            folder=i
+                            break
+                folder=folder+'_signs'
+                data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                cur = conn.cursor()
+                path2=video.replace(".mp4","")
+                sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
+                        Test_Completed,Path) VALUES (?,?,?,?,?)'''
+                cur.execute(f'SELECT Roll_no From Std_In WHERE Class_Enroll = {self.class_assign};')
+                passw=cur.fetchall()
+                for i in range(len(passw)):
+                    users=passw[i]
+                    repeat_tests=0
+                    data=(users[0],path2,0,'No',folder)
+                    cur.execute(f"SELECT Test_Completed from Student_Tests WHERE ID=={users[0]} AND Sign_Name=='{path2}' ;")
+                    passw1=cur.fetchall()
+                    for i in range(len(passw1)):
+                        temp=passw1[i]
+                        if temp[0]=="No":
+                            repeat_tests=1
+                    if passw1==None:
+                        cur.execute(sql,data)
+                        conn.commit()
+                        popup=QMessageBox()
+                        popup.setWindowTitle("Assign Test")
+                        popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users[0]}")
+                        popup.setStandardButtons(QMessageBox.Ok)
+                        popup.setIcon(QMessageBox.Information)
+                        popup.exec_()
+                        
+                    else:
+                        if repeat_tests==1:
+                            popup=QMessageBox()
+                            popup.setWindowTitle("Assign Test")
+                            popup.setText(f"Test of Sign={path2} has Already been Assigned to Roll_No {users[0]}")
+                            popup.setStandardButtons(QMessageBox.Ok)
+                            popup.setIcon(QMessageBox.Critical)
+                            popup.exec_()
+                        else:
+                            cur.execute(sql,data)
+                            conn.commit()
+                            popup=QMessageBox()
+                            popup.setWindowTitle("Assign Test")
+                            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users[0]}")
+                            popup.setStandardButtons(QMessageBox.Ok)
+                            popup.setIcon(QMessageBox.Information)
+                            popup.exec_()
+                conn.close()
+                self.test_users=[]
+                self.class_assign=0
+                self.ui.stackedWidget.setCurrentIndex(4)
 
     def select_video(self,index):
         video = self.fileModel.fileName(index)

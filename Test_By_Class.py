@@ -12,9 +12,20 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(20, 20, 81, 21))
         self.label.setObjectName("label")
-        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setGeometry(QtCore.QRect(120, 20, 201, 31))
-        self.lineEdit.setObjectName("lineEdit")
+        # self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        # self.lineEdit.setGeometry(QtCore.QRect(120, 20, 201, 31))
+        # self.lineEdit.setObjectName("lineEdit")
+
+        self.AssignedClassComboBox_4 = QtWidgets.QComboBox(self.centralwidget)
+        self.AssignedClassComboBox_4.setObjectName("AssignedClassComboBox_4")
+        self.AssignedClassComboBox_4.setGeometry(QtCore.QRect(120, 20, 201, 31))
+        self.AssignedClassComboBox_4.addItem("")
+        self.AssignedClassComboBox_4.setItemText(0, "Please Select Class")
+        self.AssignedClassComboBox_4.addItem("")
+        self.AssignedClassComboBox_4.addItem("")
+        self.AssignedClassComboBox_4.addItem("")
+        self.AssignedClassComboBox_4.addItem("")
+        self.AssignedClassComboBox_4.addItem("")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(150, 60, 75, 23))
         self.pushButton.setObjectName("pushButton")
@@ -25,7 +36,6 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        self.lineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
@@ -34,27 +44,25 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Enter Password"))
+        self.label.setText(_translate("MainWindow", "Select Class"))
+        self.AssignedClassComboBox_4.setItemText(1, _translate("MainWindow", "1"))
+        self.AssignedClassComboBox_4.setItemText(2, _translate("MainWindow", "2"))
+        self.AssignedClassComboBox_4.setItemText(3, _translate("MainWindow", "3"))
+        self.AssignedClassComboBox_4.setItemText(4, _translate("MainWindow", "4"))
+        self.AssignedClassComboBox_4.setItemText(5, _translate("MainWindow", "5"))
         self.pushButton.setText(_translate("MainWindow", "Submit"))
-        self.pushButton.clicked.connect(self.passw)
-    def passw(self):
-        if str(self.lineEdit.text())=="":
+        self.pushButton.clicked.connect(self.classw)
+    def classw(self):
+        if self.AssignedClassComboBox_4.currentText()=="Please Select Class":
             popup=QMessageBox()
-            popup.setWindowTitle("Enter Password")
-            popup.setText("Please Enter a Password")
-            popup.setStandardButtons(QMessageBox.Ok)
-            popup.setIcon(QMessageBox.Critical)
-            popup.exec_()
-        elif len(str(self.lineEdit.text()))<2:
-            popup=QMessageBox()
-            popup.setWindowTitle("Enter Password")
-            popup.setText("Password Length Should be More than two characters")
+            popup.setWindowTitle("Select Class")
+            popup.setText("Please Select Class Before Submitting")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Critical)
             popup.exec_()
         else:
             MainWindow.close()  
-            print(str(self.lineEdit.text()))
+            print(str(self.AssignedClassComboBox_4.currentText()))
 
 
 if __name__ == "__main__":

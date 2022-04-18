@@ -33,7 +33,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>12</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -500,50 +500,8 @@
            <item>
             <widget class="QTableWidget" name="tableWidget_5">
              <property name="rowCount">
-              <number>30</number>
+              <number>0</number>
              </property>
-             <row>
-              <property name="text">
-               <string>1</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>2</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>3</string>
-              </property>
-             </row>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
-             <row/>
              <column>
               <property name="text">
                <string>Roll Number</string>
@@ -561,17 +519,22 @@
              </column>
              <column>
               <property name="text">
+               <string>Phone</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Fathers_Phone</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
                <string>Gender</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Class</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Age</string>
+               <string>Class_Enroll</string>
               </property>
              </column>
             </widget>
@@ -597,6 +560,20 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_54">
+                <property name="text">
+                 <string>Assign Test</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_53">
+                <property name="text">
+                 <string>Assign Test By Class</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="pushButton_38">
