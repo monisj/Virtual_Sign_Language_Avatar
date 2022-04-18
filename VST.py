@@ -20,6 +20,7 @@ import trim
 import sys
 import pandas as pd
 from cmath import inf
+import subprocess
 
 from UI import Ui_MainWindow
 
@@ -29,7 +30,7 @@ class window(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-
+        self.user_remove=''
         self.test_roll_no=0
         self.sentences=[]
         self.std_roll_number=0
@@ -124,10 +125,16 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_37.clicked.connect(self.Remove_Teacher)
         self.ui.pushButton_41.clicked.connect(self.Add_Student)
         self.ui.pushButton_42.clicked.connect(self.Update_Student)
+        self.ui.pushButton_43.clicked.connect(self.Add_Teacher_Back)
+        self.ui.pushButton_44.clicked.connect(self.Add_Teacher_Credentials)
+        self.ui.pushButton_45.clicked.connect(self.Update_Teacher_Credentials_Back)
+        self.ui.pushButton_46.clicked.connect(self.Update_Teacher_Credentials_Submit)
+
         self.ui.tableWidget.cellDoubleClicked.connect(self.std_data_progress)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
+
         #############Validators###################
         self.ui.lineEdit_2.setValidator(self.onlyInt)
         self.ui.lineEdit_3.setValidator(self.onlyInt)
@@ -135,6 +142,8 @@ class window(QtWidgets.QMainWindow):
         self.ui.phoneNumberLineEdit.setValidator(self.onlyInt)
         self.ui.rollNumberLineEdit.setValidator(self.onlyInt)
         self.ui.fatherSPhoneNumberLineEdit.setValidator(self.onlyInt)
+        self.ui.IDNumberLineEdit_4.setValidator(self.onlyInt)
+        self.ui.phoneNumberLineEdit_4.setValidator(self.onlyInt)
     
 
     def test_screen(self):
@@ -226,13 +235,289 @@ class window(QtWidgets.QMainWindow):
             self.ui.stackedWidget.setCurrentIndex(8)
 
     def Add_Teacher(self):
-        pass
+        #b=self.retrieveTeacherinfoValue()
+        self.ui.stackedWidget.setCurrentIndex(9)
+        
+    def Add_Teacher_Credentials(self):
+        popup=QMessageBox()
+        if self.ui.TeachersNameLineEdit_4.text()=="" or self.ui.AssignedSubjectsComboBox_4.currentText()=="Please Select Subjects" or self.ui.IDNumberLineEdit_4.text()=="" or self.ui.phoneNumberLineEdit_4.text()=="" or self.ui.AssignedClassComboBox_4.currentText()=="Please Select Class":
+            popup.setWindowTitle("Create Teacher User")
+            popup.setText("Please Enter All Fields")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        else:
+            teach_name=self.ui.TeachersNameLineEdit_4.text()
+            teach_assign_subj=self.ui.AssignedSubjectsComboBox_4.currentText()
+            teach_id=self.ui.IDNumberLineEdit_4.text()
+            teach_ph_no=self.ui.phoneNumberLineEdit_4.text()
+            teach_assign_class=self.ui.AssignedClassComboBox_4.currentText()
+            if int(teach_id) <=10000:
+                popup.setWindowTitle("Create Teacher User")
+                popup.setText("Teacher ID Cannot Be Less than 1000x")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Critical)
+                popup.exec_()
+            else:
+                data=(teach_id,teach_name,teach_assign_subj,teach_ph_no,teach_assign_class)
+                data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                conn = sqlite3.connect(f"{data_path}/Login.db")
+                cur = conn.cursor()
+                cur.execute(f'SELECT Roll_No From LOGIN_S WHERE Roll_no = {teach_id};')
+                passw=cur.fetchall()
+
+                if passw==None:
+                    data=(teach_id,teach_name,teach_assign_subj,teach_ph_no,teach_assign_class)
+                    data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                    conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+                    cur = conn.cursor()
+                    sql=''' INSERT INTO Teacher_info (ID,Name,Assigned_Subjects,Phone_No,
+                            Assigned_Class) VALUES (?,?,?,?,?) ''' 
+                    cur.execute(sql,data)
+                    conn.commit()
+                    conn.close()
+                    passw=subprocess.check_output([sys.executable, "Password.py"])
+                    passw=str(passw.decode("utf-8"))
+                    passw=passw[:-2]
+                    data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                    conn = sqlite3.connect(f"{data_path}/Login.db")
+                    cur = conn.cursor()
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
+                    task2=(teach_id,passw,"T")
+                    cur.execute(sql2,task2)
+                    conn.commit()
+                    conn.close()
+                            
+                    self.ui.tableWidget_2.setRowCount(0)  
+                    self.manage_teachers()
+                    popup.setWindowTitle("Create Teacher User")
+                    popup.setText(f'Teacher with ID ={teach_id} Has Been Added')
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Information)
+                    popup.exec_()
+                elif passw==[]:
+                    data=(teach_id,teach_name,teach_assign_subj,teach_ph_no,teach_assign_class)
+                    data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                    conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+                    cur = conn.cursor()
+                    sql=''' INSERT INTO Teacher_info (ID,Name,Assigned_Subjects,Phone_No,
+                            Assigned_Class) VALUES (?,?,?,?,?) ''' 
+                    cur.execute(sql,data)
+                    conn.commit()
+                    conn.close()
+                    passw=subprocess.check_output([sys.executable, "Password.py"])
+                    passw=str(passw.decode("utf-8"))
+                    passw=passw[:-2]
+                    data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                    conn = sqlite3.connect(f"{data_path}/Login.db")
+                    cur = conn.cursor()
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
+                    task2=(teach_id,passw,"T")
+                    cur.execute(sql2,task2)
+                    conn.commit()
+                    conn.close()
+                            
+                    self.ui.tableWidget_2.setRowCount(0)  
+                    self.manage_teachers()
+                    popup.setWindowTitle("Create Teacher User")
+                    popup.setText(f'Teacher with ID ={teach_id} Has Been Added')
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Information)
+                    popup.exec_()
+                    
+                    self.ui.stackedWidget.setCurrentIndex(2)
+                else:
+                    popup.setWindowTitle("Create Teacher User")
+                    popup.setText(f'The Roll Number Already Exsists')
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Critical)
+                    popup.exec_()
+
+    def Add_Teacher_Back(self):
+        self.ui.stackedWidget.setCurrentIndex(2)
+
+    def Teacher_Update_button(self,i):
+        if i.text() == '&Yes' :
+            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+            conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+            cur = conn.cursor()
+            cur.execute(f'SELECT * FROM Teacher_Info where ID == {self.user_remover};')
+            passw=cur.fetchall()
+            conn.close()
+            temp=passw[0]
+            self.ui.TeachersNameLineEdit_5.setText(temp[1])
+            self.ui.AssignedSubjectsComboBox_5.setItemText(0,temp[2])
+            self.ui.IDNumberLineEdit_5.setText(str(temp[0]))
+            self.ui.phoneNumberLineEdit_5.setText(str(temp[3]))
+            self.ui.AssignedClassComboBox_5.setItemText(0,str(temp[4]))
+            self.ui.stackedWidget.setCurrentIndex(10)
+            self.user_remover=''
+        else:
+            pass
+
+    def Teacher_Update(self):           
+        b=self.retrieveTeacherinfoValue()
+
+        popup=QMessageBox()
+        if self.ui.TeachersNameLineEdit_5.text()=="" or self.ui.AssignedSubjectsComboBox_5.currentText()=="Please Select Subjects" or self.ui.IDNumberLineEdit_5.text()=="" or self.ui.phoneNumberLineEdit_5.text()=="" or self.ui.AssignedClassComboBox_5.currentText()=="Please Select Class":
+            popup.setWindowTitle("Update Teacher User")
+            popup.setText("Please Enter All Fields")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        else:
+            teach_name=self.ui.TeachersNameLineEdit_5.text()
+            teach_assign_subj=self.ui.AssignedSubjectsComboBox_5.currentText()
+            teach_id=self.ui.IDNumberLineEdit_5.text()
+            teach_ph_no=self.ui.phoneNumberLineEdit_5.text()
+            teach_assign_class=self.ui.AssignedClassComboBox_5.currentText()
+            data=(teach_name,teach_assign_subj,teach_ph_no,teach_assign_class,teach_id)
+            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+            conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+            cur = conn.cursor()
+            sql=''' UPDATE Teacher_info
+                    SET Name = ?, Assigned_Subjects= ? ,Phone_No = ?, Assigned_Class=?
+                    WHERE ID = ?''' 
+            cur.execute(sql,data)
+            conn.commit()
+            conn.close()   
+            self.ui.tableWidget_2.setRowCount(0)  
+            self.manage_teachers()
+            popup.setWindowTitle("Update Teacher User")
+            popup.setText(f'Teacher Information Has Been Updated')
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+            self.ui.stackedWidget.setCurrentIndex(2)
+
+
+        
+        
+
+    def Update_Teacher_Credentials_Back(self):
+        self.ui.stackedWidget.setCurrentIndex(2)
+
+    def Teach_Update(self,i):
+        if i.text() == '&Yes' :
+            self.Teacher_Update()
+        else:
+            pass
+
+    def Update_Teacher_Credentials_Submit(self):
+        popup=QMessageBox()
+        popup.setWindowTitle("Update Teacher")
+        popup.setText(f"Are you sure you want to Update Teacher Information")
+        popup.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        popup.setIcon(QMessageBox.Information)
+        popup.buttonClicked.connect(self.Teach_Update)
+        popup.exec_()
 
     def Update_Teacher(self):
-        pass
+        b=self.retrieveTeacherinfoValue()
+        
+        if b==[]:
+            popup=QMessageBox()
+            popup.setWindowTitle("Update Teacher")
+            popup.setText(f"First Select Teachers To Update Their Information")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+        elif len(b)>1:
+            popup=QMessageBox()
+            popup.setWindowTitle("Update Teacher")
+            popup.setText(f"You can only update Information of One Teacher At a Time")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+        else:
+            temp=b[0]
+            self.user_remover=temp[0]
+            popup=QMessageBox()
+            popup.setWindowTitle("Update Teacher")
+            popup.setText(f"Are you sure you want to Update Teacher Information")
+            popup.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            popup.setIcon(QMessageBox.Information)
+            popup.buttonClicked.connect(self.Teacher_Update_button)
+            popup.exec_()
+
+   
+
+    def Teacher_Remove_button(self,i):
+        if i.text() == '&Yes' :
+            b=self.retrieveTeacherinfoValue()
+            if len(b)==1:
+                temp=b[0]
+                self.user_remove=temp[0]
+                data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+                cur = conn.cursor()
+                cur.execute(f'DELETE FROM Teacher_Info WHERE ID = {self.user_remove};')
+                conn.commit()
+                conn.close()
+
+                conn = sqlite3.connect(f"{data_path}/Login.db")
+                cur = conn.cursor()
+                cur.execute(f'DELETE FROM Login_S WHERE Roll_No = {self.user_remove};')
+                conn.commit()
+                conn.close()
+
+                self.ui.tableWidget_2.setRowCount(0)  
+                self.manage_teachers()
+                popup=QMessageBox()
+                popup.setWindowTitle("Remove Teacher")
+                popup.setText(f"The Teacher with ID = {self.user_remove} Has Been Removed")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Information)
+                popup.exec_()
+                
+                self.user_remove=''
+            else:
+                b=self.retrieveTeacherinfoValue()
+                
+                for i in range(len(b)):
+                    temp=b[i]
+                    self.user_remove=temp[0]
+                    data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                    conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
+                    cur = conn.cursor()
+                    cur.execute(f'DELETE FROM Teacher_Info WHERE ID = {self.user_remove};')
+                    conn.commit()
+                    conn.close()
+
+                    conn = sqlite3.connect(f"{data_path}/Login.db")
+                    cur = conn.cursor()
+                    cur.execute(f'DELETE FROM Login_S WHERE Roll_No = {self.user_remove};')
+                    conn.commit()
+                    conn.close()
+                    self.user_remove=''
+                self.ui.tableWidget_2.setRowCount(0)  
+                self.manage_teachers()
+                popup=QMessageBox()
+                popup.setWindowTitle("Remove Teacher")
+                popup.setText(f"The Selected Teachers Have Been Removed")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Information)
+                popup.exec_()
 
     def Remove_Teacher(self):
-        pass
+        b=self.retrieveTeacherinfoValue()
+        if b==[]:
+            popup=QMessageBox()
+            popup.setWindowTitle("Remove Teacher")
+            popup.setText(f"First Select Teachers To Remove ")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Information)
+            popup.exec_()
+        else:
+            popup=QMessageBox()
+            popup.setWindowTitle("Remove Teacher")
+            popup.setText(f"Are you Sure to Remove The Teacher ")
+            popup.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            popup.setIcon(QMessageBox.Information)
+            popup.buttonClicked.connect(self.Teacher_Remove_button)
+            popup.exec_()
+
+    
 
     def Add_Student(self):
         pass
@@ -332,11 +617,25 @@ class window(QtWidgets.QMainWindow):
             else:
                 self.ui.tableWidget_2.insertRow(row_number)
             for column_number, data in enumerate(details):
-                self.ui.tableWidget_2.setItem(
-                row_number, column_number, QTableWidgetItem(str(data)))
+                if column_number==0:
+                    chkBoxItem =QTableWidgetItem(str(data))
+                    chkBoxItem.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                    chkBoxItem.setCheckState(QtCore.Qt.Unchecked)       
+                    self.ui.tableWidget_2.setItem(row_number,column_number,chkBoxItem)
+                else:
+                    self.ui.tableWidget_2.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
 
         self.ui.stackedWidget.setCurrentIndex(2)
 
+    def retrieveTeacherinfoValue(self):
+        list1=[]
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            if self.ui.tableWidget_2.item(row,0).checkState()==Qt.CheckState.Checked:
+                list1.append([self.ui.tableWidget_2.item(row,col).text() for col in range(self.ui.tableWidget_2.columnCount())])
+        return list1
+
+        
     def teachers_search(self):
         self.ui.tableWidget_2.setRowCount(0)
         data=self.ui.lineEdit_2.text()
@@ -344,7 +643,7 @@ class window(QtWidgets.QMainWindow):
         conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
         cur = conn.cursor()
         if data:
-            cur.execute(f'SELECT * FROM Teacher_Info WHERE ID LIKE {data};')
+            cur.execute("SELECT * FROM Teacher_Info WHERE ID LIKE ?",(data+'%',))
             passw=cur.fetchall()
             conn.close()
             for details in passw:
@@ -354,8 +653,14 @@ class window(QtWidgets.QMainWindow):
                 else:
                     self.ui.tableWidget_2.insertRow(row_number)
                 for column_number, data in enumerate(details):
-                    self.ui.tableWidget_2.setItem(
-                    row_number, column_number, QTableWidgetItem(str(data)))
+                    if column_number==0:
+                        chkBoxItem =QTableWidgetItem(str(data))
+                        chkBoxItem.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                        chkBoxItem.setCheckState(QtCore.Qt.Unchecked)       
+                        self.ui.tableWidget_2.setItem(row_number,column_number,chkBoxItem)
+                    else:
+                        self.ui.tableWidget_2.setItem(
+                        row_number, column_number, QTableWidgetItem(str(data)))
         else:
             conn.close()
             self.manage_teachers()
@@ -516,8 +821,8 @@ class window(QtWidgets.QMainWindow):
             popup.setIcon(QMessageBox.Critical)
             popup.exec_()
         else:
-            cur.execute(f'SELECT Roll_no ,Password FROM Login_S where Roll_no == {a} AND Password == "{b}";')
-            passw=cur.fetchone()
+            cur.execute(f'SELECT Roll_no ,Password, Type FROM Login_S where Roll_no == {a} AND Password == "{b}";')
+            passw=cur.fetchall()
             conn.close()
             if passw==None:
                 popup.setWindowTitle("Login Credientials")
@@ -525,31 +830,61 @@ class window(QtWidgets.QMainWindow):
                 popup.setStandardButtons(QMessageBox.Ok)
                 popup.setIcon(QMessageBox.Critical)
                 popup.exec_()
+            elif passw==[]:
+                popup.setWindowTitle("Login Credientials")
+                popup.setText(f"Username with ID ={a} Does not exsist")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Critical)
+                popup.exec_()
             else:
-                #print("Credentails Accepted")
-                #print(pathlib.Path.cwd().joinpath('videos\Alphabets'))
-                if int(a)==900:
-                    self.user='Teacher'
-                    self.ui.tableWidget_3.show()
-                    self.ui.pushButton_18.show()
-                    self.ui.pushButton_17.show()
-                    self.ui.pushButton_10.hide()
-                    self.ui.pushButton_13.hide()
-                    self.ui.pushButton_15.hide()
-                    self.ui.label_20.setText('Teacher')
-                    self.ui.stackedWidget.setCurrentIndex(1)
-                else:
-                    self.user='Student'
-                    self.std_roll_number=a
-                    self.ui.tableWidget_3.hide()
-                    self.ui.pushButton_10.hide()
-                    self.ui.pushButton_18.hide()
-                    self.ui.pushButton_13.show()
-                    self.ui.pushButton_15.show()
-                    self.ui.pushButton_17.hide()
-                    self.ui.label_20.setText('Student')
-                    self.ui.stackedWidget.setCurrentIndex(7)
-                    self.ui.stackedWidget_2.setCurrentIndex(0)
+                for i in passw:
+                    if int(a)==900:
+                        self.user='Teacher'
+                        self.ui.tableWidget_3.show()
+                        self.ui.pushButton_18.show()
+                        self.ui.pushButton_17.show()
+                        self.ui.pushButton_10.hide()
+                        self.ui.pushButton_13.hide()
+                        self.ui.pushButton_15.hide()
+
+                        self.ui.pushButton_42.show()
+                        self.ui.pushButton_41.show()
+                        self.ui.pushButton_6.show()
+                        self.ui.pushButton_39.show()
+                        self.ui.pushButton_36.show()
+                        self.ui.pushButton_37.show()
+
+                        self.ui.label_20.setText('Teacher')
+                        self.ui.stackedWidget.setCurrentIndex(1)
+                    elif i[2]=="S":
+                        self.user='Student'
+                        self.std_roll_number=a
+                        self.ui.tableWidget_3.hide()
+                        self.ui.pushButton_10.hide()
+                        self.ui.pushButton_18.hide()
+                        self.ui.pushButton_13.show()
+                        self.ui.pushButton_15.show()
+                        self.ui.pushButton_17.hide()
+                        self.ui.label_20.setText('Student')
+                        self.ui.stackedWidget.setCurrentIndex(7)
+                        self.ui.stackedWidget_2.setCurrentIndex(0)
+                    else:
+                        self.user='Teacher'
+                        self.ui.tableWidget_3.show()
+                        self.ui.pushButton_18.show()
+                        self.ui.pushButton_17.show()
+                        self.ui.pushButton_10.hide()
+                        self.ui.pushButton_13.hide()
+                        self.ui.pushButton_15.hide()
+                        self.ui.pushButton_42.hide()
+                        self.ui.pushButton_41.hide()
+                        self.ui.pushButton_6.hide()
+                        self.ui.pushButton_39.hide()
+                        self.ui.pushButton_36.hide()
+                        self.ui.pushButton_37.hide()
+
+                        self.ui.label_20.setText('Teacher')
+                        self.ui.stackedWidget.setCurrentIndex(1)
     def logout(self):
         self.std_roll_number=0
         self.ui.stackedWidget.setCurrentIndex(0)
@@ -561,6 +896,7 @@ class window(QtWidgets.QMainWindow):
     def Create_New_User(self):
         popup=QMessageBox()
         if self.ui.studentNameLineEdit.text()=="" or self.ui.fatherSNameLineEdit.text()=="" or self.ui.rollNumberLineEdit.text()=="" or self.ui.phoneNumberLineEdit.text()=="" or self.ui.fatherSPhoneNumberLineEdit.text()=="" or self.ui.gradeComboBox.currentText()=="":
+            popup.setWindowTitle("Create User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Critical)
@@ -613,7 +949,7 @@ class window(QtWidgets.QMainWindow):
                     passw=passw[:-2]
                     conn1 = sqlite3.connect(f"{data_path}/Login.db")
                     cur2 = conn1.cursor()
-                    sql2=''' INSERT INTO LOGIN_s (Roll_No,Password,Type) VALUES (?,?,?) '''
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
                     task2=(roll_no,passw,"S")
                     cur2.execute(sql2,task2)
                     conn1.commit()
@@ -1171,7 +1507,8 @@ if __name__ == "__main__":
     
     all_data_sentences=pd.DataFrame(columns=["name", "sign_model", "distance"])
     for i in data_len:
-        if i=="Science_dataset" or i=="Alphabets_dataset" or i=="Computer_dataset":
+        #if i=="Science_dataset" or i=="Alphabets_dataset" or i=="Computer_dataset":
+        if i=="Alphabets_dataset":
             temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")
