@@ -253,6 +253,8 @@ class window(QtWidgets.QMainWindow):
         passw=passw[:-2]
         if passw==None:
             pass
+        elif passw=="":
+            pass
         else:
             self.class_assign=passw
             path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
