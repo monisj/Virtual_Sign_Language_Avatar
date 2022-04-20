@@ -65,7 +65,7 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame):
     # print(len(recorded_sign.rh_embedding))
     rec_left_hand = np.array(recorded_sign.lh_embedding,dtype=np.double)
     rec_right_hand = np.array(recorded_sign.rh_embedding,dtype=np.double)
-
+    b=0
     for idx, row in reference_signs.iterrows():
         # Initialize the row variables
         ref_sign_name, ref_sign_model, _ = row
@@ -81,6 +81,13 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame):
                 row["distance"] += dtw_ndim.distance_fast(rec_left_hand, ref_left_hand)
             elif recorded_sign.has_right_hand:
                 row["distance"] += dtw_ndim.distance_fast(rec_right_hand, ref_right_hand)
+                for i in recorded_sign.rh_embedding_2:
+                    for j in i:
+                        sequence=j[0]
+                        vector1=(j[1]+','+j[2])
+                        vector2=(j[3]+','+j[4])
+                        angle=j[5]
+                        
             elif recorded_sign.has_left_hand and recorded_sign.has_right_hand:
                 row["distance"] += dtw_ndim.distance_fast(rec_left_hand, ref_left_hand)
                 row["distance"] += dtw_ndim.distance_fast(rec_right_hand, ref_right_hand)

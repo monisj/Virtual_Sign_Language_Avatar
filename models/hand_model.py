@@ -1,8 +1,10 @@
 from typing import List
+from django.db import connection
 
 import numpy as np
 import mediapipe as mp
-
+import csv
+from pathlib import Path
 
 class HandModel(object):
     """
@@ -13,14 +15,25 @@ class HandModel(object):
         feature_vector: List of length 21 * 21 = 441 containing the angles between all connections
     """
 
-    def __init__(self, landmarks: List[float]):
+    def __init__(self, landmarks: List[float],frame_index,which):
 
         # Define the connections
         self.connections = mp.solutions.holistic.HAND_CONNECTIONS
+        
+        self.frame_index=frame_index
+        self.decide=which
+
+        # Points Name
+        self.points_name= ["Wrist","Thumb_CMC","Thumb_MCP","Thumb_IP","Thumb_Tip",
+        "Index_Finger_MPC","Index_Finger_PIP","Index_Finger_DIP","Index_Finger_TIP",
+        "Middle_Finger_MCP","Middle_Finger_PIP","Middle_Finger_DIP","Middle_Finger_TIP",
+        "Ring_Finger_MCP","Ring_Finger_PIP","Ring_Finger_DIP","Ring_Finger_TIP","Pinky_MCP",
+        "Pinky_PIP","Pinky_DIP","Pinky_TIP"]
 
         # Create feature vector (list of the angles between all the connections)
         landmarks = np.array(landmarks).reshape((21, 3))
-        self.feature_vector = self._get_feature_vector(landmarks)
+        
+        self.feature_vector,self.feature_vector_2 = self._get_feature_vector(landmarks)
 
     def _get_feature_vector(self, landmarks: np.ndarray) -> List[float]:
         """
@@ -31,18 +44,30 @@ class HandModel(object):
             all the angles between the connections
         """
         connections = self._get_connections_from_landmarks(landmarks)
-
+        
+        # Changes for store the data in csv file
+        if self.decide ==0:
+            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_left.csv","a")
+        elif self.decide ==1:
+            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_right.csv","a")
+        
+        writer2=csv.writer(csv_file_2)
+        count=0
+        
+        # Write the data of angles of vectors either in "angle_between_vectors_left.csv" or "angle_between_vectors_right.csv"
         angles_list = []
-        for connection_from in connections:
-            for connection_to in connections:
+        list_2=[]
+        for connection_from,vector1 in zip(connections,self.connections):
+            for connection_to,vector2 in zip(connections,self.connections):
                 angle = self._get_angle_between_vectors(connection_from, connection_to)
                 # If the angle is not NaN we store it else we store 0
                 if angle == angle:
+                    #writer2.writerow([self.frame_index,(self.points_name[vector1[0]],self.points_name[vector1[1]]),(self.points_name[vector2[0]],self.points_name[vector2[1]]),angle])
                     angles_list.append(angle)
+                    list_2.append([self.frame_index,self.points_name[vector1[0]],self.points_name[vector1[1]],self.points_name[vector2[0]],self.points_name[vector2[1]],angle])
                 else:
                     angles_list.append(0)
-        
-        return angles_list
+        return angles_list,list_2
 
     def _get_connections_from_landmarks(
         self, landmarks: np.ndarray
@@ -72,5 +97,4 @@ class HandModel(object):
             return 0
         dot_product = np.dot(u, v)
         norm = np.linalg.norm(u) * np.linalg.norm(v)
-        #print("Angles between u={} and v={} vectors are ={}".format(u,v,np.arccos(dot_product / norm)))
         return np.arccos(dot_product / norm)
