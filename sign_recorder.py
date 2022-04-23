@@ -8,12 +8,15 @@ from utils.landmark_utils import extract_landmarks
 
 
 class SignRecorder(object):
-    def __init__(self, reference_signs: pd.DataFrame, seq_len=False):
+    def __init__(self, reference_signs: pd.DataFrame, acc_sign,seq_len=False):
         # Variables for recording
         self.is_recording = False
         self.seq_len = seq_len
         self.temp=False
         self.num_temp=0
+        self.acc_sign=acc_sign
+        self.out_left=[]
+        self.out_right=[]
         # List of results stored each frame
         self.recorded_results = []
 
@@ -59,10 +62,10 @@ class SignRecorder(object):
                     print(self.reference_signs) #Uncomment to reveal distances
 
         if np.sum(self.reference_signs["distance"].values) == 0:
-            return "", self.is_recording,[" "],[" "]
+            return "", self.is_recording,[" "],[" "],self.out_left,self.out_right
         sign=self.reference_signs.iloc[::]["name"].values
         dist=self.reference_signs.iloc[::]["distance"].values
-        return self._get_sign_predicted(), self.is_recording,sign,dist
+        return self._get_sign_predicted(), self.is_recording,sign,dist,self.out_left,self.out_right
 
     def compute_distances(self):
         """
@@ -80,7 +83,7 @@ class SignRecorder(object):
 
         # Compute sign similarity with DTW (ascending order)
         #self.reference_signs = dtw_distances(recorded_sign, self.reference_signs) #Old Algorithm
-        self.reference_signs = fdtw_distances(recorded_sign, self.reference_signs)
+        self.reference_signs,self.out_left,self.out_right = fdtw_distances(recorded_sign, self.reference_signs,self.acc_sign)
 
         # Reset variables
         self.recorded_results = []

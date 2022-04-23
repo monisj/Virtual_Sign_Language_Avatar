@@ -43,6 +43,7 @@ class window(QtWidgets.QMainWindow):
         self.onlyInt = QtGui.QIntValidator()
         self.sentences_pass=0
         self.sentences_record=0
+        self.error=0
     ################## New widgets ######################
         self.dirModel = QFileSystemModel()
         self.dirModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs)
@@ -1320,8 +1321,6 @@ class window(QtWidgets.QMainWindow):
                     Fathers_Phone,Gender,Class_Enroll) VALUES (?,?,?,?,?,?,?) '''
                 cur.execute(f'SELECT Roll_no  FROM STD_IN where Roll_no == {roll_no} ;')
                 passw=cur.fetchone()
-                
-                print(passw)
                 import subprocess
                 if passw==None:
                     cur.execute(sql,data)
@@ -1344,10 +1343,6 @@ class window(QtWidgets.QMainWindow):
                     popup.exec_()
                     self.ui.stackedWidget_2.setCurrentIndex(0)
                     self.ui.stackedWidget.setCurrentIndex(0)
-                    #print("Data has been Entered")
-                    
-                    # MainWindow.close()
-                    # call(["python","Login.py"])
                 else:
                     popup.setWindowTitle("Create User")
                     popup.setText("Roll Number Already Exists!")
@@ -1668,11 +1663,7 @@ class window(QtWidgets.QMainWindow):
         elif folder == 'Science':
             signs=Science_signs
         if fileName:
-            #print(fileName)
-            #print(self.path_video)
-            #url = QUrl.fromLocalFile(fileName)
             file=QFileInfo(fileName).fileName()
-            print(file,fileName)
             video_path=pathlib.Path(folder_path).joinpath(file)
             video_data_path=pathlib.Path(datapath).joinpath(file[:-4])
             
@@ -1694,7 +1685,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.label_4.setPixmap(QPixmap.fromImage(Image))
         self.ui.label_7.setPixmap(QPixmap.fromImage(Image))
     
-    def accuracyUpdateSlot(self,predicted,sign,dist,acc):
+    def accuracyUpdateSlot(self,predicted,sign,dist,acc,out_left,out_right):
         acc=float(acc)
         if self.test_attempt<3:
             if self.test_accuracy==0:
@@ -1824,10 +1815,38 @@ class window(QtWidgets.QMainWindow):
                     item = self.ui.tableWidget_3.item(1, 1)
                     item.setText("0")
                     self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
+        if acc>90:
+            self.ui.textEdit_2.clear()
+        if out_right==[] and out_left==[]:
+            self.ui.textEdit_2.clear()
+        else:
+            if self.error==1:
+                if out_right!=[] and out_left==[]:
+                    for i in out_right:
+                        self.ui.textEdit_2.append(i)
+                    self.error=0
+                elif out_left!=[]  and out_right==[]:
+                    for i in out_left:
+                        self.ui.textEdit_2.append(i)
+                    self.error=0
+                else:
+                    self.ui.textEdit_2.append("For Left Hand")
+                    for i in out_left:
+                        self.ui.textEdit_2.append(i)
+                    self.ui.textEdit_2.append("For Right Hand")
+                    for i in out_right:
+                        self.ui.textEdit_2.append(i)
+                    self.error=0
+            else:
+                pass
+
+                
     def accuracy_reset(self):
         self.ui.label_16.setText('Recording Signs')
         self.ui.label_17.setText('')
+        self.ui.textEdit_2.clear()
         self.sentences_pass=1
+        self.error=1
         
     
     def play(self):
@@ -1859,7 +1878,6 @@ class window(QtWidgets.QMainWindow):
             pass
         else:
             self.sentences.remove(self.sentences[-1])
-            print(self.sentences)
             self.ui.textEdit.clear()
             for i in self.sentences:
                 self.ui.textEdit.insertPlainText(str(i))
@@ -1879,7 +1897,7 @@ class cameraThread(QThread):
     matrix_sign_accuracy_predicted=''
     accuracy_reset=pyqtSignal(str)
     ImageUpdate = pyqtSignal(QImage)
-    accuracyUpdate=pyqtSignal(str,list,list,str)
+    accuracyUpdate=pyqtSignal(str,list,list,str,list,list)
     
     
     def on_release(self,record):
@@ -1896,7 +1914,7 @@ class cameraThread(QThread):
         
 
     def run(self):
-        self.sign_recorder = SignRecorder(self.reference_signs)
+        self.sign_recorder = SignRecorder(self.reference_signs,self.acc_sign)
         self.ThreadActive = True
         webcam_manager = WebcamManager()
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -1914,7 +1932,7 @@ class cameraThread(QThread):
                 image, results = mediapipe_detection(frame, holistic)
 
                 # Process results
-                sign_detected, is_recording,sign,dist = self.sign_recorder.process_results(results)
+                sign_detected, is_recording,sign,dist,out_left,out_right = self.sign_recorder.process_results(results)
 
                 # Update the frame (draw landmarks & display result)
                 FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on,self.attempt_no)
@@ -1922,7 +1940,7 @@ class cameraThread(QThread):
                 Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
                 #self.ImageUpdate.emit(ConvertToQtFormat)
                 self.ImageUpdate.emit(Pic)
-                self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc))
+                self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc),list(out_left),list(out_right))
                 
                 if results.left_hand_landmarks:
                    self.on_release(True)
@@ -1959,7 +1977,7 @@ if __name__ == "__main__":
     all_data_sentences=pd.DataFrame(columns=["name", "sign_model", "distance"])
     for i in data_len:
         #if i=="Science_dataset" or i=="Alphabets_dataset" or i=="Computer_dataset":
-        if i=="Alphabets_dataset":
+        if i=="Alphabets_dataset" or i=="Computer_dataset":
             temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")

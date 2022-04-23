@@ -45,14 +45,6 @@ class HandModel(object):
         """
         connections = self._get_connections_from_landmarks(landmarks)
         
-        # Changes for store the data in csv file
-        if self.decide ==0:
-            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_left.csv","a")
-        elif self.decide ==1:
-            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_right.csv","a")
-        
-        writer2=csv.writer(csv_file_2)
-        count=0
         
         # Write the data of angles of vectors either in "angle_between_vectors_left.csv" or "angle_between_vectors_right.csv"
         angles_list = []
@@ -62,7 +54,6 @@ class HandModel(object):
                 angle = self._get_angle_between_vectors(connection_from, connection_to)
                 # If the angle is not NaN we store it else we store 0
                 if angle == angle:
-                    #writer2.writerow([self.frame_index,(self.points_name[vector1[0]],self.points_name[vector1[1]]),(self.points_name[vector2[0]],self.points_name[vector2[1]]),angle])
                     angles_list.append(angle)
                     list_2.append([self.frame_index,self.points_name[vector1[0]],self.points_name[vector1[1]],self.points_name[vector2[0]],self.points_name[vector2[1]],angle])
                 else:

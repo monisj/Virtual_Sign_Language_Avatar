@@ -35,24 +35,6 @@ class SignModel(object):
             Array of shape (n_frame, nb_connections * nb_connections) containing
             the feature_vectors of the hand for each frame
         """
-        # Changes for store Database
-        if which ==0:
-            
-            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_left.csv","w").close()
-            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_left.csv","a")
-           
-            writer2=csv.writer(csv_file_2)
-            writer2.writerow(["Frame","Vector1","Vector2","Angle between Vector1 and Vector2"])
-            csv_file_2.close()
-
-        if which ==1:
-            
-            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_right.csv","w").close()
-            csv_file_2=open(f"{Path.cwd()}/Databases/angle_between_vectors_right.csv","a")
-           
-            writer2=csv.writer(csv_file_2)
-            writer2.writerow(["Frame","Vector1","Vector2","Angle between Vector1 and Vector2"])
-            csv_file_2.close()
         embedding = []
         emb=[]
         for frame_idx in range(len(hand_list)):
