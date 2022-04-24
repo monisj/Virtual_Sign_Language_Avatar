@@ -137,6 +137,9 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_52.clicked.connect(self.Update_Student_Credentials_Submit)
         self.ui.pushButton_53.clicked.connect(self.Assign_Test_By_Class)
         self.ui.pushButton_54.clicked.connect(self.std_data)
+        self.ui.pushButton_30.clicked.connect(self.back_to_camera)
+        self.ui.pushButton_32.clicked.connect(self.pause_play)
+        self.ui.pushButton_49.clicked.connect(self.view_previous_recording)
         
 
         self.ui.tableWidget.cellDoubleClicked.connect(self.std_data_progress)
@@ -897,6 +900,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.stackedWidget_2.setCurrentIndex(4)
         self.sentences=[]
         self.camerathread = cameraThread()
+        self.camerathread.previous_record=False
         self.camerathread.attempt_no=0
         self.test_accuracy=0
         self.test_attempt=0
@@ -1379,6 +1383,7 @@ class window(QtWidgets.QMainWindow):
     def sentence_screen(self):
         self.sentences=[]
         self.camerathread = cameraThread()
+        self.camerathread.previous_record=False
         self.camerathread.reference_signs=all_data_sentences
         self.camerathread.acc_sign='A'
         self.video='A'
@@ -1563,6 +1568,7 @@ class window(QtWidgets.QMainWindow):
                 pass
             
         self.camerathread.start()
+        self.camerathread.previous_record=False
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
@@ -1570,6 +1576,7 @@ class window(QtWidgets.QMainWindow):
         self.camerathread.sentences_pass_on=False
     
     def back_video(self):
+        self.ui.textEdit_2.clear()
         self.playlist.clear()
         self.camerathread.stop()
         self.ui.label_16.setText('Closest Sign:')
@@ -1815,30 +1822,33 @@ class window(QtWidgets.QMainWindow):
                     item = self.ui.tableWidget_3.item(1, 1)
                     item.setText("0")
                     self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
-        if acc>90:
-            self.ui.textEdit_2.clear()
-        if out_right==[] and out_left==[]:
-            self.ui.textEdit_2.clear()
+        if self.sentences_pass==1:
+            pass
         else:
-            if self.error==1:
-                if out_right!=[] and out_left==[]:
-                    for i in out_right:
-                        self.ui.textEdit_2.append(i)
-                    self.error=0
-                elif out_left!=[]  and out_right==[]:
-                    for i in out_left:
-                        self.ui.textEdit_2.append(i)
-                    self.error=0
-                else:
-                    self.ui.textEdit_2.append("For Left Hand")
-                    for i in out_left:
-                        self.ui.textEdit_2.append(i)
-                    self.ui.textEdit_2.append("For Right Hand")
-                    for i in out_right:
-                        self.ui.textEdit_2.append(i)
-                    self.error=0
+            if acc>90:
+                self.ui.textEdit_2.clear()
+            if out_right==[] and out_left==[]:
+                self.ui.textEdit_2.clear()
             else:
-                pass
+                if self.error==1:
+                    if out_right!=[] and out_left==[]:
+                        for i in out_right:
+                            self.ui.textEdit_2.append(i)
+                        self.error=0
+                    elif out_left!=[]  and out_right==[]:
+                        for i in out_left:
+                            self.ui.textEdit_2.append(i)
+                        self.error=0
+                    else:
+                        self.ui.textEdit_2.append("For Left Hand")
+                        for i in out_left:
+                            self.ui.textEdit_2.append(i)
+                        self.ui.textEdit_2.append("For Right Hand")
+                        for i in out_right:
+                            self.ui.textEdit_2.append(i)
+                        self.error=0
+                else:
+                    pass
 
                 
     def accuracy_reset(self):
@@ -1886,6 +1896,14 @@ class window(QtWidgets.QMainWindow):
         self.sentences.append(" ")
         self.ui.textEdit.insertPlainText(str(" "))
 
+    def back_to_camera(self):
+        self.camerathread.previous_record=False
+    def pause_play(self):
+        pass
+    def view_previous_recording(self):
+        print(True)
+        self.camerathread.previous_record=True
+
 class cameraThread(QThread):
     reference_signs=''
     acc_sign=''
@@ -1895,6 +1913,7 @@ class cameraThread(QThread):
     sentence_key=False
     matrix_sign_predicted=''
     matrix_sign_accuracy_predicted=''
+    previous_record=False
     accuracy_reset=pyqtSignal(str)
     ImageUpdate = pyqtSignal(QImage)
     accuracyUpdate=pyqtSignal(str,list,list,str,list,list)
@@ -1914,43 +1933,72 @@ class cameraThread(QThread):
         
 
     def run(self):
+        from cv2 import VideoWriter
+        from cv2 import VideoWriter_fourcc
+        
         self.sign_recorder = SignRecorder(self.reference_signs,self.acc_sign)
         self.ThreadActive = True
         webcam_manager = WebcamManager()
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        if self.previous_record==False:
+            cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
+            video = VideoWriter('webcam.avi', VideoWriter_fourcc(*'MP42'), 20.0, (640, 480))
 
-        with mediapipe.solutions.holistic.Holistic(
-            min_detection_confidence=0.3, min_tracking_confidence=0.3
-        ) as holistic:
-            while self.ThreadActive:
-                
-                # Read feed
-                ret, frame = cap.read()
+            with mediapipe.solutions.holistic.Holistic(
+                min_detection_confidence=0.3, min_tracking_confidence=0.3
+            ) as holistic:
+                while self.ThreadActive:
+                    
+                    # Read feed
+                    ret, frame = cap.read()
 
-                # Make detections
-                image, results = mediapipe_detection(frame, holistic)
+                    # Make detections
+                    image, results = mediapipe_detection(frame, holistic)
 
-                # Process results
-                sign_detected, is_recording,sign,dist,out_left,out_right = self.sign_recorder.process_results(results)
+                    # Process results
+                    sign_detected, is_recording,sign,dist,out_left,out_right = self.sign_recorder.process_results(results)
 
-                # Update the frame (draw landmarks & display result)
-                FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on,self.attempt_no)
-                ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
-                Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
-                #self.ImageUpdate.emit(ConvertToQtFormat)
-                self.ImageUpdate.emit(Pic)
-                self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc),list(out_left),list(out_right))
-                
-                if results.left_hand_landmarks:
-                   self.on_release(True)
-                elif results.right_hand_landmarks:
-                    self.on_release(True)  
-                else:
-                    self.on_release(False)
+                    # Update the frame (draw landmarks & display result)
+                    FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on,self.attempt_no)
+                    ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
+                    Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
+                    self.ImageUpdate.emit(Pic)
+                    self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc),list(out_left),list(out_right))
+                    
+                    if results.left_hand_landmarks:
+                        self.on_release(True)
+                        video.write(frame)
+                    elif results.right_hand_landmarks:
+                        self.on_release(True)  
+                        video.write(frame)
+                    else:
+                        self.on_release(False)
+        else:
+            print(True)
+            while True:
+                #This is to check whether to break the first loop
+                isclosed=0
+                cap = cv2.VideoCapture('webcam.avi')
+                while (True):
+
+                    ret, frame = cap.read()
+                    # It should only show the frame when the ret is true
+                    if ret == True:
+
+                        cv2.imshow('frame',frame)
+                        if cv2.waitKey(1) == 27:
+                            # When esc is pressed isclosed is 1
+                            isclosed=1
+                            break
+                    else:
+                        break
+                # To break the loop if it is closed manually
+                if isclosed:
+                    break
     def stop(self):
         self.ThreadActive = False
         self.quit()
+
 
 
     
@@ -1977,7 +2025,7 @@ if __name__ == "__main__":
     all_data_sentences=pd.DataFrame(columns=["name", "sign_model", "distance"])
     for i in data_len:
         #if i=="Science_dataset" or i=="Alphabets_dataset" or i=="Computer_dataset":
-        if i=="Alphabets_dataset" or i=="Computer_dataset":
+        if i=="Alphabets_dataset" :
             temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")

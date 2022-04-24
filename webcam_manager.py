@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import mediapipe as mp
 
-
 WHITE_COLOR = (245, 242, 226)
 RED_COLOR = (25, 35, 240)
 
@@ -33,6 +32,7 @@ class WebcamManager(object):
         self.sentences_pass_on=sentences_pass_on
         self.attempt=attempt
         # Draw landmarks
+
         self.draw_landmarks(frame, results)
 
         WIDTH = int(HEIGHT * len(frame[0]) / len(frame))
