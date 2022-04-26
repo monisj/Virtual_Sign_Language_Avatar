@@ -51,11 +51,11 @@ class window(QtWidgets.QMainWindow):
         self.fileModel.setFilter(QDir.NoDotAndDotDot |  QDir.Files)
         self.model = QtWidgets.QFileSystemModel()
         self.model.setRootPath((QtCore.QDir.rootPath()))
-        self.ui.treeview.setModel(self.model)
-        self.ui.treeview.hideColumn(1)
-        self.ui.treeview.hideColumn(2)
-        self.ui.treeview.hideColumn(3)
-        self.ui.treeview.doubleClicked.connect(self.select_video)
+        # self.ui.treeview.setModel(self.model)
+        # self.ui.treeview.hideColumn(1)
+        # self.ui.treeview.hideColumn(2)
+        # self.ui.treeview.hideColumn(3)
+        # self.ui.treeview.doubleClicked.connect(self.select_video)
 
         self.ui.treeview_3.setModel(self.model)
         self.ui.treeview_3.hideColumn(1)
@@ -77,9 +77,9 @@ class window(QtWidgets.QMainWindow):
     ################## Connections ######################
         self.ui.pushButton.clicked.connect(self.login)
         self.ui.pushButton_14.clicked.connect(self.New_User)
-        self.ui.pushButton_9.clicked.connect(self.aphabets_folder)
-        self.ui.pushButton_11.clicked.connect(self.science_folder)
-        self.ui.pushButton_12.clicked.connect(self.computer_folder)
+        self.ui.pushButton_9.clicked.connect(lambda x : self.video_browse("Alphabets"))
+        self.ui.pushButton_11.clicked.connect(lambda x : self.video_browse("Science"))
+        self.ui.pushButton_12.clicked.connect(lambda x : self.video_browse("Computer"))
         self.ui.pushButton_16.clicked.connect(self.back_videos)
         self.ui.pushButton_21.clicked.connect(self.back_video)
         self.ui.pushButton_19.clicked.connect(self.play)
@@ -137,9 +137,9 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_52.clicked.connect(self.Update_Student_Credentials_Submit)
         self.ui.pushButton_53.clicked.connect(self.Assign_Test_By_Class)
         self.ui.pushButton_54.clicked.connect(self.std_data)
-        self.ui.pushButton_30.clicked.connect(self.back_to_camera)
-        self.ui.pushButton_32.clicked.connect(self.pause_play)
-        self.ui.pushButton_49.clicked.connect(self.view_previous_recording)
+        self.ui.pushButton_301.clicked.connect(self.back_to_camera)
+        self.ui.pushButton_321.clicked.connect(self.pause_play)
+        self.ui.pushButton_491.clicked.connect(self.view_previous_recording)
         
 
         self.ui.tableWidget.cellDoubleClicked.connect(self.std_data_progress)
@@ -913,6 +913,8 @@ class window(QtWidgets.QMainWindow):
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
         self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+    
+    
 
         
     def test_back_button(self,i):
@@ -1396,6 +1398,97 @@ class window(QtWidgets.QMainWindow):
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         self.ui.stackedWidget_2.setCurrentIndex(3)
     
+    def click(self,eve,subject,video,i):
+        print(eve,subject,video,i)
+        self.select_video_new(subject,video)
+
+
+    def video_browse(self,subject):
+        for i in reversed(range(self.ui.gridLayout_18.count())): 
+            self.ui.gridLayout_18.itemAt(i).widget().deleteLater()
+        r=0
+        c=0
+        path=pathlib.Path(__file__).parent.absolute().joinpath('videos',subject)
+        videos=[]
+        for i in path.glob('**/*'):
+            if ".mp4" in i.name:
+                videos.append(i.stem)
+        buttons= {}
+        for i in range(len(videos)):
+            frame = QtWidgets.QFrame(self.ui.scrollAreaWidgetContents_3)
+            frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+            frame.setFrameShadow(QtWidgets.QFrame.Raised)
+            frame.setObjectName("frame")
+            verticalLayout_15 = QtWidgets.QVBoxLayout(frame)
+            verticalLayout_15.setObjectName("verticalLayout_15")
+            label=QtWidgets.QLabel(frame)
+            label.setMaximumSize(QtCore.QSize(400, 250))
+            label.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+            label.setText("")
+            label.setPixmap(QtGui.QPixmap(f"Thumbnails/{subject}/{videos[i]}.jpg"))
+            #print(f"Thumbnails/{subject}/{videos[i]}.jpg")
+            label.setScaledContents(True)
+            label.mousePressEvent = lambda eve,subject=subject,video=videos[i],i=i: self.click(eve,subject,video,i)
+            label.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            verticalLayout_15.addWidget(label)
+            label_2 = QtWidgets.QLabel(frame)
+            label_2.setText(f"{videos[i]}")
+            font = QtGui.QFont()
+            font.setPointSize(12)
+            label_2.setFont(font)
+            label_2.setObjectName("label_2")
+            verticalLayout_15.addWidget(label_2)
+            #print(r,c)
+            self.ui.gridLayout_18.addWidget(frame, c, r, 1, 1)
+            if r>1:
+                c+=1
+                r=0
+            else:
+                r+=1
+        self.ui.stackedWidget_2.setCurrentIndex(1)
+        
+    
+    def select_video_new(self,subject,video):
+        path=pathlib.Path(__file__).parent.absolute().joinpath('videos',subject,f"{video}.mp4")
+
+        self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile(str(path))))
+        self.mediaPlayer.play()
+        #self.mediaPlayer.pause()
+        time.sleep(0.1)
+        
+        self.camerathread = cameraThread()
+        self.camerathread.acc_sign=video
+        self.video=video
+        self.camerathread.record=False
+        if subject == "Alphabets":
+            self.camerathread.reference_signs=Alphabets_signs
+            self.current_reference_signs=Alphabets_signs
+            try:
+                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_alph)
+            except:
+                pass
+        elif subject == 'Computer':
+            self.camerathread.reference_signs=Computer_signs
+            self.current_reference_signs=Computer_signs
+            try:
+                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_comp)
+            except:
+                pass 
+        elif subject == 'Science':
+            self.camerathread.reference_signs=Science_signs
+            self.current_reference_signs=Science_signs
+            try:
+                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_sci)
+            except:
+                pass
+            
+        self.camerathread.start()
+        self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
+        self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+        self.ui.stackedWidget_2.setCurrentIndex(2)
+        self.camerathread.sentences_pass_on=False
+
     def select_video_test(self,index): #For Student Video Assignment
             if self.class_assign==0:
                 path=pathlib.Path.cwd().joinpath('videos')
@@ -1532,7 +1625,7 @@ class window(QtWidgets.QMainWindow):
         self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile(str(path))))
         self.mediaPlayer.play()
         #self.mediaPlayer.pause()
-        time.sleep(0.15)
+        time.sleep(0.1)
         
         
         if folder == "alphabets":
@@ -1603,6 +1696,7 @@ class window(QtWidgets.QMainWindow):
 
     def sentence_back(self):
         self.camerathread.stop()
+        self.videoThread.stop()
         self.ui.stackedWidget_2.setCurrentIndex(0)
         self.sentences_pass=0
         self.test_attempt=4
@@ -1691,6 +1785,8 @@ class window(QtWidgets.QMainWindow):
         self.camerathread.sentences_pass_on=True
         self.ui.label_4.setPixmap(QPixmap.fromImage(Image))
         self.ui.label_7.setPixmap(QPixmap.fromImage(Image))
+    def VideoUpdateSlot(self, Image):
+        self.ui.label_18.setPixmap(QPixmap.fromImage(Image))
     
     def accuracyUpdateSlot(self,predicted,sign,dist,acc,out_left,out_right):
         acc=float(acc)
@@ -1897,12 +1993,45 @@ class window(QtWidgets.QMainWindow):
         self.ui.textEdit.insertPlainText(str(" "))
 
     def back_to_camera(self):
-        self.camerathread.previous_record=False
+        self.videoThread.stop()
+        self.camerathread = cameraThread()
+        self.camerathread.acc_sign=self.video
+        self.camerathread.reference_signs=self.current_reference_signs
+        self.camerathread.record=False
+        self.camerathread.start()
+        self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
+        self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+        self.ui.stackedWidget_2.setCurrentIndex(2)
+        self.camerathread.sentences_pass_on=False
     def pause_play(self):
         pass
     def view_previous_recording(self):
-        print(True)
-        self.camerathread.previous_record=True
+        self.camerathread.stop()
+        time.sleep(0.1)
+        file_size = os.path.getsize('webcamimage.avi')
+        convert_to_kb=file_size//1024
+        if convert_to_kb<6:
+            popup=QMessageBox()
+            popup.setWindowTitle("See Previous Recording")
+            popup.setText("First Record the Video By Placing your Hand")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+            self.camerathread = cameraThread()
+            self.camerathread.acc_sign=self.video
+            self.camerathread.reference_signs=self.current_reference_signs
+            self.camerathread.record=False
+            self.camerathread.start()
+            self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
+            self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+            self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+            self.ui.stackedWidget_2.setCurrentIndex(2)
+            self.camerathread.sentences_pass_on=False
+        else: 
+            self.videoThread=videoThread()
+            self.videoThread.ImageUpdate.connect(self.VideoUpdateSlot)
+            self.videoThread.start()
 
 class cameraThread(QThread):
     reference_signs=''
@@ -1942,7 +2071,8 @@ class cameraThread(QThread):
         if self.previous_record==False:
             cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
-            video = VideoWriter('webcam.avi', VideoWriter_fourcc(*'MP42'), 20.0, (640, 480))
+            #video = VideoWriter('webcam.avi', VideoWriter_fourcc(*'MP42'), 20.0, (640, 480))
+            video = VideoWriter('webcamimage.avi', VideoWriter_fourcc(*'MP42'), 2.0, (640, 480))
 
             with mediapipe.solutions.holistic.Holistic(
                 min_detection_confidence=0.3, min_tracking_confidence=0.3
@@ -1967,38 +2097,53 @@ class cameraThread(QThread):
                     
                     if results.left_hand_landmarks:
                         self.on_release(True)
-                        video.write(frame)
+                        video.write(image)
                     elif results.right_hand_landmarks:
                         self.on_release(True)  
-                        video.write(frame)
+                        video.write(image)
                     else:
                         self.on_release(False)
-        else:
-            print(True)
-            while True:
-                #This is to check whether to break the first loop
-                isclosed=0
-                cap = cv2.VideoCapture('webcam.avi')
-                while (True):
-
-                    ret, frame = cap.read()
-                    # It should only show the frame when the ret is true
-                    if ret == True:
-
-                        cv2.imshow('frame',frame)
-                        if cv2.waitKey(1) == 27:
-                            # When esc is pressed isclosed is 1
-                            isclosed=1
-                            break
-                    else:
-                        break
-                # To break the loop if it is closed manually
-                if isclosed:
-                    break
+       
     def stop(self):
         self.ThreadActive = False
         self.quit()
 
+class videoThread(QThread):
+    ImageUpdate = pyqtSignal(QImage)
+
+    
+        
+
+    def run(self):
+        self.ThreadActive = True
+        cap = cv2.VideoCapture("webcamimage.avi")
+        length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        frame_counter = 0
+        with mediapipe.solutions.holistic.Holistic(
+            min_detection_confidence=0.3, min_tracking_confidence=0.3
+        ) as holistic:
+            while self.ThreadActive:
+                
+                # Read feed
+                ret, frame = cap.read()
+                if frame_counter == length:
+                    frame_counter = 0
+                    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    continue
+                frame_counter+=1
+
+                # Make detections
+                if ret:
+                    image, results = mediapipe_detection(frame, holistic)
+
+                # Update the frame (draw landmarks & display result)
+                    FlippedImage=image
+                    ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
+                    Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
+                    self.ImageUpdate.emit(Pic)
+    def stop(self):
+            self.ThreadActive = False
+            self.quit()
 
 
     
