@@ -2,12 +2,39 @@ from asyncio.windows_events import INFINITE
 import cv2
 import numpy as np
 import mediapipe as mp
+from mediapipe.framework.formats import landmark_pb2
+import enum
+
 
 WHITE_COLOR = (245, 242, 226)
 RED_COLOR = (25, 35, 240)
 
 HEIGHT = 600
 
+
+class HandLandmark(enum.IntEnum):
+    """The 21 hand landmarks."""
+    WRIST = 0
+    THUMB_CMC = 1
+    THUMB_MCP = 2
+    THUMB_IP = 3
+    THUMB_TIP = 4
+    INDEX_FINGER_MCP = 5
+    INDEX_FINGER_PIP = 6
+    INDEX_FINGER_DIP = 7
+    INDEX_FINGER_TIP = 8
+    MIDDLE_FINGER_MCP = 9
+    MIDDLE_FINGER_PIP = 10
+    MIDDLE_FINGER_DIP = 11
+    MIDDLE_FINGER_TIP = 12
+    RING_FINGER_MCP = 13
+    RING_FINGER_PIP = 14
+    RING_FINGER_DIP = 15
+    RING_FINGER_TIP = 16
+    PINKY_MCP = 17
+    PINKY_PIP = 18
+    PINKY_DIP = 19
+    PINKY_TIP = 20
 
 class WebcamManager(object):
     """Object that displays the Webcam output, draws the landmarks detected and
@@ -54,6 +81,28 @@ class WebcamManager(object):
         cv2.circle(frame, (30, 30), 20, color, -1)
         #cv2.imshow("OpenCV Feed", frame)
         return frame,acc
+
+    def update2(self, frame: np.ndarray, results,frame_counter,leftlist,rightlist):
+        
+        # Draw landmarks
+
+        self.draw_landmarks_2(frame, results,frame_counter,leftlist,rightlist)
+
+        WIDTH = int(HEIGHT * len(frame[0]) / len(frame))
+        # Resize frame
+        frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation=cv2.INTER_AREA)
+
+        # Flip the image vertically for mirror effect
+        frame = cv2.flip(frame, 1)
+
+        # Write result if there is
+
+
+        # Chose circle color
+        color = WHITE_COLOR
+        
+        #cv2.imshow("OpenCV Feed", frame)
+        return frame
 
     def draw_text(
         self,
@@ -209,11 +258,192 @@ class WebcamManager(object):
         return frame,acc2
 
     @staticmethod
-    def draw_landmarks(image, results):
+    def draw_landmarks_2(image, results,frame_counter,leftlist,rightlist):
         mp_holistic = mp.solutions.holistic  # Holistic model
         mp_drawing = mp.solutions.drawing_utils  # Drawing utilities
 
-        # Draw left hand connections
+        landmark_list=[]
+        sequence=0
+        import re
+        if rightlist!=[] and leftlist==[]:
+            for i in rightlist:
+                y=re.findall('\d',i)
+                sequence=y[0]
+                
+                if int(sequence)==int(frame_counter):
+                    x=re.findall('([a-zA-Z]+(_[a-zA-Z]+)+)',i)
+                    for i in x:
+                        landmark_list.append(i[0])
+                    
+                    if results.right_hand_landmarks==None:
+                        pass
+                    else:
+                        
+                        landmark2=[] #Stores landmarks
+                        list3=[] #Stores landmarks lines used to connect the points
+                        temp=["Wrist","Thumb_CMC","Thumb_MCP","Thumb_IP","Thumb_Tip",
+                                "Index_Finger_MPC","Index_Finger_PIP","Index_Finger_DIP","Index_Finger_TIP",
+                                "Middle_Finger_MCP","Middle_Finger_PIP","Middle_Finger_DIP","Middle_Finger_TIP",
+                                "Ring_Finger_MCP","Ring_Finger_PIP","Ring_Finger_DIP","Ring_Finger_TIP","Pinky_MCP",
+                                "Pinky_PIP","Pinky_DIP","Pinky_TIP"] 
+                        for i in landmark_list:
+                            temp1=temp.index(i)
+                            landmark2.append(results.right_hand_landmarks.landmark[temp1])
+                        for i in range(len(landmark_list)-1):
+                            temp1=temp.index(landmark_list[i])
+                            temp2=temp.index(landmark_list[i+1])
+                            list3.append((temp1,temp2))
+                        landmark_subset=landmark_pb2.NormalizedLandmarkList(
+                            landmark=landmark2
+                            )
+                        
+                        HAND_CONNECTIONS = frozenset(list3)
+                            
+                        mp_drawing.draw_landmarks(
+                                image,
+                                landmark_list=landmark_subset,
+                                #connections=HAND_CONNECTIONS,
+                                landmark_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                ),
+                                connection_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(255, 249, 161), thickness=2, circle_radius=2
+                                ),
+                            )
+                else:
+                    landmark_list=[]
+        if rightlist==[] and leftlist!=[]:
+            for i in leftlist:
+                y=re.findall('\d',i)
+                sequence=y[0]
+                
+                if int(sequence)==int(frame_counter):
+                    x=re.findall('([a-zA-Z]+(_[a-zA-Z]+)+)',i)
+                    for i in x:
+                        landmark_list.append(i[0])
+                    
+                    if results.left_hand_landmarks==None:
+                        pass
+                    else:
+                        
+                        landmark2=[] #Stores landmarks
+                        list3=[] #Stores landmarks lines used to connect the points
+                        temp=["Wrist","Thumb_CMC","Thumb_MCP","Thumb_IP","Thumb_Tip",
+                                "Index_Finger_MPC","Index_Finger_PIP","Index_Finger_DIP","Index_Finger_TIP",
+                                "Middle_Finger_MCP","Middle_Finger_PIP","Middle_Finger_DIP","Middle_Finger_TIP",
+                                "Ring_Finger_MCP","Ring_Finger_PIP","Ring_Finger_DIP","Ring_Finger_TIP","Pinky_MCP",
+                                "Pinky_PIP","Pinky_DIP","Pinky_TIP"] 
+                        for i in landmark_list:
+                            temp1=temp.index(i)
+                            landmark2.append(results.left_hand_landmarks.landmark[temp1])
+                        for i in range(len(landmark_list)-1):
+                            temp1=temp.index(landmark_list[i])
+                            temp2=temp.index(landmark_list[i+1])
+                            list3.append((temp1,temp2))
+                        landmark_subset=landmark_pb2.NormalizedLandmarkList(
+                            landmark=landmark2
+                            )
+                        print(list3)
+                        print(landmark_list)
+                        HAND_CONNECTIONS = frozenset(list3)
+                            
+                        mp_drawing.draw_landmarks(
+                                image,
+                                landmark_list=landmark_subset,
+                                #connections=HAND_CONNECTIONS,
+                                landmark_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                ),
+                                connection_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(255, 249, 161), thickness=2, circle_radius=2
+                                ),
+                            )
+                else:
+                    landmark_list=[]        
+        elif rightlist!=[] and leftlist!=[]:
+            landmark_list_2=[]
+            for i,j in zip(leftlist,rightlist):
+                y=re.findall('\d',i)
+                sequence=y[0]
+                z=re.findall('\d',j)
+                sequence2=z[0]
+                
+                if int(sequence)==int(frame_counter):
+                    x=re.findall('([a-zA-Z]+(_[a-zA-Z]+)+)',i)
+                    y=re.findall('([a-zA-Z]+(_[a-zA-Z]+)+)',j)
+                    for i in x:
+                        landmark_list.append(i[0])
+                    for k in x:
+                        landmark_list_2.append(k[0])
+
+                    
+                    if results.left_hand_landmarks==None:
+                        pass
+                    else:
+                        
+                        landmark2=[] #Stores landmarks Left
+                        list3=[] #Stores landmarks lines used to connect the points Left
+                        landmark3=[] #Stores landmarks Right
+                        list4=[] #Stores landmarks lines used to connect the points Right
+                        temp=["Wrist","Thumb_CMC","Thumb_MCP","Thumb_IP","Thumb_Tip",
+                                "Index_Finger_MPC","Index_Finger_PIP","Index_Finger_DIP","Index_Finger_TIP",
+                                "Middle_Finger_MCP","Middle_Finger_PIP","Middle_Finger_DIP","Middle_Finger_TIP",
+                                "Ring_Finger_MCP","Ring_Finger_PIP","Ring_Finger_DIP","Ring_Finger_TIP","Pinky_MCP",
+                                "Pinky_PIP","Pinky_DIP","Pinky_TIP"] 
+                        for i in landmark_list:
+                            temp1=temp.index(i)
+                            landmark2.append(results.left_hand_landmarks.landmark[temp1])
+                        for i in range(len(landmark_list)-1):
+                            temp1=temp.index(landmark_list[i])
+                            temp2=temp.index(landmark_list[i+1])
+                            list3.append((temp1,temp2))
+                        landmark_subset=landmark_pb2.NormalizedLandmarkList(
+                            landmark=landmark2
+                            )
+
+                        for i in landmark_list_2:
+                            temp1=temp.index(i)
+                            landmark3.append(results.right_hand_landmarks.landmark[temp1])
+                        for i in range(len(landmark_list_2)-1):
+                            temp1=temp.index(landmark_list_2[i])
+                            temp2=temp.index(landmark_list_2[i+1])
+                            list4.append((temp1,temp2))
+                        landmark_subset_2=landmark_pb2.NormalizedLandmarkList(
+                            landmark=landmark3
+                            )
+        
+                        HAND_CONNECTIONS = frozenset(list3)
+                        HAND_CONNECTIONS_2 = frozenset(list3)
+                            
+                        mp_drawing.draw_landmarks(
+                                image,
+                                landmark_list=landmark_subset,
+                                #connections=HAND_CONNECTIONS,
+                                landmark_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                ),
+                                connection_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(255, 249, 161), thickness=2, circle_radius=2
+                                ),
+                            )
+                        mp_drawing.draw_landmarks(
+                                image,
+                                landmark_list=landmark_subset_2,
+                                #connections=HAND_CONNECTIONS,
+                                landmark_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                ),
+                                connection_drawing_spec=mp_drawing.DrawingSpec(
+                                    color=(255, 249, 161), thickness=2, circle_radius=2
+                                ),
+                            )
+                else:
+                    landmark_list=[]
+                    landmark_list_2=[]
+    @staticmethod
+    def draw_landmarks(image, results):
+        mp_holistic = mp.solutions.holistic  # Holistic model
+        mp_drawing = mp.solutions.drawing_utils  # Drawing utilities
         mp_drawing.draw_landmarks(
             image,
             landmark_list=results.left_hand_landmarks,
@@ -237,3 +467,5 @@ class WebcamManager(object):
                 color=(255, 249, 161), thickness=2, circle_radius=2
             ),
         )
+
+    

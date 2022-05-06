@@ -59,7 +59,7 @@ class SignRecorder(object):
                     self.num_temp=0 #For Safe Measures 
                     self.temp=False
                     self.compute_distances()
-                    print(self.reference_signs) #Uncomment to reveal distances
+                    #print(self.reference_signs) #Uncomment to reveal distances
 
         if np.sum(self.reference_signs["distance"].values) == 0:
             return "", self.is_recording,[" "],[" "],self.out_left,self.out_right

@@ -179,7 +179,7 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,acc_s
                             temp2=np.expand_dims(bc,axis=1)
                             cd= dtw_ndim.distance_fast(temp1,temp2)
                             list5.append(cd)
-                    c=''
+                    c=[]
                     for i in range(len(list5)):
                         temp_val=list5[i]
                         temp_val=float(temp_val)
@@ -189,10 +189,10 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,acc_s
                             pass
                         else:
                             temp3=list3[i]
-                            if c==temp3[0]:
-                                pass
+                            if temp3[0]+str(temp3[2]) in c:
+                                pass 
                             else:
-                                c=temp3[0]
+                                c.append(temp3[0]+str(temp3[2]))
                                 out_right.append(f"The Hand Position of {temp3[0]} At Sequence ={temp3[2]} Have Problem")
                     out_left=[]        
                 else:

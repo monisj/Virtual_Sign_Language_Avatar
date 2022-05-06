@@ -44,6 +44,8 @@ class window(QtWidgets.QMainWindow):
         self.sentences_pass=0
         self.sentences_record=0
         self.error=0
+        self.left_list=[]
+        self.right_list=[]
     ################## New widgets ######################
         self.dirModel = QFileSystemModel()
         self.dirModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs)
@@ -166,6 +168,7 @@ class window(QtWidgets.QMainWindow):
     
 
     def test_screen(self):
+        self.ui.frame_13.hide()
         self.ui.stackedWidget_2.setCurrentIndex(5)
         self.ui.treeWidget_2.clear()
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
@@ -191,6 +194,7 @@ class window(QtWidgets.QMainWindow):
             self.ui.treeWidget_2.itemClicked.connect(self.perform_test)
 
     def test_back_screen(self):
+        self.ui.frame_13.show()
         self.ui.stackedWidget_2.setCurrentIndex(0)
 
     def progress(self):
@@ -919,6 +923,35 @@ class window(QtWidgets.QMainWindow):
         
     def test_back_button(self,i):
         if i.text() == 'OK' :
+            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+            conn = sqlite3.connect(f"{data_path}/Student_info.db")
+            cur = conn.cursor()
+            sql='''UPDATE Student_Tests
+                SET Marks_Obtained = (?), Test_Completed = (?)
+                WHERE ID = (?) AND Sign_Name = (?);'''
+            data=(0,"Yes",self.std_roll_number,self.test_sign)
+            cur.execute(sql,data)
+            conn.commit()
+            conn.close()
+
+            self.ui.treeWidget_2.clear()
+            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+            conn = sqlite3.connect(f"{data_path}/Student_info.db")
+            cur = conn.cursor()
+            cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
+            passw=cur.fetchall()
+            
+            if passw==None:
+                parent=QtWidgets.QTreeWidgetItem(1)
+                parent.setText(0,"No Tests Are Assigned #Winning")
+                self.ui.treeWidget_2.addTopLevelItem(parent)
+            else:
+                for i in passw:
+                    if i[2]=="No":
+                        parent=QtWidgets.QTreeWidgetItem(1)
+                        parent.setText(0,f"{i[0]}")
+                        self.ui.treeWidget_2.addTopLevelItem(parent)
+                        conn.close()
             self.acc2=0
             self.camerathread.stop()
             self.sentences_pass=0
@@ -928,14 +961,14 @@ class window(QtWidgets.QMainWindow):
             self.test_accuracy=0
             self.test_attempt=0
         else:
-            pass
+            self.camerathread.stop()
 
         
     def test_back(self):
         if self.test_attempt<3:
             popup=QMessageBox()
             popup.setWindowTitle("Test Incompleted")
-            popup.setText(f"You Have not the completed the test Pressing Ok will not record the test marks")
+            popup.setText(f"You Have not the completed the test Pressing Ok will record the test marks as Zero")
             popup.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             popup.setIcon(QMessageBox.Information)
             popup.buttonClicked.connect(self.test_back_button)
@@ -1672,6 +1705,8 @@ class window(QtWidgets.QMainWindow):
         self.ui.textEdit_2.clear()
         self.playlist.clear()
         self.camerathread.stop()
+        videoThread()
+        self.videoThread.stop()
         self.ui.label_16.setText('Closest Sign:')
         self.ui.label_17.setText('None')
         __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
@@ -1918,6 +1953,7 @@ class window(QtWidgets.QMainWindow):
                     item = self.ui.tableWidget_3.item(1, 1)
                     item.setText("0")
                     self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
+        
         if self.sentences_pass==1:
             pass
         else:
@@ -1926,22 +1962,45 @@ class window(QtWidgets.QMainWindow):
             if out_right==[] and out_left==[]:
                 self.ui.textEdit_2.clear()
             else:
+                c=[]
                 if self.error==1:
                     if out_right!=[] and out_left==[]:
                         for i in out_right:
-                            self.ui.textEdit_2.append(i)
+                            if i in c:
+                                pass
+                            else:
+                                self.ui.textEdit_2.append(i)
+                                self.right_list.append(i)
+                                c.append(i)
+                        print(len(out_right))
                         self.error=0
                     elif out_left!=[]  and out_right==[]:
                         for i in out_left:
-                            self.ui.textEdit_2.append(i)
+                            if i in c:
+                                pass
+                            else:
+                                self.ui.textEdit_2.append(i)
+                                self.left_list.append(i)
+                                c.append(i)
                         self.error=0
                     else:
                         self.ui.textEdit_2.append("For Left Hand")
                         for i in out_left:
-                            self.ui.textEdit_2.append(i)
+                            if i in c:
+                                pass
+                            else:
+                                self.ui.textEdit_2.append(i)
+                                self.left_list.append(i)
+                                c.append(i)
                         self.ui.textEdit_2.append("For Right Hand")
+                        c=[]
                         for i in out_right:
-                            self.ui.textEdit_2.append(i)
+                            for i in c:
+                                pass
+                            else:
+                                self.ui.textEdit_2.append(i)
+                                self.right_list.append(i)
+                                c.append(i)
                         self.error=0
                 else:
                     pass
@@ -2004,6 +2063,8 @@ class window(QtWidgets.QMainWindow):
         self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         self.ui.stackedWidget_2.setCurrentIndex(2)
         self.camerathread.sentences_pass_on=False
+        self.left_list=[]
+        self.right_list=[]
     def pause_play(self):
         pass
     def view_previous_recording(self):
@@ -2030,6 +2091,8 @@ class window(QtWidgets.QMainWindow):
             self.camerathread.sentences_pass_on=False
         else: 
             self.videoThread=videoThread()
+            self.videoThread.leftlist=self.left_list
+            self.videoThread.rightlist=self.right_list
             self.videoThread.ImageUpdate.connect(self.VideoUpdateSlot)
             self.videoThread.start()
 
@@ -2110,7 +2173,8 @@ class cameraThread(QThread):
 
 class videoThread(QThread):
     ImageUpdate = pyqtSignal(QImage)
-
+    leftlist=[]
+    rightlist=[]
     
         
 
@@ -2119,6 +2183,7 @@ class videoThread(QThread):
         cap = cv2.VideoCapture("webcamimage.avi")
         length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         frame_counter = 0
+        webcam_manager=WebcamManager()
         with mediapipe.solutions.holistic.Holistic(
             min_detection_confidence=0.3, min_tracking_confidence=0.3
         ) as holistic:
@@ -2135,9 +2200,8 @@ class videoThread(QThread):
                 # Make detections
                 if ret:
                     image, results = mediapipe_detection(frame, holistic)
-
                 # Update the frame (draw landmarks & display result)
-                    FlippedImage=image
+                    FlippedImage=webcam_manager.update2(frame,results,frame_counter,self.leftlist,self.rightlist)
                     ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
                     Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
                     self.ImageUpdate.emit(Pic)
@@ -2146,17 +2210,6 @@ class videoThread(QThread):
             self.quit()
 
 
-    
-
-
-def param_capture(n):
-    n = [
-        file_name.replace(".pickle", "").replace("lh_", "")
-        for root, dirs, files in os.walk(os.path.join("data", f'{n}'))
-        for file_name in files
-        if file_name.endswith(".pickle") and file_name.startswith("lh_")
-    ]
-    return n
 
 def load_param(np,all_data_sentences):
     np1,all_data_sentences=newer_load_reference_signs(np,all_data_sentences)
@@ -2170,7 +2223,7 @@ if __name__ == "__main__":
     all_data_sentences=pd.DataFrame(columns=["name", "sign_model", "distance"])
     for i in data_len:
         #if i=="Science_dataset" or i=="Alphabets_dataset" or i=="Computer_dataset":
-        if i=="Alphabets_dataset" :
+        if i=="Alphabets_dataset" or i=="Computer_dataset":
             temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")
