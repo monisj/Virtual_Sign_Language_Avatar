@@ -4,6 +4,7 @@ import numpy as np
 import mediapipe as mp
 from mediapipe.framework.formats import landmark_pb2
 import enum
+from utils.drawing_utils import draw_landmarks
 
 
 WHITE_COLOR = (245, 242, 226)
@@ -299,12 +300,12 @@ class WebcamManager(object):
                         
                         HAND_CONNECTIONS = frozenset(list3)
                             
-                        mp_drawing.draw_landmarks(
+                        draw_landmarks(
                                 image,
                                 landmark_list=landmark_subset,
-                                #connections=HAND_CONNECTIONS,
+                                connections=HAND_CONNECTIONS,
                                 landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                    color=(232, 254, 255), thickness=4, circle_radius=2
                                 ),
                                 connection_drawing_spec=mp_drawing.DrawingSpec(
                                     color=(255, 249, 161), thickness=2, circle_radius=2
@@ -343,16 +344,14 @@ class WebcamManager(object):
                         landmark_subset=landmark_pb2.NormalizedLandmarkList(
                             landmark=landmark2
                             )
-                        print(list3)
-                        print(landmark_list)
                         HAND_CONNECTIONS = frozenset(list3)
                             
-                        mp_drawing.draw_landmarks(
+                        draw_landmarks(
                                 image,
                                 landmark_list=landmark_subset,
-                                #connections=HAND_CONNECTIONS,
+                                connections=HAND_CONNECTIONS,
                                 landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                    color=(232, 254, 255), thickness=4, circle_radius=2
                                 ),
                                 connection_drawing_spec=mp_drawing.DrawingSpec(
                                     color=(255, 249, 161), thickness=2, circle_radius=2
@@ -415,23 +414,23 @@ class WebcamManager(object):
                         HAND_CONNECTIONS = frozenset(list3)
                         HAND_CONNECTIONS_2 = frozenset(list3)
                             
-                        mp_drawing.draw_landmarks(
+                        draw_landmarks(
                                 image,
                                 landmark_list=landmark_subset,
-                                #connections=HAND_CONNECTIONS,
+                                connections=HAND_CONNECTIONS,
                                 landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                    color=(232, 254, 255), thickness=4, circle_radius=2
                                 ),
                                 connection_drawing_spec=mp_drawing.DrawingSpec(
                                     color=(255, 249, 161), thickness=2, circle_radius=2
                                 ),
                             )
-                        mp_drawing.draw_landmarks(
+                        draw_landmarks(
                                 image,
                                 landmark_list=landmark_subset_2,
-                                #connections=HAND_CONNECTIONS,
+                                connections=HAND_CONNECTIONS_2,
                                 landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=1, circle_radius=2
+                                    color=(232, 254, 255), thickness=4, circle_radius=2
                                 ),
                                 connection_drawing_spec=mp_drawing.DrawingSpec(
                                     color=(255, 249, 161), thickness=2, circle_radius=2

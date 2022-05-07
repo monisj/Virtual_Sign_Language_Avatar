@@ -46,6 +46,7 @@ class window(QtWidgets.QMainWindow):
         self.error=0
         self.left_list=[]
         self.right_list=[]
+        self.key1=True
     ################## New widgets ######################
         self.dirModel = QFileSystemModel()
         self.dirModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs)
@@ -1705,7 +1706,8 @@ class window(QtWidgets.QMainWindow):
         self.ui.textEdit_2.clear()
         self.playlist.clear()
         self.camerathread.stop()
-        videoThread()
+        self.videoThread=videoThread()
+        self.videoThread.key1=False
         self.videoThread.stop()
         self.ui.label_16.setText('Closest Sign:')
         self.ui.label_17.setText('None')
@@ -1732,6 +1734,7 @@ class window(QtWidgets.QMainWindow):
     def sentence_back(self):
         self.camerathread.stop()
         self.videoThread.stop()
+        self.videoThread.key1=False
         self.ui.stackedWidget_2.setCurrentIndex(0)
         self.sentences_pass=0
         self.test_attempt=4
@@ -2053,6 +2056,7 @@ class window(QtWidgets.QMainWindow):
 
     def back_to_camera(self):
         self.videoThread.stop()
+        self.videoThread.key1=False
         self.camerathread = cameraThread()
         self.camerathread.acc_sign=self.video
         self.camerathread.reference_signs=self.current_reference_signs
@@ -2066,7 +2070,13 @@ class window(QtWidgets.QMainWindow):
         self.left_list=[]
         self.right_list=[]
     def pause_play(self):
-        pass
+        videoThread()
+        if self.key1==True:
+            self.key1=False
+            videoThread.key1=False
+        else:
+            self.key1=True
+            videoThread.key1=True
     def view_previous_recording(self):
         self.camerathread.stop()
         time.sleep(0.1)
@@ -2175,6 +2185,7 @@ class videoThread(QThread):
     ImageUpdate = pyqtSignal(QImage)
     leftlist=[]
     rightlist=[]
+    key1=False
     
         
 
@@ -2205,6 +2216,9 @@ class videoThread(QThread):
                     ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
                     Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
                     self.ImageUpdate.emit(Pic)
+                    key = cv2.waitKey(1)
+                    if self.key1==True:
+                        cv2.waitKey(500)
     def stop(self):
             self.ThreadActive = False
             self.quit()
