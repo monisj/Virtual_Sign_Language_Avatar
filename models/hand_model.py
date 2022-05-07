@@ -1,6 +1,4 @@
 from typing import List
-from django.db import connection
-
 import numpy as np
 import mediapipe as mp
 import csv
