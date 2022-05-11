@@ -183,7 +183,7 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,acc_s
                     for i in range(len(list5)):
                         temp_val=list5[i]
                         temp_val=float(temp_val)
-                        if float(temp_val)<=2.9:
+                        if float(temp_val)<=1.8:
                             pass
                         elif int(temp_val)==0:
                             pass
