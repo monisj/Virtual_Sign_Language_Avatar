@@ -23,7 +23,7 @@ from cmath import inf
 import subprocess
 
 # from UI import Ui_MainWindow
-from newuiupdate import Ui_MainWindow
+from UInew import Ui_MainWindow
 
 class window(QtWidgets.QMainWindow):
     def __init__(self):
@@ -109,7 +109,6 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_26.clicked.connect(self.teachers_back)
         self.ui.pushButton_6.clicked.connect(self.Remove_Student)
         self.ui.pushButton_10.clicked.connect(self.main)
-        self.ui.pushButton_50.clicked.connect(self.main)
 
 
         #self.ui.pushButton_7.clicked.connect(self.students_info_back)
@@ -150,8 +149,8 @@ class window(QtWidgets.QMainWindow):
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
 
-        self.ui.lineEdit_7.textChanged.connect(self.video_search)
-        self.ui.lineEdit_8.textChanged.connect(self.subject_search)
+        self.ui.lineEdit_7.returnPressed.connect(self.video_search)
+        self.ui.lineEdit_8.returnPressed.connect(self.subject_search)
 
         #############Validators###################
         self.ui.lineEdit_2.setValidator(self.onlyInt)
@@ -1262,7 +1261,7 @@ class window(QtWidgets.QMainWindow):
                 popup.exec_()
             elif passw==[]:
                 popup.setWindowTitle("Login Credientials")
-                popup.setText("Incorrect Username or Password!")
+                popup.setText(f"Username with ID ={a} Does not exsist")
                 popup.setStandardButtons(QMessageBox.Ok)
                 popup.setIcon(QMessageBox.Critical)
                 popup.exec_()
@@ -1445,24 +1444,21 @@ class window(QtWidgets.QMainWindow):
     def video_search(self):
         for i in reversed(range(self.ui.gridLayout_19.count())): 
             self.ui.gridLayout_19.itemAt(i).widget().setVisible(False)
-        result = [v for v in list(self.vid_buttons.keys()) if self.ui.lineEdit_7.text().upper() in v]
-        for l in result:
-            for m in self.vid_buttons[l]:
-                m.setVisible(True)
+        try:
+            for l in self.vid_buttons[self.ui.lineEdit_7.text().upper()]:
+                    l.setVisible(True)
+        except:
+            for i in reversed(range(self.ui.gridLayout_19.count())): 
+                self.ui.gridLayout_19.itemAt(i).widget().setVisible(True)
     
     def subject_search(self):
         for i in reversed(range(self.ui.gridLayout_20.count())): 
             self.ui.gridLayout_20.itemAt(i).widget().setVisible(False)
-        result = [v for v in list(self.sub_buttons.keys()) if self.ui.lineEdit_8.text().upper() in v]
-        for l in result:
-                self.sub_buttons[l].setVisible(True)
-        # try:
-        #     result = [v for v in self.sub_buttons.keys() if self.ui.lineEdit_8.text() in v]
-        #     for l in result:
-        #             self.sub_buttons[l].setVisible(True)
-        # except:
-        #     for i in reversed(range(self.ui.gridLayout_20.count())): 
-        #         self.ui.gridLayout_20.itemAt(i).widget().setVisible(True)
+        try:
+            self.sub_buttons[self.ui.lineEdit_8.text().upper()].setVisible(True)
+        except:
+            for i in reversed(range(self.ui.gridLayout_20.count())): 
+                self.ui.gridLayout_20.itemAt(i).widget().setVisible(True)
 
 
     def video_browse(self,subject,folder):
@@ -1806,10 +1802,8 @@ class window(QtWidgets.QMainWindow):
 
     def sentence_back(self):
         self.camerathread.stop()
-        try:
-            self.videoThread.stop()
-        except:
-            pass
+        self.videoThread=videoThread()
+        self.videoThread.stop()
         self.videoThread.key1=False
         self.ui.stackedWidget_2.setCurrentIndex(0)
         self.sentences_pass=0
@@ -2066,15 +2060,15 @@ class window(QtWidgets.QMainWindow):
                 if self.error==1:
                     if out_right!=[] and out_left==[]:
                         for i in out_right:
-                                self.ui.textEdit_2.append(i)
-                                self.right_list.append(i)
-                                c.append(i)
+                            self.ui.textEdit_2.append(i)
+                            self.right_list.append(i)
+                            c.append(i)
                         self.error=0
                     elif out_left!=[]  and out_right==[]:
                         for i in out_left:
-                                self.ui.textEdit_2.append(i)
-                                self.left_list.append(i)
-                                c.append(i)
+                            self.ui.textEdit_2.append(i)
+                            self.left_list.append(i)
+                            c.append(i)
                         self.error=0
                     else:
                         self.ui.textEdit_2.append("For Left Hand")
@@ -2333,8 +2327,8 @@ class videoThread(QThread):
                     if self.key1==True:
                         cv2.waitKey(500)
     def stop(self):
-            self.ThreadActive = False
-            self.quit()
+        self.ThreadActive = False
+        self.quit()
 
 
     
@@ -2379,5 +2373,5 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication([])
     application = window()
-    application.showMaximized()
+    application.show()
     sys.exit(app.exec())
