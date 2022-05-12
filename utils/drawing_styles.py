@@ -70,41 +70,41 @@ _HAND_LANDMARK_STYLE = {
             color=_RED, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
     _THUMP_LANDMARKS:
         DrawingSpec(
-            color=_PEACH, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
+            color=_RED, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
     _INDEX_FINGER_LANDMARKS:
         DrawingSpec(
-            color=_PURPLE, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
+            color=_RED, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
     _MIDDLE_FINGER_LANDMARKS:
         DrawingSpec(
-            color=_YELLOW, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
+            color=_RED, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
     _RING_FINGER_LANDMARKS:
         DrawingSpec(
-            color=_GREEN, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
+            color=_RED, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
     _PINKY_FINGER_LANDMARKS:
         DrawingSpec(
-            color=_BLUE, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
+            color=_RED, thickness=_THICKNESS_DOT, circle_radius=_RADIUS),
 }
 
 # Hands connections
 _HAND_CONNECTION_STYLE = {
     hands_connections.HAND_PALM_CONNECTIONS:
-        DrawingSpec(color=_GRAY, thickness=_THICKNESS_WRIST_MCP),
+        DrawingSpec(color=_RED, thickness=_THICKNESS_WRIST_MCP),
     hands_connections.HAND_THUMB_CONNECTIONS:
-        DrawingSpec(color=_PEACH, thickness=_THICKNESS_FINGER),
+        DrawingSpec(color=_RED, thickness=_THICKNESS_FINGER),
     hands_connections.HAND_INDEX_FINGER_CONNECTIONS:
-        DrawingSpec(color=_PURPLE, thickness=_THICKNESS_FINGER),
+        DrawingSpec(color=_RED, thickness=_THICKNESS_FINGER),
     hands_connections.HAND_MIDDLE_FINGER_CONNECTIONS:
-        DrawingSpec(color=_YELLOW, thickness=_THICKNESS_FINGER),
+        DrawingSpec(color=_RED, thickness=_THICKNESS_FINGER),
     hands_connections.HAND_RING_FINGER_CONNECTIONS:
-        DrawingSpec(color=_GREEN, thickness=_THICKNESS_FINGER),
+        DrawingSpec(color=_RED, thickness=_THICKNESS_FINGER),
     hands_connections.HAND_PINKY_FINGER_CONNECTIONS:
-        DrawingSpec(color=_BLUE, thickness=_THICKNESS_FINGER)
+        DrawingSpec(color=_RED, thickness=_THICKNESS_FINGER)
 }
 
 
 
 
-def get_default_hand_landmarks_style() -> Mapping[int, DrawingSpec]:
+def get_default_hand_landmarks_style(landmark_points) -> Mapping[int, DrawingSpec]:
     """Returns the default hand landmarks drawing style.
     Returns:
         A mapping from each hand landmark to its default drawing spec.
@@ -112,7 +112,7 @@ def get_default_hand_landmarks_style() -> Mapping[int, DrawingSpec]:
     hand_landmark_style = {}
     for k, v in _HAND_LANDMARK_STYLE.items():
         for landmark in k:
-            if landmark==HandLandmark.WRIST or landmark==HandLandmark.THUMB_CMC or  landmark==HandLandmark.PINKY_MCP or  landmark==HandLandmark.PINKY_PIP or landmark==HandLandmark.PINKY_DIP or  landmark==HandLandmark.PINKY_TIP:
+            if landmark in landmark_points:
                 hand_landmark_style[landmark] = v
             else:
                  hand_landmark_style[landmark]=DrawingSpec(
@@ -121,8 +121,7 @@ def get_default_hand_landmarks_style() -> Mapping[int, DrawingSpec]:
     return hand_landmark_style
 
 
-def get_default_hand_connections_style(
-) -> Mapping[Tuple[int, int], DrawingSpec]:
+def get_default_hand_connections_style(landmark_lines) -> Mapping[Tuple[int, int], DrawingSpec]:
 
     """Returns the default hand connections drawing style.
     Returns:
@@ -131,7 +130,7 @@ def get_default_hand_connections_style(
     hand_connection_style = {}
     for k, v in _HAND_CONNECTION_STYLE.items():
         for connection in k:
-            if connection==(0,1) or connection==(17,18) or connection==(18,19) or connection==(19,20):
+            if connection in landmark_lines:
                 hand_connection_style[connection] = v
             else:
                 hand_connection_style[connection]=DrawingSpec(

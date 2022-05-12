@@ -45,20 +45,8 @@ def mediapipe_detection(image, model):
 
 def draw_styled_landmarks(image, results):
     mp_drawing = mp.solutions.drawing_utils
-    mp_drawing.draw_landmarks(
-             image,
-             landmark_list=results.left_hand_landmarks,
-             connections=mp_holistic.HAND_CONNECTIONS,
-             landmark_drawing_spec=get_default_hand_landmarks_style(),
-             connection_drawing_spec=get_default_hand_connections_style(),
-        )
-    mp_drawing.draw_landmarks(
-             image,
-             landmark_list=results.right_hand_landmarks,
-             connections=mp_holistic.HAND_CONNECTIONS,
-            landmark_drawing_spec=get_default_hand_landmarks_style(),
-             connection_drawing_spec=get_default_hand_connections_style(),
-        )
+    
+    
 #     mp_drawing.draw_landmarks(
 #             image,
 #             landmark_list=results.left_hand_landmarks,
@@ -75,43 +63,36 @@ def draw_styled_landmarks(image, results):
 #     points_name= frozenset(["Wrist","Thumb_CMC","Thumb_MCP","Thumb_IP","Thumb_Tip",
 #         "Index_Finger_MPC","Index_Finger_PIP"])
 
-#     if results.right_hand_landmarks==None:
-#         pass
-#     else:
-#         landmark2 = [
-#           results.right_hand_landmarks.landmark[0],
-#           results.right_hand_landmarks.landmark[1], 
-#           results.right_hand_landmarks.landmark[2],
-#           results.right_hand_landmarks.landmark[3], 
-#           results.right_hand_landmarks.landmark[4],
-#           results.right_hand_landmarks.landmark[5],
-#           results.right_hand_landmarks.landmark[6],
-#           results.right_hand_landmarks.landmark[7]
-#       ]
-#         landmark_subset=landmark_pb2.NormalizedLandmarkList(
-#       landmark = landmark2
-# )
+    if results.right_hand_landmarks==None:
+        pass
+    else:
+        landmark2 = [
+           0,
+           1, 
+           2,
+           3, 
+           4,
+           5,
+           6,
+       ]
+        
 
-#         HAND_CONNECTIONS = frozenset([(HandLandmark.WRIST, HandLandmark.THUMB_CMC),
-#             (HandLandmark.THUMB_CMC, HandLandmark.THUMB_MCP),
-#             (HandLandmark.THUMB_MCP, HandLandmark.THUMB_IP),
-#             (HandLandmark.THUMB_IP, HandLandmark.THUMB_TIP),
-#             (HandLandmark.WRIST, HandLandmark.INDEX_FINGER_MCP),
-#             (HandLandmark.INDEX_FINGER_MCP, HandLandmark.INDEX_FINGER_PIP),
-#             (HandLandmark.INDEX_FINGER_PIP, HandLandmark.INDEX_FINGER_DIP),
-#         ])
+        HAND_CONNECTIONS = [(HandLandmark.WRIST, HandLandmark.THUMB_CMC),
+             (HandLandmark.THUMB_CMC, HandLandmark.THUMB_MCP),
 
-#         mp_drawing.draw_landmarks(
-#                 image,
-#                 landmark_list=landmark_subset,
-#                 connections=HAND_CONNECTIONS,
-#                 landmark_drawing_spec=mp_drawing.DrawingSpec(
-#                     color=(232, 254, 255), thickness=1, circle_radius=2
-#                 ),
-#                 connection_drawing_spec=mp_drawing.DrawingSpec(
-#                     color=(255, 249, 161), thickness=2, circle_radius=2
-#                 ),
-#             )
+             (HandLandmark.THUMB_MCP, HandLandmark.THUMB_IP),            
+             (HandLandmark.THUMB_IP, HandLandmark.THUMB_TIP),
+            (HandLandmark.WRIST, HandLandmark.INDEX_FINGER_MCP),
+            (HandLandmark.INDEX_FINGER_MCP, HandLandmark.INDEX_FINGER_PIP),           
+         ]
+
+        mp_drawing.draw_landmarks(
+             image,
+             landmark_list=results.right_hand_landmarks,
+             connections=mp_holistic.HAND_CONNECTIONS,
+            landmark_drawing_spec=get_default_hand_landmarks_style(landmark2),
+             connection_drawing_spec=get_default_hand_connections_style(HAND_CONNECTIONS),
+        )
 
 mp_drawing_styles = mp.solutions.drawing_styles
 cap = cv2.VideoCapture(0)

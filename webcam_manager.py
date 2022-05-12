@@ -5,6 +5,7 @@ import mediapipe as mp
 from mediapipe.framework.formats import landmark_pb2
 import enum
 from utils.drawing_utils import draw_landmarks
+from utils.drawing_styles import get_default_hand_landmarks_style,get_default_hand_connections_style,DrawingSpec
 
 
 WHITE_COLOR = (245, 242, 226)
@@ -289,30 +290,21 @@ class WebcamManager(object):
                                 "Pinky_PIP","Pinky_DIP","Pinky_TIP"] 
                         for i in landmark_list:
                             temp1=temp.index(i)
-                            landmark2.append(results.right_hand_landmarks.landmark[temp1])
+                            landmark2.append(temp1)
                         for i in range(len(landmark_list)-1):
                             temp1=temp.index(landmark_list[i])
                             temp2=temp.index(landmark_list[i+1])
                             list3.append((temp1,temp2))
-                        landmark_subset=landmark_pb2.NormalizedLandmarkList(
-                            landmark=landmark2
-                            )
-                        
-                        HAND_CONNECTIONS = frozenset(list3)
-                            
-                        draw_landmarks(
-                                image,
-                                landmark_list=landmark_subset,
-                                connections=HAND_CONNECTIONS,
-                                landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=4, circle_radius=2
-                                ),
-                                connection_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(255, 249, 161), thickness=2, circle_radius=2
-                                ),
+                        mp_drawing.draw_landmarks(
+                            image,
+                            landmark_list=results.right_hand_landmarks,
+                            connections=mp_holistic.HAND_CONNECTIONS,
+                            landmark_drawing_spec=get_default_hand_landmarks_style(landmark2),
+                            connection_drawing_spec=get_default_hand_connections_style(list3),
                             )
                 else:
                     landmark_list=[]
+
         if rightlist==[] and leftlist!=[]:
             for i in leftlist:
                 y=re.findall('\d',i)
@@ -336,27 +328,18 @@ class WebcamManager(object):
                                 "Pinky_PIP","Pinky_DIP","Pinky_TIP"] 
                         for i in landmark_list:
                             temp1=temp.index(i)
-                            landmark2.append(results.left_hand_landmarks.landmark[temp1])
+                            landmark2.append(temp1)
                         for i in range(len(landmark_list)-1):
                             temp1=temp.index(landmark_list[i])
                             temp2=temp.index(landmark_list[i+1])
-                            list3.append((temp1,temp2))
-                        landmark_subset=landmark_pb2.NormalizedLandmarkList(
-                            landmark=landmark2
-                            )
-                        HAND_CONNECTIONS = frozenset(list3)
-                            
-                        draw_landmarks(
+                            list3.append((temp1,temp2))                          
+                        mp_drawing.draw_landmarks(
                                 image,
-                                landmark_list=landmark_subset,
-                                connections=HAND_CONNECTIONS,
-                                landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=4, circle_radius=2
-                                ),
-                                connection_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(255, 249, 161), thickness=2, circle_radius=2
-                                ),
-                            )
+                                landmark_list=results.left_hand_landmarks,
+                                connections=mp_holistic.HAND_CONNECTIONS,
+                                landmark_drawing_spec=get_default_hand_landmarks_style(landmark2),
+                                connection_drawing_spec=get_default_hand_connections_style(list3),
+                        )
                 else:
                     landmark_list=[]        
         elif rightlist!=[] and leftlist!=[]:
@@ -391,51 +374,36 @@ class WebcamManager(object):
                                 "Pinky_PIP","Pinky_DIP","Pinky_TIP"] 
                         for i in landmark_list:
                             temp1=temp.index(i)
-                            landmark2.append(results.left_hand_landmarks.landmark[temp1])
+                            landmark2.append(temp1)
                         for i in range(len(landmark_list)-1):
                             temp1=temp.index(landmark_list[i])
                             temp2=temp.index(landmark_list[i+1])
                             list3.append((temp1,temp2))
-                        landmark_subset=landmark_pb2.NormalizedLandmarkList(
-                            landmark=landmark2
-                            )
+                        
 
                         for i in landmark_list_2:
                             temp1=temp.index(i)
-                            landmark3.append(results.right_hand_landmarks.landmark[temp1])
+                            landmark3.append(temp1)
                         for i in range(len(landmark_list_2)-1):
                             temp1=temp.index(landmark_list_2[i])
                             temp2=temp.index(landmark_list_2[i+1])
                             list4.append((temp1,temp2))
-                        landmark_subset_2=landmark_pb2.NormalizedLandmarkList(
-                            landmark=landmark3
-                            )
         
-                        HAND_CONNECTIONS = frozenset(list3)
-                        HAND_CONNECTIONS_2 = frozenset(list3)
                             
-                        draw_landmarks(
-                                image,
-                                landmark_list=landmark_subset,
-                                connections=HAND_CONNECTIONS,
-                                landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=4, circle_radius=2
-                                ),
-                                connection_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(255, 249, 161), thickness=2, circle_radius=2
-                                ),
-                            )
-                        draw_landmarks(
-                                image,
-                                landmark_list=landmark_subset_2,
-                                connections=HAND_CONNECTIONS_2,
-                                landmark_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(232, 254, 255), thickness=4, circle_radius=2
-                                ),
-                                connection_drawing_spec=mp_drawing.DrawingSpec(
-                                    color=(255, 249, 161), thickness=2, circle_radius=2
-                                ),
-                            )
+                        mp_drawing.draw_landmarks(
+                        image,
+                        landmark_list=results.left_hand_landmarks,
+                        connections=mp_holistic.HAND_CONNECTIONS,
+                        landmark_drawing_spec=get_default_hand_landmarks_style(landmark2),
+                        connection_drawing_spec=get_default_hand_connections_style(list3),
+                        )
+                        mp_drawing.draw_landmarks(
+                        image,
+                        landmark_list=results.right_hand_landmarks,
+                        connections=mp_holistic.HAND_CONNECTIONS,
+                        landmark_drawing_spec=get_default_hand_landmarks_style(landmark3),
+                        connection_drawing_spec=get_default_hand_connections_style(list4),
+                        )
                 else:
                     landmark_list=[]
                     landmark_list_2=[]
