@@ -4,6 +4,7 @@ import numpy as np
 import pickle as pkl
 import mediapipe as mp
 from utils.mediapipe_utils import mediapipe_detection
+from models.sign_model import SignModel
 
 
 def landmark_to_array(mp_landmark_list):
@@ -35,7 +36,7 @@ def extract_landmarks(results):
     #return pose, left_hand, right_hand
     return left_hand, right_hand
 
-def save_landmarks_from_new_video(video_name,video_path,dataset_path):
+def save_landmarks_from_new_video(video_name,video_path,dataset_path,sign_path):
     landmark_list = {"left_hand": [], "right_hand": []}
     sign_name = video_name.split("_")[0]
 
@@ -44,7 +45,7 @@ def save_landmarks_from_new_video(video_name,video_path,dataset_path):
         str(pathlib.Path.cwd().joinpath(video_path,f'{video_name}.mp4'))
     )
     with mp.solutions.holistic.Holistic(
-        min_detection_confidence=0.5, min_tracking_confidence=0.5
+        min_detection_confidence=0.3, min_tracking_confidence=0.3
     ) as holistic:
         while cap.isOpened():
             ret, frame = cap.read()
@@ -63,25 +64,33 @@ def save_landmarks_from_new_video(video_name,video_path,dataset_path):
         cap.release()
 
     # Create the folder of the sign if it doesn't exists
+    
+    if not os.path.exists(sign_path):
+        os.mkdir(sign_path)
+
     path = dataset_path
     if not os.path.exists(path):
         os.mkdir(path)
 
     # Create the folder of the video data if it doesn't exists
     data_path = pathlib.Path(dataset_path).joinpath(video_name)
-    if not os.path.exists(data_path):
-        os.mkdir(data_path)
+    # if not os.path.exists(data_path):
+    #     os.mkdir(data_path)
 
     # Saving the landmark_list in the correct folder
     # save_array(
     #     landmark_list["pose"], os.path.join(data_path, f"pose_{video_name}.pickle")
     # )
-    save_array(
-        landmark_list["left_hand"], os.path.join(data_path, f"lh_{video_name}.pickle")
-    )
-    save_array(
-        landmark_list["right_hand"], os.path.join(data_path, f"rh_{video_name}.pickle")
-    )
+    # save_array(
+    #     landmark_list["left_hand"], os.path.join(data_path, f"lh_{video_name}.pickle")
+    # )
+    # save_array(
+    #     landmark_list["right_hand"], os.path.join(data_path, f"rh_{video_name}.pickle")
+    # )
+
+    if not os.path.exists(os.path.join(path, f"embeddings_{video_name}.pickle")):
+        embeddings=SignModel(landmark_list["left_hand"], landmark_list["right_hand"])
+        save_embeds(embeddings,os.path.join(path, f"embeddings_{video_name}.pickle"))
 
 def save_landmarks_from_video(video_name):
     #print(video_name)
@@ -126,12 +135,16 @@ def save_landmarks_from_video(video_name):
     # save_array(
     #     landmark_list["pose"], os.path.join(data_path, f"pose_{video_name}.pickle")
     # )
-    save_array(
-        landmark_list["left_hand"], os.path.join(data_path, f"lh_{video_name}.pickle")
-    )
-    save_array(
-        landmark_list["right_hand"], os.path.join(data_path, f"rh_{video_name}.pickle")
-    )
+    #save_array(
+    #    landmark_list["left_hand"], os.path.join(data_path, f"lh_{video_name}.pickle")
+    #)
+    #save_array(
+    #    landmark_list["right_hand"], os.path.join(data_path, f"rh_{video_name}.pickle")
+    #)
+
+    if not os.path.exists(os.path.join(path, f"embeddings_{video_name}.pickle")):
+        embeddings=SignModel(landmark_list["left_hand"], landmark_list["right_hand"])
+        save_embeds(embeddings,os.path.join(path, f"embeddings_{video_name}.pickle"))
 
 
 def save_array(arr, path):
@@ -145,3 +158,8 @@ def load_array(path):
     arr = pkl.load(file)
     file.close()
     return np.array(arr)
+
+def save_embeds(arr, path):
+    file = open(path, "wb")
+    pkl.dump(arr, file)
+    file.close()

@@ -95,31 +95,18 @@ def load_reference_signs(videos):
     )
     return reference_signs
 
-def new_load_reference_signs(videos,subject):
+def new_load_reference_signs(sign_name,videos,subject):
     # print('loading references')
     reference_signs = pd.DataFrame(columns=["name", "sign_model", "distance"])
     #tstart=time.time()
     for video_name in videos:
         #vstart=time.time()
         
-        sign_name = video_name.split("_")[0]
+        #sign_name = video_name.split("_")[0]
         path = os.path.join("data", f"{subject}_dataset", sign_name, video_name)
         #data_path = os.path.join(path, video_name)
 
-        # lstart=time.time()
-        #print(f"lh_{video_name}.pickle")
-        #####left_hand_list = load_array(os.path.join(path, f"lh_{video_name}.pickle"))
-
-        # lend=time.time()
-        # print(f'{video_name} left time=',(lend-lstart))
-        # rstart=time.time()
-        #####right_hand_list = load_array(os.path.join(path, f"rh_{video_name}.pickle"))
-        # rend=time.time()
-        # print(f'{video_name} left time=',(rend-rstart))
-        #####if not os.path.exists(os.path.join(path, f"embeddings_{video_name}.pickle")):
-        #####    embeddings=SignModel(left_hand_list, right_hand_list)
-        #####    save_embeds(embeddings,os.path.join(path, f"embeddings_{video_name}.pickle"))
-        #####else :
+        
         embeddings=load_embeds(os.path.join(path, f"embeddings_{video_name}.pickle"))
 
         reference_signs = reference_signs.append(
@@ -130,13 +117,7 @@ def new_load_reference_signs(videos,subject):
             },
             ignore_index=True,
         )
-        # vend=time.time()
-    #     print(f'{video_name} time=',(vend-vstart))
-    # tend=time.time()
-    # print('total time=',(tend-tstart))
-    # print(
-    #     f'Dictionary count: {reference_signs[["name", "sign_model"]].groupby(["name"]).count()}'
-    # )
+        
     return reference_signs
 
 
@@ -187,5 +168,45 @@ def newer_load_reference_signs(videos,all_data_sentences):
         )
         
     return reference_signs,all_data_sentences
+def newload_reference_signs(videos):
+    # print('loading references')
+    reference_signs = pd.DataFrame(columns=["name", "sign_model", "distance"])
+    #tstart=time.time()
+    for p in videos:
+        video_name=ntpath.basename(p)
+        # print(video_name)
+        #vstart=time.time()
+        #print(p)
+        sign_name = video_name.split("_")[0]
+        path = p
+        # print(path)
+        #data_path = os.path.join(path, video_name)
+
+        # lstart=time.time()
+        #left_hand_list = load_array(os.path.join(path, f"lh_{video_name}.pickle"))
+        # lend=time.time()
+        # print(f'{video_name} left time=',(lend-lstart))
+        # rstart=time.time()
+        #right_hand_list = load_array(os.path.join(path, f"rh_{video_name}.pickle"))
+        # rend=time.time()
+        # print(f'{video_name} left time=',(rend-rstart))
+        #if not os.path.exists(os.path.join(path, f"embeddings_{video_name}.pickle")):
+            #embeddings=SignModel(left_hand_list, right_hand_list)
+            #save_embeds(embeddings,os.path.join(path, f"embeddings_{video_name}.pickle"))
+        #else :
+        
+        embeddings=load_embeds(os.path.join(path, f"embeddings_{video_name}.pickle"))
+        
+        reference_signs = reference_signs.append(
+            {
+                "name": sign_name,
+                "sign_model": embeddings,
+                "distance": 0,
+            },
+            ignore_index=True,
+        )
+        
+        
+    return reference_signs
 
 

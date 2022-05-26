@@ -120,21 +120,24 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,acc_s
                     for i in range(len(list2)):
                         temp=len(list2[i])
                         temp3=list2[i]
-                        temp4=list6[i]
-                        for j in range(temp):
-                            temp5=[temp3[j]]
-                            temp6=[temp4[j]]
-                            ab = np.array(temp5,dtype=np.double)
-                            bc = np.array(temp6,dtype=np.double)
-                            temp1=np.expand_dims(ab,axis=1)
-                            temp2=np.expand_dims(bc,axis=1)
-                            cd= dtw_ndim.distance_fast(temp1,temp2)
-                            list5.append(cd)
+                        if i>=len(list6):
+                            pass
+                        else:
+                            temp4=list6[i]
+                            for j in range(temp):
+                                temp5=[temp3[j]]
+                                temp6=[temp4[j]]
+                                ab = np.array(temp5,dtype=np.double)
+                                bc = np.array(temp6,dtype=np.double)
+                                temp1=np.expand_dims(ab,axis=1)
+                                temp2=np.expand_dims(bc,axis=1)
+                                cd= dtw_ndim.distance_fast(temp1,temp2)
+                                list5.append(cd)
                     c=''
                     for i in range(len(list5)):
                         temp_val=list5[i]
                         temp_val=float(temp_val)
-                        if float(temp_val)<=1.6:
+                        if float(temp_val)<=2.6:
                             pass
                         elif int(temp_val)==0:
                             pass
@@ -169,21 +172,24 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,acc_s
                     for i in range(len(list2)):
                         temp=len(list2[i])
                         temp3=list2[i]
-                        temp4=list1[i]
-                        for j in range(temp):
-                            temp5=[temp3[j]]
-                            temp6=[temp4[j]]
-                            ab = np.array(temp5,dtype=np.double)
-                            bc = np.array(temp6,dtype=np.double)
-                            temp1=np.expand_dims(ab,axis=1)
-                            temp2=np.expand_dims(bc,axis=1)
-                            cd= dtw_ndim.distance_fast(temp1,temp2)
-                            list5.append(cd)
+                        if i>=len(list1):
+                            pass
+                        else:
+                            temp4=list1[i]
+                            for j in range(temp):
+                                temp5=[temp3[j]]
+                                temp6=[temp4[j]]
+                                ab = np.array(temp5,dtype=np.double)
+                                bc = np.array(temp6,dtype=np.double)
+                                temp1=np.expand_dims(ab,axis=1)
+                                temp2=np.expand_dims(bc,axis=1)
+                                cd= dtw_ndim.distance_fast(temp1,temp2)
+                                list5.append(cd)
                     c=[]
                     for i in range(len(list5)):
                         temp_val=list5[i]
                         temp_val=float(temp_val)
-                        if float(temp_val)<=1.6:
+                        if float(temp_val)<=2.6:
                             pass
                         elif int(temp_val)==0:
                             pass
@@ -220,21 +226,24 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,acc_s
                     for i in range(len(list7)):
                         temp=len(list7[i])
                         temp3=list7[i]
-                        temp4=list6[i]
-                        for j in range(temp):
-                            temp5=[temp3[j]]
-                            temp6=[temp4[j]]
-                            ab = np.array(temp5,dtype=np.double)
-                            bc = np.array(temp6,dtype=np.double)
-                            temp1=np.expand_dims(ab,axis=1)
-                            temp2=np.expand_dims(bc,axis=1)
-                            cd= dtw_ndim.distance_fast(temp1,temp2)
-                            list_5.append(cd)
+                        if i>=len(list6):
+                            pass
+                        else:
+                            temp4=list6[i]
+                            for j in range(temp):
+                                temp5=[temp3[j]]
+                                temp6=[temp4[j]]
+                                ab = np.array(temp5,dtype=np.double)
+                                bc = np.array(temp6,dtype=np.double)
+                                temp1=np.expand_dims(ab,axis=1)
+                                temp2=np.expand_dims(bc,axis=1)
+                                cd= dtw_ndim.distance_fast(temp1,temp2)
+                                list_5.append(cd)
                     cd=''
                     for i in range(len(list_5)):
                         temp_val=list5[i]
                         temp_val=float(temp_val)
-                        if float(temp_val)<=1.6:
+                        if float(temp_val)<=2.6:
                             pass
                         elif int(temp_val)==0:
                             pass
@@ -268,21 +277,24 @@ def fdtw_distances(recorded_sign: SignModel, reference_signs: pd.DataFrame,acc_s
                     for i in range(len(list8)):
                         temp=len(list8[i])
                         temp3=list8[i]
-                        temp4=list1[i]
-                        for j in range(temp):
-                            temp5=[temp3[j]]
-                            temp6=[temp4[j]]
-                            ab = np.array(temp5,dtype=np.double)
-                            bc = np.array(temp6,dtype=np.double)
-                            temp1=np.expand_dims(ab,axis=1)
-                            temp2=np.expand_dims(bc,axis=1)
-                            cd= dtw_ndim.distance_fast(temp1,temp2)
-                            list5.append(cd)
+                        if i>=len(list1):
+                            pass
+                        else:
+                            temp4=list1[i]
+                            for j in range(temp):
+                                temp5=[temp3[j]]
+                                temp6=[temp4[j]]
+                                ab = np.array(temp5,dtype=np.double)
+                                bc = np.array(temp6,dtype=np.double)
+                                temp1=np.expand_dims(ab,axis=1)
+                                temp2=np.expand_dims(bc,axis=1)
+                                cd= dtw_ndim.distance_fast(temp1,temp2)
+                                list5.append(cd)
                     c=''
                     for i in range(len(list5)):
                         temp_val=list5[i]
                         temp_val=float(temp_val)
-                        if float(temp_val)<=1.6:
+                        if float(temp_val)<=2.6:
                             pass
                         elif int(temp_val)==0:
                             pass

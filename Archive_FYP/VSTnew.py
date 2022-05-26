@@ -22,8 +22,7 @@ import pandas as pd
 from cmath import inf
 import subprocess
 
-# from UI import Ui_MainWindow
-from UInew import Ui_MainWindow
+from newuiupdate import Ui_MainWindow
 
 class window(QtWidgets.QMainWindow):
     def __init__(self):
@@ -48,6 +47,9 @@ class window(QtWidgets.QMainWindow):
         self.left_list=[]
         self.right_list=[]
         self.key1=True
+        self.new_ref='a'
+        self.subject='a'
+        self.folder='a'
     ################## New widgets ######################
         self.dirModel = QFileSystemModel()
         self.dirModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs)
@@ -55,11 +57,7 @@ class window(QtWidgets.QMainWindow):
         self.fileModel.setFilter(QDir.NoDotAndDotDot |  QDir.Files)
         self.model = QtWidgets.QFileSystemModel()
         self.model.setRootPath((QtCore.QDir.rootPath()))
-        # self.ui.treeview.setModel(self.model)
-        # self.ui.treeview.hideColumn(1)
-        # self.ui.treeview.hideColumn(2)
-        # self.ui.treeview.hideColumn(3)
-        # self.ui.treeview.doubleClicked.connect(self.select_video)
+        
 
         self.ui.treeview_3.setModel(self.model)
         self.ui.treeview_3.hideColumn(1)
@@ -71,7 +69,6 @@ class window(QtWidgets.QMainWindow):
         self.mediaPlayer.setVideoOutput(self.ui.videoWidget)
 
         self.playlist = QMediaPlaylist()
-        #self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile('videos/alphabet/a.mp4')))
         self.playlist.setPlaybackMode(self.playlist.Loop)
         self.mediaPlayer.setPlaylist(self.playlist)
 
@@ -109,6 +106,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_26.clicked.connect(self.teachers_back)
         self.ui.pushButton_6.clicked.connect(self.Remove_Student)
         self.ui.pushButton_10.clicked.connect(self.main)
+        self.ui.pushButton_50.clicked.connect(self.main)
 
 
         #self.ui.pushButton_7.clicked.connect(self.students_info_back)
@@ -149,8 +147,8 @@ class window(QtWidgets.QMainWindow):
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
 
-        self.ui.lineEdit_7.returnPressed.connect(self.video_search)
-        self.ui.lineEdit_8.returnPressed.connect(self.subject_search)
+        self.ui.lineEdit_7.textChanged.connect(self.video_search)
+        self.ui.lineEdit_8.textChanged.connect(self.subject_search)
 
         #############Validators###################
         self.ui.lineEdit_2.setValidator(self.onlyInt)
@@ -239,7 +237,10 @@ class window(QtWidgets.QMainWindow):
                     pass
                 else:
                     self.test_roll_no = temp[0]
-                    path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
+                    if self.subject == "Computer":
+                        path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject)
+                    else:
+                        path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,self.folder)
                     path=str(path)
                     self.dirModel.setRootPath(path)
                     self.ui.treeview_3.setRootIndex(self.model.index(path))
@@ -255,7 +256,10 @@ class window(QtWidgets.QMainWindow):
                     for i in range(len(b)):
                         temp=b[i]
                         self.test_users.append(temp[0])
-                    path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
+                    if self.subject == "Computer":
+                        path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject)
+                    else:
+                        path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,self.folder)
                     path=str(path)
                     self.dirModel.setRootPath(path)
                     self.ui.treeview_3.setRootIndex(self.model.index(path))
@@ -271,7 +275,10 @@ class window(QtWidgets.QMainWindow):
             pass
         else:
             self.class_assign=passw
-            path=pathlib.Path(__file__).parent.absolute().joinpath('videos')
+            if self.subject == "Computer":
+                path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject)
+            else:
+                path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,self.folder)
             path=str(path)
             self.dirModel.setRootPath(path)
             self.ui.treeview_3.setRootIndex(self.model.index(path))
@@ -1261,7 +1268,7 @@ class window(QtWidgets.QMainWindow):
                 popup.exec_()
             elif passw==[]:
                 popup.setWindowTitle("Login Credientials")
-                popup.setText(f"Username with ID ={a} Does not exsist")
+                popup.setText("Incorrect Username or Password!")
                 popup.setStandardButtons(QMessageBox.Ok)
                 popup.setIcon(QMessageBox.Critical)
                 popup.exec_()
@@ -1395,32 +1402,6 @@ class window(QtWidgets.QMainWindow):
                     popup.setIcon(QMessageBox.Critical)
                     popup.exec_()
                     
-    def aphabets_folder(self):
-        path=pathlib.Path(__file__).parent.absolute().joinpath('videos','Alphabets')
-        path=str(path)
-        self.dirModel.setRootPath(path)
-        self.ui.treeview.setRootIndex(self.model.index(path))
-        self.ui.stackedWidget_2.setCurrentIndex(1)
-        self.ui.frame_13.hide()
-        self.current_folder='Alphabets'
-    def science_folder(self):
-        path=pathlib.Path(__file__).parent.absolute().joinpath('videos','Science')
-        path=str(path)
-        self.dirModel.setRootPath(path)
-        self.ui.treeview.setRootIndex(self.model.index(path))
-        self.ui.stackedWidget_2.setCurrentIndex(1)
-        self.ui.frame_13.hide()
-        self.current_folder='Science'
-    def computer_folder(self):
-        path=pathlib.Path(__file__).parent.absolute().joinpath('videos','Computer')
-        path=str(path)
-        self.dirModel.setRootPath(path)
-        self.ui.treeview.setRootIndex(self.model.index(path))
-        self.ui.stackedWidget_2.setCurrentIndex(1)
-        self.ui.frame_13.hide()
-        self.current_folder='Computer'
-
-
     def sentence_screen(self):
         self.sentences=[]
         self.camerathread = cameraThread()
@@ -1438,27 +1419,23 @@ class window(QtWidgets.QMainWindow):
         self.ui.stackedWidget_2.setCurrentIndex(3)
     
     def click(self,eve,subject,folder,video):
-        #print(eve,subject,video,i)
         self.select_video_new(subject,folder,video)
 
     def video_search(self):
         for i in reversed(range(self.ui.gridLayout_19.count())): 
             self.ui.gridLayout_19.itemAt(i).widget().setVisible(False)
-        try:
-            for l in self.vid_buttons[self.ui.lineEdit_7.text().upper()]:
-                    l.setVisible(True)
-        except:
-            for i in reversed(range(self.ui.gridLayout_19.count())): 
-                self.ui.gridLayout_19.itemAt(i).widget().setVisible(True)
+        result = [v for v in list(self.vid_buttons.keys()) if self.ui.lineEdit_7.text().upper() in v]
+        for l in result:
+            for m in self.vid_buttons[l]:
+                m.setVisible(True)
     
     def subject_search(self):
         for i in reversed(range(self.ui.gridLayout_20.count())): 
             self.ui.gridLayout_20.itemAt(i).widget().setVisible(False)
-        try:
-            self.sub_buttons[self.ui.lineEdit_8.text().upper()].setVisible(True)
-        except:
-            for i in reversed(range(self.ui.gridLayout_20.count())): 
-                self.ui.gridLayout_20.itemAt(i).widget().setVisible(True)
+        result = [v for v in list(self.sub_buttons.keys()) if self.ui.lineEdit_8.text().upper() in v]
+        for l in result:
+                self.sub_buttons[l].setVisible(True)
+        
 
 
     def video_browse(self,subject,folder):
@@ -1470,9 +1447,9 @@ class window(QtWidgets.QMainWindow):
         c=0
         
         if subject == "Computer":
-            path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',subject)
+            path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',subject)
         else:
-            path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',subject,folder)
+            path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',subject,folder)
         videos=[]
         for i in path.glob('**/*'):
             if ".mp4" in i.name:
@@ -1513,7 +1490,7 @@ class window(QtWidgets.QMainWindow):
     def select_subject(self,subject):
         self.subject=subject
         
-        path = pathlib.Path(__file__).parent.joinpath("New Structure",subject)
+        path = pathlib.Path(__file__).parent.joinpath("Videos",subject)
         folders = [f.name for f in os.scandir(path) if f.is_dir()]
         for i in reversed(range(self.ui.gridLayout_20.count())): 
             self.ui.gridLayout_20.itemAt(i).widget().deleteLater()
@@ -1545,41 +1522,28 @@ class window(QtWidgets.QMainWindow):
         self.video=video
         self.subject=subject
         self.current_folder=folder
+    
+        waleed_signs=eval(f'{folder}_signs')
         if subject == "Computer":
-            path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',subject,f"{video}.mp4")
+            path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',subject,f"{video}.mp4")
         else:
-            path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',subject,folder,f"{video}.mp4")
+            path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',subject,folder,f"{video}.mp4")
 
         self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile(str(path))))
         self.mediaPlayer.play()
-        #self.mediaPlayer.pause()
         time.sleep(0.1)
         
         self.camerathread = cameraThread()
         self.camerathread.acc_sign=video
         self.video=video
         self.camerathread.record=False
-        if folder == "Alphabets":
-            self.camerathread.reference_signs=Alphabets_signs
-            self.current_reference_signs=Alphabets_signs
-            try:
-                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_alph)
-            except:
-                pass
-        elif folder == 'Computer':
-            self.camerathread.reference_signs=Computer_signs
-            self.current_reference_signs=Computer_signs
-            try:
-                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_comp)
-            except:
-                pass 
-        elif folder == 'Science':
-            self.camerathread.reference_signs=Science_signs
-            self.current_reference_signs=Science_signs
-            try:
-                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_sci)
-            except:
-                pass
+
+        self.camerathread.reference_signs=waleed_signs
+        self.current_reference_signs=waleed_signs
+        try:
+            self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref)
+        except:
+            pass
             
         self.camerathread.start()
         self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
@@ -1590,7 +1554,10 @@ class window(QtWidgets.QMainWindow):
 
     def select_video_test(self,index): #For Student Video Assignment
             if self.class_assign==0:
-                path=pathlib.Path.cwd().joinpath('videos')
+                if self.subject == "Computer":
+                    path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject)
+                else:
+                    path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,self.folder)
                 video = self.fileModel.fileName(index)
                 folder=''
                 folders=os.listdir(path)
@@ -1648,7 +1615,10 @@ class window(QtWidgets.QMainWindow):
                 self.test_users=[]
                 self.ui.stackedWidget.setCurrentIndex(4)
             else:
-                path=pathlib.Path.cwd().joinpath('videos')
+                if self.subject == "Computer":
+                    path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject)
+                else:
+                    path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,self.folder)
                 video = self.fileModel.fileName(index)
                 folder=''
                 folders=os.listdir(path)
@@ -1712,52 +1682,39 @@ class window(QtWidgets.QMainWindow):
     def select_video(self,index):
         video = self.fileModel.fileName(index)
         path=''
-        folders=['alphabets','computer','science']
+        folders=['Adjectives', 'Adverbs', 'Airport', 'Alphabets', 'Appliances', 'Around_the_house',
+                'Basic_Phrases', 'Bathroom', 'Bedroom', 'Body_Anatomy', 'Buildings_Places', 'Calendar_Time'
+                , 'Classroom', 'Clothes_Accessories', 'Colors', 'Computer', 'Countries_Continents', 'Drinks',
+                'Farming_Agriculture', 'Food_General', 'Fruits', 'Geography', 'Government', 'Grammar', 'Health_Medical Care',
+                'Holidays_Celebrations', 'Insects_Spiders_Reptiles', 'Kitchen', 'Law_Order', 'Living_Room', 'Mammals',
+                    'Mathematics', 'Media', 'Military', 'Numbers', 'Pakistan_Places', 'Professions', 'Science', 'Sports_Games',
+                    'Suena_Letras', 'Transport', 'Verbs', 'Weather']
         folder=''
         
         for i in folders:
-            path=pathlib.Path(__file__).parent.absolute().joinpath('videos',i,video)
+            #path=pathlib.Path(__file__).parent.absolute().joinpath('videos',i,video)
+            if self.subject == "Computer":
+                path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,i,video)
+            else:
+                path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,self.folder,i,video)
             if path.is_file():
                 folder=i
                 break
 
         self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile(str(path))))
         self.mediaPlayer.play()
-        #self.mediaPlayer.pause()
         time.sleep(0.1)
-        
-        
-        if folder == "alphabets":
-            self.camerathread = cameraThread()
-            self.camerathread.reference_signs=Alphabets_signs
-            self.camerathread.acc_sign=video[:-4]
-            self.video=video[:-4]
-            self.camerathread.record=False
-            try:
-                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_alph)
-            except:
-                pass
-        elif folder == 'computer':
-            self.camerathread = cameraThread()
-            self.camerathread.reference_signs=Computer_signs
-            self.camerathread.acc_sign=video[:-4]
-            self.video=video[:-4]
-            self.camerathread.record=False
-            try:
-                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_comp)
-            except:
-                pass
-            
-        elif folder == 'science':
-            self.camerathread = cameraThread()
-            self.camerathread.reference_signs=Science_signs
-            self.camerathread.acc_sign=video[:-4]
-            self.video=video[:-4]
-            self.camerathread.record=False
-            try:
-                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref_sci)
-            except:
-                pass
+
+        monis=eval(f'{folder}_signs')
+        self.camerathread = cameraThread()
+        self.camerathread.reference_signs=monis
+        self.camerathread.acc_sign=video[:-4]
+        self.video=video[:-4]
+        self.camerathread.record=False
+        try:
+            self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref)
+        except:
+            pass
             
         self.camerathread.start()
         self.camerathread.previous_record=False
@@ -1798,12 +1755,13 @@ class window(QtWidgets.QMainWindow):
         self.ui.frame_13.show()
         self.sentences_pass=0
         self.sentences=[]
-        #self.camerathread.sentences_pass_on=False
 
     def sentence_back(self):
         self.camerathread.stop()
-        self.videoThread=videoThread()
-        self.videoThread.stop()
+        try:
+            self.videoThread.stop()
+        except:
+            pass
         self.videoThread.key1=False
         self.ui.stackedWidget_2.setCurrentIndex(0)
         self.sentences_pass=0
@@ -1814,94 +1772,184 @@ class window(QtWidgets.QMainWindow):
     def new_account_cancel(self):
         self.ui.stackedWidget.setCurrentIndex(0)
     def add_video(self):
+        root=pathlib.Path.cwd()
+        import threading
         folder=self.current_folder
-        if folder == "Computer":
-            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',folder)
-        else:
-            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',self.subject,folder)
-        if folder == "Alphabets":
-            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data','Alphabets_dataset')
+        if folder=='Computer':
+            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data',f'{folder}_dataset')
+            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',folder)
         else:
             datapath=pathlib.Path(__file__).parent.absolute().joinpath('data',f'{folder}_dataset')
+            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,folder)
+                
         fileName, _ = QFileDialog.getOpenFileName(None,"add Video",str(folder_path),filter="*.mp4")
+        
         
         progress=QProgressDialog()
         progress.setLabelText("Video being Processed Please wait......")
-       
+        progress.setCancelButton(None)
+        progress.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         if fileName:
-            progress.show()
             file=QFileInfo(fileName).fileName()
             video_path=fileName
             video_data_path=pathlib.Path(datapath).joinpath(file[:-4])
-            progress.setValue(0)
-            QApplication.processEvents()
-            video_dest_path=pathlib.Path(folder_path).joinpath(file) ## Do changes to this because the patlib change to CWD was made in landmark_utils just send the file name not the entire path
-            temp_vid_path=pathlib.Path(__file__).parent.absolute().joinpath('temp_videos')
-            progress.setValue(10)
-            QApplication.processEvents()
-            
-            
-            shutil.copyfile(video_path,video_dest_path)
-            trim.trim(file[:-4],video_path,temp_vid_path)
-            vid1=f'{file[:-4]}_1'
-            vid2=f'{file[:-4]}_2'
-            progress.setValue(20)
-            QApplication.processEvents()
-            save_landmarks_from_new_video(vid1,temp_vid_path,video_data_path)
-            progress.setValue(40)
-            QApplication.processEvents()
-            save_landmarks_from_new_video(vid2,temp_vid_path,video_data_path)
-            progress.setValue(60)
-            QApplication.processEvents()
-            if folder == "Alphabets":
-                self.new_ref_alph=new_load_reference_signs([vid1,vid2],"Alphabets")
-                Alphabets_signs.append(self.new_ref_alph)
-            elif folder == 'Science':
-                self.new_ref_sci=new_load_reference_signs([vid1,vid2],'Science')
-                Science_signs.append(self.new_ref_alph)
-            elif folder == 'Computer':
-                self.new_ref_comp=new_load_reference_signs([vid1,vid2],'Computer')
-                Computer_signs.append(self.new_ref_alph)
-            progress.setValue(80)
-            QApplication.processEvents()
-            cp=pathlib.Path(__file__).parent.absolute()
-            op=pathlib.Path(cp).joinpath('Thumbnails',folder,f"{file[:-4]}.jpg")
-            pathlib.Path(cp).joinpath('Thumbnails',folder).mkdir(parents=True, exist_ok=True)
-            subprocess.run(f"ffmpeg -i \"{video_path}\" -ss 00:00:02.000 -vframes 1 \"{op}\"")
-            progress.setValue(100)
-            QApplication.processEvents()
-            self.video_browse(self.subject,folder)
-            #self.dirModel.modelReset()
-            # self.model.setRootPath((QtCore.QDir.rootPath()))
-            # self.ui.treeview.setRootIndex(self.model.index(str(folder_path)))
+            if folder=='Computer':
+                if os.path.exists(str(root)+'\\'+'Videos'+'\\'+folder+'\\'+file[:-4]+'.mp4'):
+                    popup=QMessageBox()
+                    popup.setWindowTitle("Video Already Exists")
+                    popup.setText("Video Already Exists To Update First Remove the Video")
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Critical)
+                    popup.exec_()
+                    
+                else:
+                    progress.show()
+                    xy=threading.Thread(target=progress.setValue,args=(0,))
+                    xy.start()
+                    QApplication.processEvents()
+                    video_dest_path=pathlib.Path(folder_path).joinpath(file) 
+                    temp_vid_path=pathlib.Path(__file__).parent.absolute().joinpath('temp_videos')
+                    yx=threading.Thread(target=progress.setValue,args=(10,))
+                    yx.start()
+                    QApplication.processEvents()
+                    
+                    datapath=str(datapath)+'\\'+file[:-4]
+                    shutil.copyfile(video_path,video_dest_path)
+                    trim.trim(file[:-4],video_path,temp_vid_path)
+                    vid1=f'{file[:-4]}_1'
+                    vid2=f'{file[:-4]}_2'
+                    x=threading.Thread(target=progress.setValue,args=(20,))
+                    x.start()
+                    QApplication.processEvents()
+                    temp1=str(video_data_path)+'\\'+vid1
+                    temp2=str(video_data_path)+'\\'+vid2
+                    save_landmarks_from_new_video(vid1,temp_vid_path,temp1,datapath)
+                    
+                    y=threading.Thread(target=progress.setValue,args=(40,))
+                    y.start()
+                    QApplication.processEvents()
+                    save_landmarks_from_new_video(vid2,temp_vid_path,temp2,datapath)
+                    
+                    z=threading.Thread(target=progress.setValue,args=(60,))
+                    QApplication.processEvents()
+                    z.start()
+                    
+                    self.new_ref=new_load_reference_signs(file[:-4],[vid1,vid2],folder)
+                    exec(f'{folder}_signs.append(self.new_ref)')
+
+                    xyz=threading.Thread(target=progress.setValue,args=(80,))
+                    xyz.start()
+                    QApplication.processEvents()
+                    cp=pathlib.Path.cwd()
+                    op=pathlib.Path(cp).joinpath('Thumbnails',folder,f"{file[:-4]}.jpg")
+                    pathlib.Path(cp).joinpath('Thumbnails',folder).mkdir(parents=True, exist_ok=True)
+                    video_path=str(video_path)
+                    video_path=video_path.replace('/','\\')
+                    print(video_path)
+                    print(op)
+
+                    from ffmpy import FFmpeg
+                    ff_path=pathlib.Path.cwd()
+                    ff_path2=str(ff_path)+'\\'+'ffmpeg'+'\\'+'bin'+'\\'+'ffmpeg.exe'
+                    ff=FFmpeg(executable=ff_path2,inputs={video_path: None}, outputs={op: ['-ss', '00:00:2', '-vframes', '1']})
+                    ff.run()
+                    
+                    progress.setValue(100)
+                    QApplication.processEvents()
+                    self.video_browse(self.subject,folder)
+            else:
+                if os.path.exists(str(root)+'\\'+'Videos'+'\\'+self.subject+'\\'+folder+'\\'+file[:-4]+'.mp4'):
+                    popup=QMessageBox()
+                    popup.setWindowTitle("Video Already Exists")
+                    popup.setText("Video Already Exists To Update First Remove the Video")
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Critical)
+                    popup.exec_()
+                    
+                else:
+                    progress.show()
+                    xy=threading.Thread(target=progress.setValue,args=(0,))
+                    xy.start()
+                    QApplication.processEvents()
+                    video_dest_path=pathlib.Path(folder_path).joinpath(file) 
+                    temp_vid_path=pathlib.Path(__file__).parent.absolute().joinpath('temp_videos')
+                    yx=threading.Thread(target=progress.setValue,args=(10,))
+                    yx.start()
+                    QApplication.processEvents()
+                    
+                    datapath=str(datapath)+'\\'+file[:-4]
+                    shutil.copyfile(video_path,video_dest_path)
+                    trim.trim(file[:-4],video_path,temp_vid_path)
+                    vid1=f'{file[:-4]}_1'
+                    vid2=f'{file[:-4]}_2'
+                    x=threading.Thread(target=progress.setValue,args=(20,))
+                    x.start()
+                    QApplication.processEvents()
+                    temp1=str(video_data_path)+'\\'+vid1
+                    temp2=str(video_data_path)+'\\'+vid2
+                    save_landmarks_from_new_video(vid1,temp_vid_path,temp1,datapath)
+                    
+                    y=threading.Thread(target=progress.setValue,args=(40,))
+                    y.start()
+                    QApplication.processEvents()
+                    save_landmarks_from_new_video(vid2,temp_vid_path,temp2,datapath)
+                    
+                    z=threading.Thread(target=progress.setValue,args=(60,))
+                    QApplication.processEvents()
+                    z.start()
+
+                    self.new_ref=new_load_reference_signs(file[:-4],[vid1,vid2],folder)
+                    exec(f'{folder}_signs.append(self.new_ref)')
+
+                    xyz=threading.Thread(target=progress.setValue,args=(80,))
+                    xyz.start()
+                    QApplication.processEvents()
+                    cp=pathlib.Path.cwd()
+                    op=pathlib.Path(cp).joinpath('Thumbnails',folder,f"{file[:-4]}.jpg")
+                    pathlib.Path(cp).joinpath('Thumbnails',folder).mkdir(parents=True, exist_ok=True)
+                    video_path=str(video_path)
+                    video_path=video_path.replace('/','\\')
+                    print(video_path)
+                    print(op)
+
+                    from ffmpy import FFmpeg
+                    ff_path=pathlib.Path.cwd()
+                    ff_path2=str(ff_path)+'\\'+'ffmpeg'+'\\'+'bin'+'\\'+'ffmpeg.exe'
+                    ff=FFmpeg(executable=ff_path2,inputs={video_path: None}, outputs={op: ['-ss', '00:00:2', '-vframes', '1']})
+                    ff.run()
+                    
+                    progress.setValue(100)
+                    QApplication.processEvents()
+                    self.video_browse(self.subject,folder)
     def delete_video(self):
         folder=self.current_folder
         if folder == "Computer":
-            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',folder)
-        else:
-            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('New Structure',self.subject,folder)
-        if folder == "Alphabets":
-            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data','Alphabets_dataset')
+            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',folder)
+            datapath=pathlib.Path(__file__).parent.absolute().joinpath('data','Computer_dataset')
         else:
             datapath=pathlib.Path(__file__).parent.absolute().joinpath('data',f'{folder}_dataset')
+            folder_path=pathlib.Path(__file__).parent.absolute().joinpath('Videos',self.subject,folder)
+        
         
         fileName, _ = QFileDialog.getOpenFileName(None,"Delete Video",str(folder_path),filter="*.mp4")
-        if folder == 'Alphabets':
-            signs=Alphabets_signs
-        elif folder == 'Computer':
-            signs=Computer_signs
-        elif folder == 'Science':
-            signs=Science_signs
+        temp_signs=eval(f'{folder}_signs')
         if fileName:
             file=QFileInfo(fileName).fileName()
             video_path=pathlib.Path(folder_path).joinpath(file)
             video_data_path=pathlib.Path(datapath).joinpath(file[:-4])
+            thumb_path=pathlib.Path.cwd().joinpath('Thumbnails')
+            path=str(thumb_path)+'\\'+folder+'\\'+file[:-4]+'.jpg'
+            dataset=pathlib.Path.cwd().joinpath('data')
+            data=str(dataset)+'\\'+folder+'_dataset'+'\\'+file[:-4]
             
             try:
                 os.remove(video_path)
+                os.remove(path)
                 shutil.rmtree(video_data_path)
+                shutil.rmtree(data)
+
                 
-                signs.drop(signs.index[signs['name'] == file[:-4]], inplace=True)
+                temp_signs.drop(temp_signs.index[temp_signs['name'] == file[:-4]], inplace=True)
             except:
                 pass
         self.video_browse(self.subject,folder)
@@ -1966,24 +2014,27 @@ class window(QtWidgets.QMainWindow):
                             self.ui.label_16.setText('No Close Signs Predicted')
                             self.ui.label_17.setText('')
                         else:
-                            acc1=((int(dist[i])-60)/60)*100
-                            if int(dist[i])<60:
-                                acc1=round(acc1,2)
-                                self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                self.ui.label_17.setText(str('98.5'))
-                                break
+                            if dist[i]==float('inf'):
+                                acc1=0
                             else:
-                                if acc1>100:
-                                    acc1=(acc1)//100
+                                acc1=((int(dist[i])-60)/60)*100
+                                if int(dist[i])<60:
                                     acc1=round(acc1,2)
                                     self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                    self.ui.label_17.setText(str(100-acc1))
+                                    self.ui.label_17.setText(str('98.5'))
                                     break
                                 else:
-                                    acc1=round(acc1,2)
-                                    self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                    self.ui.label_17.setText(str(100-acc1))
-                                    break
+                                    if acc1>100:
+                                        acc1=(acc1)//100
+                                        acc1=round(acc1,2)
+                                        self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
+                                        self.ui.label_17.setText(str(100-acc1))
+                                        break
+                                    else:
+                                        acc1=round(acc1,2)
+                                        self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
+                                        self.ui.label_17.setText(str(100-acc1))
+                                        break
 
                 
                 if float(acc)>50 and predicted==self.video:
@@ -2060,15 +2111,15 @@ class window(QtWidgets.QMainWindow):
                 if self.error==1:
                     if out_right!=[] and out_left==[]:
                         for i in out_right:
-                            self.ui.textEdit_2.append(i)
-                            self.right_list.append(i)
-                            c.append(i)
+                                self.ui.textEdit_2.append(i)
+                                self.right_list.append(i)
+                                c.append(i)
                         self.error=0
                     elif out_left!=[]  and out_right==[]:
                         for i in out_left:
-                            self.ui.textEdit_2.append(i)
-                            self.left_list.append(i)
-                            c.append(i)
+                                self.ui.textEdit_2.append(i)
+                                self.left_list.append(i)
+                                c.append(i)
                         self.error=0
                     else:
                         self.ui.textEdit_2.append("For Left Hand")
@@ -2228,7 +2279,6 @@ class cameraThread(QThread):
         if self.previous_record==False:
             cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
-            #video = VideoWriter('webcam.avi', VideoWriter_fourcc(*'MP42'), 20.0, (640, 480))
             video = VideoWriter('webcamimage.avi', VideoWriter_fourcc(*'MP42'), 2.0, (640, 480))
 
             with mediapipe.solutions.holistic.Holistic(
@@ -2327,21 +2377,8 @@ class videoThread(QThread):
                     if self.key1==True:
                         cv2.waitKey(500)
     def stop(self):
-        self.ThreadActive = False
-        self.quit()
-
-
-    
-
-
-# def param_capture(n):
-#     n = [
-#         file_name.replace(".pickle", "").replace("lh_", "")
-#         for root, dirs, files in os.walk(os.path.join("data", f'{n}'))
-#         for file_name in files
-#         if file_name.endswith(".pickle") and file_name.startswith("lh_")
-#     ]
-#     return n
+            self.ThreadActive = False
+            self.quit()
 
 def load_param(np,all_data_sentences):
     np1,all_data_sentences=newer_load_reference_signs(np,all_data_sentences)
@@ -2354,24 +2391,20 @@ if __name__ == "__main__":
     
     all_data_sentences=pd.DataFrame(columns=["name", "sign_model", "distance"])
     for i in data_len:
-        #if i=="Science_dataset" or i=="Alphabets_dataset" or i=="Computer_dataset":
-        if i=="Alphabets_dataset" :
+        if i=="Alphabets_dataset": # Since with this it takes 21.2225548 seconds or i=='Basic_Phrases_dataset':
+            print(i)
             temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")
-            temp3=temp3.replace(" ","_")
-            temp3=temp3.replace("&","and")
-            temp3=temp3.replace("(","")
-            temp3=temp3.replace(")","")
-            temp3=temp3.replace(",","_")
             exec(f'{temp3}=temp1')
         else:
             pass    
     end_time = time.time()
 
     print(f"The execution time for loading is: {end_time-start_time}")
-
+    
     app = QtWidgets.QApplication([])
+    app.setWindowIcon(QtGui.QIcon("logo.png"))
     application = window()
-    application.show()
+    application.showMaximized()
     sys.exit(app.exec())

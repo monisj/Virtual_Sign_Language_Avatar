@@ -1,6 +1,7 @@
 import subprocess
 import string,os,pathlib
 from moviepy.editor import *
+import _thread
 def trim(vid,path,outpath):
     skip=False
     try:
