@@ -180,29 +180,29 @@ class window(QtWidgets.QMainWindow):
             self.camerathread.stop()
         except:
             pass
-        self.ui.stackedWidget_2.setCurrentIndex(5)
-        self.ui.treeWidget.clear()
-        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        conn = sqlite3.connect(f"{data_path}/Student_info.db")
-        cur = conn.cursor()
-        cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
-        passw=cur.fetchall()
+        #self.ui.stackedWidget_2.setCurrentIndex(5)
+        #self.ui.treeWidget.clear()
+        #data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        #conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        #cur = conn.cursor()
+        #cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
+        #passw=cur.fetchall()
         
-        if passw==None:
-            parent=QtWidgets.QTreeWidgetItem(1)
-            parent.setText(0,"No Tests Are Assigned #Winning")
-            self.ui.treeWidget.addTopLevelItem(parent)
-        else:
-            for i in passw:
-                if i[2]=="No":
-                    parent=QtWidgets.QTreeWidgetItem(1)
-                    parent.setText(0,f"{i[0]}")
-                    self.ui.treeWidget.addTopLevelItem(parent)
+        #if passw==None:
+        #    parent=QtWidgets.QTreeWidgetItem(1)
+        #    parent.setText(0,"No Tests Are Assigned #Winning")
+        #    self.ui.treeWidget.addTopLevelItem(parent)
+        #else:
+        #    for i in passw:
+        #        if i[2]=="No":
+        #            parent=QtWidgets.QTreeWidgetItem(1)
+        #            parent.setText(0,f"{i[0]}")
+        #            self.ui.treeWidget.addTopLevelItem(parent)
 
             
             
-                    conn.close()
-            self.ui.treeWidget.itemClicked.connect(self.perform_test)
+        #            conn.close()
+        #    self.ui.treeWidget.itemClicked.connect(self.perform_test)
 
     def test_back_screen(self):
         self.ui.stackedWidget_2.setCurrentIndex(0)
