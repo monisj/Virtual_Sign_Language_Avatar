@@ -2408,7 +2408,7 @@ class cameraThread(QThread):
     def run(self):
         from cv2 import VideoWriter
         from cv2 import VideoWriter_fourcc
-        
+        condition=0
         self.sign_recorder = SignRecorder(self.reference_signs,self.acc_sign)
         self.ThreadActive = True
         webcam_manager = WebcamManager()
@@ -2439,13 +2439,26 @@ class cameraThread(QThread):
                     self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc),list(out_left),list(out_right))
                     
                     if results.left_hand_landmarks:
-                        self.on_release(True)
-                        video.write(image)
+                        if condition==0:
+                            video = VideoWriter('webcamimage.avi', VideoWriter_fourcc(*'MP42'), 2.0, (640, 480))
+                            condition=1
+                        else:
+                            self.on_release(True)
+                            video.write(image)
                     elif results.right_hand_landmarks:
-                        self.on_release(True)  
-                        video.write(image)
+                        if condition==0:
+                            video = VideoWriter('webcamimage.avi', VideoWriter_fourcc(*'MP42'), 2.0, (640, 480))
+                            condition=1
+                        else:
+                            self.on_release(True)
+                            video.write(image)
                     else:
-                        self.on_release(False)
+                        if condition==0:
+                            self.on_release(False)
+                        else:
+                            video.release()
+                            self.on_release(False)
+                            condition=0
         else:
             print(True)
             while True:
@@ -2555,12 +2568,12 @@ if __name__ == "__main__":
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")
             exec(f'{temp3}=temp1')
-        else:
-            print(i)
-            temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
-            temp1=load_param2(temp)
-            temp3=i.replace("dataset","signs")
-            exec(f'{temp3}=temp1')   
+        # else:
+        #     print(i)
+        #     temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
+        #     temp1=load_param2(temp)
+        #     temp3=i.replace("dataset","signs")
+        #     exec(f'{temp3}=temp1')   
     end_time = time.time()
     bc.terminate()
 

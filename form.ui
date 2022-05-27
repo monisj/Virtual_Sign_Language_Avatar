@@ -110,7 +110,6 @@ QPushButton:hover:!pressed {
                 <property name="font">
                  <font>
                   <pointsize>22</pointsize>
-                  <weight>75</weight>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -245,7 +244,6 @@ border-bottom-right-radius:20px;}</string>
                            <property name="font">
                             <font>
                              <pointsize>9</pointsize>
-                             <weight>75</weight>
                              <bold>true</bold>
                             </font>
                            </property>
@@ -265,7 +263,6 @@ border-bottom-right-radius:20px;}</string>
                            <property name="font">
                             <font>
                              <pointsize>9</pointsize>
-                             <weight>75</weight>
                              <bold>true</bold>
                             </font>
                            </property>
@@ -886,7 +883,6 @@ QPushButton:hover {
              <property name="font">
               <font>
                <pointsize>20</pointsize>
-               <weight>50</weight>
                <bold>false</bold>
               </font>
              </property>
@@ -1021,7 +1017,7 @@ QPushButton#pushButton_47:hover:!pressed{
                <widget class="QPushButton" name="pushButton_10">
                 <property name="minimumSize">
                  <size>
-                  <width>121</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1049,7 +1045,7 @@ QPushButton#pushButton_47:hover:!pressed{
                <widget class="QPushButton" name="pushButton_13">
                 <property name="minimumSize">
                  <size>
-                  <width>121</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1074,7 +1070,7 @@ QPushButton#pushButton_47:hover:!pressed{
                <widget class="QPushButton" name="pushButton_15">
                 <property name="minimumSize">
                  <size>
-                  <width>121</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1099,7 +1095,7 @@ QPushButton#pushButton_47:hover:!pressed{
                <widget class="QPushButton" name="pushButton_69">
                 <property name="minimumSize">
                  <size>
-                  <width>121</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1127,7 +1123,7 @@ QPushButton#pushButton_47:hover:!pressed{
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>180</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1143,7 +1139,7 @@ QPushButton#pushButton_47:hover:!pressed{
                <widget class="QPushButton" name="pushButton_48">
                 <property name="minimumSize">
                  <size>
-                  <width>180</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1159,7 +1155,7 @@ QPushButton#pushButton_47:hover:!pressed{
                <widget class="QPushButton" name="pushButton_58">
                 <property name="minimumSize">
                  <size>
-                  <width>180</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1188,7 +1184,7 @@ QPushButton#pushButton_47:hover:!pressed{
                <widget class="QPushButton" name="pushButton_20">
                 <property name="minimumSize">
                  <size>
-                  <width>121</width>
+                  <width>131</width>
                   <height>50</height>
                  </size>
                 </property>
@@ -1215,7 +1211,7 @@ QPushButton#pushButton_47:hover:!pressed{
            <item>
             <widget class="QStackedWidget" name="stackedWidget_2">
              <property name="currentIndex">
-              <number>10</number>
+              <number>5</number>
              </property>
              <widget class="QWidget" name="page_15">
               <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1229,8 +1225,8 @@ QPushButton#pushButton_47:hover:!pressed{
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>1329</width>
-                    <height>960</height>
+                    <width>1203</width>
+                    <height>972</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -1272,7 +1268,6 @@ QPushButton:hover:!pressed {
                         <property name="font">
                          <font>
                           <pointsize>-1</pointsize>
-                          <weight>75</weight>
                           <italic>false</italic>
                           <bold>true</bold>
                          </font>
@@ -1300,7 +1295,6 @@ QPushButton:hover:!pressed {
                         <property name="font">
                          <font>
                           <pointsize>-1</pointsize>
-                          <weight>75</weight>
                           <italic>false</italic>
                           <bold>true</bold>
                          </font>
@@ -1328,7 +1322,6 @@ QPushButton:hover:!pressed {
                         <property name="font">
                          <font>
                           <pointsize>-1</pointsize>
-                          <weight>75</weight>
                           <italic>false</italic>
                           <bold>true</bold>
                          </font>
@@ -1359,7 +1352,6 @@ QPushButton:hover:!pressed {
                         <property name="font">
                          <font>
                           <pointsize>-1</pointsize>
-                          <weight>75</weight>
                           <italic>false</italic>
                           <bold>true</bold>
                          </font>
@@ -1387,7 +1379,6 @@ QPushButton:hover:!pressed {
                         <property name="font">
                          <font>
                           <pointsize>-1</pointsize>
-                          <weight>75</weight>
                           <italic>false</italic>
                           <bold>true</bold>
                          </font>
@@ -1418,7 +1409,6 @@ QPushButton:hover:!pressed {
                         <property name="font">
                          <font>
                           <pointsize>-1</pointsize>
-                          <weight>75</weight>
                           <italic>false</italic>
                           <bold>true</bold>
                          </font>
@@ -1493,8 +1483,8 @@ QPushButton:hover:!pressed {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>1329</width>
-                    <height>841</height>
+                    <width>1203</width>
+                    <height>861</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -2122,7 +2112,7 @@ QPushButton:hover:!pressed {
              </widget>
              <widget class="QWidget" name="page_10">
               <layout class="QGridLayout" name="gridLayout_8">
-               <item row="1" column="0">
+               <item row="0" column="0">
                 <widget class="QFrame" name="frame_20">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
@@ -2130,8 +2120,30 @@ QPushButton:hover:!pressed {
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_21">
-                  <item>
+                 <layout class="QGridLayout" name="gridLayout_2">
+                  <item row="0" column="0" colspan="2">
+                   <widget class="QTableWidget" name="tableWidget_7">
+                    <property name="rowCount">
+                     <number>0</number>
+                    </property>
+                    <column>
+                     <property name="text">
+                      <string>Test_Name</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Start_Date</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>End_Date</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
                    <spacer name="horizontalSpacer_12">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -2144,7 +2156,7 @@ QPushButton:hover:!pressed {
                     </property>
                    </spacer>
                   </item>
-                  <item>
+                  <item row="1" column="1">
                    <widget class="QPushButton" name="pushButton_35">
                     <property name="cursor">
                      <cursorShape>PointingHandCursor</cursorShape>
@@ -2156,9 +2168,6 @@ QPushButton:hover:!pressed {
                   </item>
                  </layout>
                 </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QTreeView" name="treeView"/>
                </item>
               </layout>
              </widget>
@@ -2383,8 +2392,8 @@ QPushButton:hover:!pressed {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>1329</width>
-                    <height>841</height>
+                    <width>508</width>
+                    <height>386</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -4422,7 +4431,7 @@ Number</string>
      <x>0</x>
      <y>0</y>
      <width>1405</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
