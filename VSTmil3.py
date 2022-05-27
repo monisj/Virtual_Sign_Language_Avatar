@@ -2568,12 +2568,12 @@ if __name__ == "__main__":
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")
             exec(f'{temp3}=temp1')
-        # else:
-        #     print(i)
-        #     temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
-        #     temp1=load_param2(temp)
-        #     temp3=i.replace("dataset","signs")
-        #     exec(f'{temp3}=temp1')   
+        else:
+            print(i)
+            temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
+            temp1=load_param2(temp)
+            temp3=i.replace("dataset","signs")
+            exec(f'{temp3}=temp1')   
     end_time = time.time()
     bc.terminate()
 
