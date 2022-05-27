@@ -66,6 +66,8 @@ class window(QtWidgets.QMainWindow):
         self.ui.treeView_3.hideColumn(2)
         self.ui.treeView_3.hideColumn(3)
         self.ui.treeView_3.doubleClicked.connect(self.select_video_test)
+        self.ui.treeView_3.clicked.connect(self.pass_variable)
+        
         
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.mediaPlayer.setVideoOutput(self.ui.videoWidget)
@@ -171,38 +173,63 @@ class window(QtWidgets.QMainWindow):
         self.ui.fatherSPhoneNumberLineEdit_7.setValidator(self.onlyInt)
         self.ui.phoneNumberLineEdit_5.setValidator(self.onlyInt)
 
-    
-
+    def pass_variable(self):
+        pass
     def test_screen(self):
+        # import datetime
+        # date=datetime.datetime.now()
+        # date_format=date.month+'/'+date.day+'/'+date.year
+        # time_format=date.hour+':'+date.minute
         try:
             self.ui.textEdit_2.clear()
             self.playlist.clear()
             self.camerathread.stop()
         except:
             pass
-        #self.ui.stackedWidget_2.setCurrentIndex(5)
-        #self.ui.treeWidget.clear()
-        #data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        #conn = sqlite3.connect(f"{data_path}/Student_info.db")
-        #cur = conn.cursor()
-        #cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
-        #passw=cur.fetchall()
+        pass_s=[]
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
         
-        #if passw==None:
-        #    parent=QtWidgets.QTreeWidgetItem(1)
-        #    parent.setText(0,"No Tests Are Assigned #Winning")
-        #    self.ui.treeWidget.addTopLevelItem(parent)
-        #else:
-        #    for i in passw:
-        #        if i[2]=="No":
-        #            parent=QtWidgets.QTreeWidgetItem(1)
-        #            parent.setText(0,f"{i[0]}")
-        #            self.ui.treeWidget.addTopLevelItem(parent)
+                
+        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        cur = conn.cursor()
+        cur.execute(f'Select Sign_Name,End_Date,End_Time FROM Student_Tests where ID == {self.std_roll_number};')
+        passw2=cur.fetchall()
+        conn.close()
+        for details in passw2:
+                row_number = self.ui.tableWidget_7.rowCount()
+                if row_number == len(passw2):
+                    pass
+                else:
+                    self.ui.tableWidget_7.insertRow(row_number)
+                for column_number, data in enumerate(details):
+                    self.ui.tableWidget_7.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
+        self.ui.tableWidget_7.itemDoubleClicked.connect(self.perform_test)
+        self.ui.stackedWidget_2.setCurrentIndex(5)
+        # self.ui.treeWidget.clear()
+        # data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+        # conn = sqlite3.connect(f"{data_path}/Student_info.db")
+        # cur = conn.cursor()
+        # cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
+        # passw=cur.fetchall()
+        
+        # if passw==None:
+        #     parent=QtWidgets.QTreeWidgetItem(1)
+        #     parent.setText(0,"No Tests Are Assigned #Winning")
+        #     self.ui.treeWidget.addTopLevelItem(parent)
+        # else:
+        #     for i in passw:
+        #         if i[2]=="No":
+        #             parent=QtWidgets.QTreeWidgetItem(1)
+        #             parent.setText(0,f"{i[0]}")
+        #             self.ui.treeWidget.addTopLevelItem(parent)
 
             
             
-        #            conn.close()
-        #    self.ui.treeWidget.itemClicked.connect(self.perform_test)
+        #             conn.close()
+        #     self.ui.treeWidget.itemClicked.connect(self.perform_test)
+
+
 
     def test_back_screen(self):
         self.ui.stackedWidget_2.setCurrentIndex(0)
@@ -263,7 +290,6 @@ class window(QtWidgets.QMainWindow):
                 else:
                     self.test_roll_no = temp[0]
                     path=pathlib.Path(__file__).parent.absolute().joinpath('Videos')
-                    print(path)
                     path=str(path)
                     self.dirModel.setRootPath(path)
                     self.ui.treeView_3.setRootIndex(self.model.index(path))
@@ -944,8 +970,9 @@ class window(QtWidgets.QMainWindow):
         popup.setIcon(QMessageBox.Information)
         popup.exec_()
         sign=''
-        for ix in self.ui.treeWidget.selectedIndexes():
-            sign = ix.data(Qt.DisplayRole) # or ix.data()
+        current_row = self.ui.tableWidget_7.currentRow()
+        current_column = self.ui.tableWidget_7.currentColumn()
+        sign = self.ui.tableWidget_7.item(current_row, current_column).text()
         self.test_sign=sign
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
@@ -1669,14 +1696,12 @@ class window(QtWidgets.QMainWindow):
     def select_video_test(self,index): #For Student Video Assignment
             import re
             if self.class_assign==0:
-                path=pathlib.Path(__file__).parent.absolute().joinpath('Videos')
+                #path=pathlib.Path(__file__).parent.absolute().joinpath('Videos')
                 video = self.fileModel.fileName(index)
                 videopath=self.fileModel.filePath(index)
-                folders=re.findall('([a-zA-Z]+(_[a-zA-Z]+)+)',str(videopath))
-                folder=folders[-1]
-                folder=folder[0]
-                
-                folder=folder+'_signs'
+                path=os.path.split(os.path.dirname(videopath))[-1]
+                print(path)
+                folder=path+'_signs'
                 data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
                 conn = sqlite3.connect(f"{data_path}/Student_info.db")
                 cur = conn.cursor()
@@ -1726,11 +1751,8 @@ class window(QtWidgets.QMainWindow):
             else:
                 video = self.fileModel.fileName(index)
                 videopath2=self.fileModel.filePath(index)
-                folders=re.findall('([a-zA-Z]+(_[a-zA-Z]+)+)',str(videopath))
-                folder=folders[-1]
-                folder=folder[0]
-                
-                folder=folder+'_signs'
+                path=os.path.split(os.path.dirname(videopath2))[-1]
+                folder=path+'_signs'
                 data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
                 conn = sqlite3.connect(f"{data_path}/Student_info.db")
                 cur = conn.cursor()
@@ -2568,12 +2590,12 @@ if __name__ == "__main__":
             temp1,all_data_sentences=load_param(temp,all_data_sentences)
             temp3=i.replace("dataset","signs")
             exec(f'{temp3}=temp1')
-        else:
-            print(i)
-            temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
-            temp1=load_param2(temp)
-            temp3=i.replace("dataset","signs")
-            exec(f'{temp3}=temp1')   
+        # else:
+        #     print(i)
+        #     temp=[root for root,dirs,files in os.walk(f'data\\{i}') if not dirs]
+        #     temp1=load_param2(temp)
+        #     temp3=i.replace("dataset","signs")
+        #     exec(f'{temp3}=temp1')   
     end_time = time.time()
     bc.terminate()
 
