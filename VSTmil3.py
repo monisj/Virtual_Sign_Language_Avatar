@@ -192,15 +192,19 @@ class window(QtWidgets.QMainWindow):
                 
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
         cur = conn.cursor()
-        cur.execute(f'Select Sign_Name,End_Date,End_Time FROM Student_Tests where ID == {self.std_roll_number};')
+        cur.execute(f'Select Sign_Name,Test_Completed,End_Date,End_Time FROM Student_Tests where ID == {self.std_roll_number};')
         passw2=cur.fetchall()
         conn.close()
+        
         for details in passw2:
                 row_number = self.ui.tableWidget_7.rowCount()
                 if row_number == len(passw2):
                     pass
                 else:
-                    self.ui.tableWidget_7.insertRow(row_number)
+                    if details[1]=='Yes':
+                        pass
+                    else:
+                        self.ui.tableWidget_7.insertRow(row_number)
                 for column_number, data in enumerate(details):
                     self.ui.tableWidget_7.setItem(
                     row_number, column_number, QTableWidgetItem(str(data)))
@@ -1007,6 +1011,7 @@ class window(QtWidgets.QMainWindow):
         
     def test_back_button(self,i):
         if i.text() == 'OK' :
+            self.ui.tableWidget_7.setRowCount(0)
             data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
             conn = sqlite3.connect(f"{data_path}/Student_info.db")
             cur = conn.cursor()
@@ -1018,24 +1023,24 @@ class window(QtWidgets.QMainWindow):
             conn.commit()
             conn.close()
 
-            self.ui.treeWidget.clear()
+            #self.ui.tableWidget_7.clear()
             data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
             conn = sqlite3.connect(f"{data_path}/Student_info.db")
             cur = conn.cursor()
             cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
             passw=cur.fetchall()
             
-            if passw==None:
-                parent=QtWidgets.QTreeWidgetItem(1)
-                parent.setText(0,"No Tests Are Assigned #Winning")
-                self.ui.treeWidget.addTopLevelItem(parent)
-            else:
-                for i in passw:
-                    if i[2]=="No":
-                        parent=QtWidgets.QTreeWidgetItem(1)
-                        parent.setText(0,f"{i[0]}")
-                        self.ui.treeWidget.addTopLevelItem(parent)
-                        conn.close()
+            # if passw==None:
+            #     parent=QtWidgets.QTreeWidgetItem(1)
+            #     parent.setText(0,"No Tests Are Assigned #Winning")
+            #     self.ui.treeWidget.addTopLevelItem(parent)
+            # else:
+            #     for i in passw:
+            #         if i[2]=="No":
+            #             parent=QtWidgets.QTreeWidgetItem(1)
+            #             parent.setText(0,f"{i[0]}")
+            #             self.ui.treeWidget.addTopLevelItem(parent)
+            #             conn.close()
             self.acc2=0
             self.camerathread.stop()
             self.sentences_pass=0
@@ -1050,6 +1055,7 @@ class window(QtWidgets.QMainWindow):
         
     def test_back(self):
         if self.test_attempt<3:
+            
             popup=QMessageBox()
             popup.setWindowTitle("Test Incompleted")
             popup.setText(f"You Have not the completed the test Pressing Ok will record the test marks as Zero")
@@ -1231,7 +1237,7 @@ class window(QtWidgets.QMainWindow):
             popup.exec_()
             self.camerathread.stop()
             self.camerathread.sentences_pass_on=False
-
+            self.ui.tableWidget_7.setRowCount(0)
             data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
             conn = sqlite3.connect(f"{data_path}/Student_info.db")
             cur = conn.cursor()
@@ -1370,6 +1376,7 @@ class window(QtWidgets.QMainWindow):
                 popup.setIcon(QMessageBox.Critical)
                 popup.exec_()
             else:
+                self.ui.tableWidget_7.setRowCount(0)
                 for i in passw:
                     if int(a)==900:
                         self.user='Teacher'
