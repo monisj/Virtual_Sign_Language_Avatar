@@ -17,10 +17,12 @@ from datetime import date,datetime
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(462, 208)
+        MainWindow.resize(80, 90)
         MainWindow.setWindowOpacity(1.0)
         MainWindow.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         MainWindow.setDocumentMode(False)
+        MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setEnabled(True)
         self.centralwidget.setObjectName("centralwidget")
