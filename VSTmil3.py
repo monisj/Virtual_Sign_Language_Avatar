@@ -192,7 +192,7 @@ class window(QtWidgets.QMainWindow):
                 
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
         cur = conn.cursor()
-        cur.execute(f'Select Sign_Name,Test_Completed,End_Date,End_Time FROM Student_Tests where ID == {self.std_roll_number};')
+        cur.execute(f'Select Sign_Name,Test_Completed,End_Date FROM Student_Tests where ID == {self.std_roll_number};')
         passw2=cur.fetchall()
         conn.close()
         
@@ -1703,21 +1703,20 @@ class window(QtWidgets.QMainWindow):
     def select_video_test(self,index): #For Student Video Assignment
             import re
             if self.class_assign==0:
-                #path=pathlib.Path(__file__).parent.absolute().joinpath('Videos')
+                #path=pathlib.Path(__file__).parent.absolute().joinpath('Videos')     
                 video = self.fileModel.fileName(index)
                 videopath=self.fileModel.filePath(index)
                 path=os.path.split(os.path.dirname(videopath))[-1]
-                print(path)
                 folder=path+'_signs'
                 data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
                 conn = sqlite3.connect(f"{data_path}/Student_info.db")
                 cur = conn.cursor()
                 path2=video.replace(".mp4","")
                 sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
-                        Test_Completed,Path) VALUES (?,?,?,?,?)'''
+                        Test_Completed,Path,Start_Date,End_Date) VALUES (?,?,?,?,?,?,?)'''
                 for users in self.test_users:
                     repeat_tests=0
-                    data=(users,path2,0,'No',folder)
+                    
                     cur.execute(f"SELECT Test_Completed from Student_Tests WHERE ID=={users} AND Sign_Name=='{path2}' ;")
                     passw=cur.fetchall()
                     for i in range(len(passw)):
@@ -1725,14 +1724,33 @@ class window(QtWidgets.QMainWindow):
                         if temp[0]=="No":
                             repeat_tests=1
                     if passw==None:
-                        cur.execute(sql,data)
-                        conn.commit()
-                        popup=QMessageBox()
-                        popup.setWindowTitle("Assign Test")
-                        popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users}")
-                        popup.setStandardButtons(QMessageBox.Ok)
-                        popup.setIcon(QMessageBox.Information)
-                        popup.exec_()
+                        pass1=subprocess.check_output([sys.executable, "test_time.py"])
+                        temp=str(pass1)
+                        temp=temp.replace('b',"")
+                        temp2=temp.split('\\r\\n')
+                        if temp2==["''"]:
+                            pass
+                        else:
+                            #YYYY-MM-DD HH:MM
+                            temp3=temp2[2]+'-'+temp2[1]+'-'+temp2[0]+' '+temp2[3]+':'+temp2[4]
+
+                            pass2=subprocess.check_output([sys.executable, "test_time_end.py"])
+                            temp4=str(pass2)
+                            temp4=temp4.replace('b',"")
+                            temp5=temp4.split('\\r\\n')
+                            if temp5==["''"]:
+                                pass
+                            else:
+                                temp6=temp5[2]+'-'+temp5[1]+'-'+temp5[0]+' '+temp5[3]+':'+temp5[4]
+                                data=(users,path2,0,'No',folder,temp3,temp6)  
+                                cur.execute(sql,data)
+                                conn.commit()
+                                popup=QMessageBox()
+                                popup.setWindowTitle("Assign Test")
+                                popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users}")
+                                popup.setStandardButtons(QMessageBox.Ok)
+                                popup.setIcon(QMessageBox.Information)
+                                popup.exec_()
                         
                         
                     else:
@@ -1744,67 +1762,107 @@ class window(QtWidgets.QMainWindow):
                             popup.setIcon(QMessageBox.Critical)
                             popup.exec_()
                         else:
-                            cur.execute(sql,data)
-                            conn.commit()
-                            popup=QMessageBox()
-                            popup.setWindowTitle("Assign Test")
-                            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users}")
-                            popup.setStandardButtons(QMessageBox.Ok)
-                            popup.setIcon(QMessageBox.Information)
-                            popup.exec_()
+                            pass1=subprocess.check_output([sys.executable, "test_time.py"])
+                            temp=str(pass1)
+                            temp=temp.replace('b',"")
+                            temp2=temp.split('\\r\\n')
+                            if temp2==["''"]:
+                                pass
+                            else:
+                                #YYYY-MM-DD HH:MM
+                                temp3=temp2[2]+'-'+temp2[1]+'-'+temp2[0]+' '+temp2[3]+':'+temp2[4]
+                                temp3=temp3.replace("'","")
+                                pass2=subprocess.check_output([sys.executable, "test_time_end.py"])
+                                temp4=str(pass2)
+                                temp4=temp4.replace('b',"")
+                                temp5=temp4.split('\\r\\n')
+                                if temp5==["''"]:
+                                    pass
+                                else:
+                                    temp6=temp5[2]+'-'+temp5[1]+'-'+temp5[0]+' '+temp5[3]+':'+temp5[4]
+                                    temp6=temp6.replace("'","")
+                                    data=(users,path2,0,'No',folder,temp3,temp6)
+                                    cur.execute(sql,data)
+                                    conn.commit()
+                                    popup=QMessageBox()
+                                    popup.setWindowTitle("Assign Test")
+                                    popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users}")
+                                    popup.setStandardButtons(QMessageBox.Ok)
+                                    popup.setIcon(QMessageBox.Information)
+                                    popup.exec_()
                 conn.close()
                 self.test_users=[]
                 self.ui.stackedWidget_2.setCurrentIndex(14)
             else:
-                video = self.fileModel.fileName(index)
-                videopath2=self.fileModel.filePath(index)
-                path=os.path.split(os.path.dirname(videopath2))[-1]
-                folder=path+'_signs'
-                data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-                conn = sqlite3.connect(f"{data_path}/Student_info.db")
-                cur = conn.cursor()
-                path2=video.replace(".mp4","")
-                sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
-                        Test_Completed,Path) VALUES (?,?,?,?,?)'''
-                cur.execute(f'SELECT Roll_no From Std_In WHERE Class_Enroll = {self.class_assign};')
-                passw=cur.fetchall()
-                for i in range(len(passw)):
-                    users=passw[i]
-                    repeat_tests=0
-                    data=(users[0],path2,0,'No',folder)
-                    cur.execute(f"SELECT Test_Completed from Student_Tests WHERE ID=={users[0]} AND Sign_Name=='{path2}' ;")
-                    passw1=cur.fetchall()
-                    for i in range(len(passw1)):
-                        temp=passw1[i]
-                        if temp[0]=="No":
-                            repeat_tests=1
-                    if passw1==None:
-                        cur.execute(sql,data)
-                        conn.commit()
-                        popup=QMessageBox()
-                        popup.setWindowTitle("Assign Test")
-                        popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users[0]}")
-                        popup.setStandardButtons(QMessageBox.Ok)
-                        popup.setIcon(QMessageBox.Information)
-                        popup.exec_()
-                        
+                pass1=subprocess.check_output([sys.executable, "test_time.py"])
+                temp=str(pass1)
+                temp=temp.replace('b',"")
+                temp2=temp.split('\\r\\n')
+                if temp2==["''"]:
+                    pass
+                else:
+                    #YYYY-MM-DD HH:MM
+                    temp3=temp2[2]+'-'+temp2[1]+'-'+temp2[0]+' '+temp2[3]+':'+temp2[4]
+                    temp3=temp3.replace("'","")
+                    pass2=subprocess.check_output([sys.executable, "test_time_end.py"])
+                    temp4=str(pass2)
+                    temp4=temp4.replace('b',"")
+                    temp5=temp4.split('\\r\\n')
+                    if temp5==["''"]:
+                        pass
                     else:
-                        if repeat_tests==1:
-                            popup=QMessageBox()
-                            popup.setWindowTitle("Assign Test")
-                            popup.setText(f"Test of Sign={path2} has Already been Assigned to Roll_No {users[0]}")
-                            popup.setStandardButtons(QMessageBox.Ok)
-                            popup.setIcon(QMessageBox.Critical)
-                            popup.exec_()
-                        else:
-                            cur.execute(sql,data)
-                            conn.commit()
-                            popup=QMessageBox()
-                            popup.setWindowTitle("Assign Test")
-                            popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users[0]}")
-                            popup.setStandardButtons(QMessageBox.Ok)
-                            popup.setIcon(QMessageBox.Information)
-                            popup.exec_()
+                        temp6=temp5[2]+'-'+temp5[1]+'-'+temp5[0]+' '+temp5[3]+':'+temp5[4]
+                        temp6=temp6.replace("'","")
+                        video = self.fileModel.fileName(index)
+                        videopath2=self.fileModel.filePath(index)
+                        path=os.path.split(os.path.dirname(videopath2))[-1]
+                        folder=path+'_signs'
+                        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                        cur = conn.cursor()
+                        path2=video.replace(".mp4","")
+                        sql= '''INSERT INTO Student_Tests (ID,Sign_Name,Marks_Obtained,
+                                Test_Completed,Path,Start_Date,End_Date) VALUES (?,?,?,?,?,?,?)'''
+                        cur.execute(f'SELECT Roll_no From Std_In WHERE Class_Enroll = {self.class_assign};')
+                        passw=cur.fetchall()
+                        for i in range(len(passw)):
+                            users=passw[i]
+                            repeat_tests=0
+                            data=(users[0],path2,0,'No',folder,temp3,temp6)
+                            cur.execute(f"SELECT Test_Completed from Student_Tests WHERE ID=={users[0]} AND Sign_Name=='{path2}' ;")
+                            passw1=cur.fetchall()
+                            for i in range(len(passw1)):
+                                temp=passw1[i]
+                                if temp[0]=="No":
+                                    repeat_tests=1
+                            if passw1==None:
+
+                                cur.execute(sql,data)
+                                conn.commit()
+                                popup=QMessageBox()
+                                popup.setWindowTitle("Assign Test")
+                                popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users[0]}")
+                                popup.setStandardButtons(QMessageBox.Ok)
+                                popup.setIcon(QMessageBox.Information)
+                                popup.exec_()
+                                
+                            else:
+                                if repeat_tests==1:
+                                    popup=QMessageBox()
+                                    popup.setWindowTitle("Assign Test")
+                                    popup.setText(f"Test of Sign={path2} has Already been Assigned to Roll_No {users[0]}")
+                                    popup.setStandardButtons(QMessageBox.Ok)
+                                    popup.setIcon(QMessageBox.Critical)
+                                    popup.exec_()
+                                else:
+                                    cur.execute(sql,data)
+                                    conn.commit()
+                                    popup=QMessageBox()
+                                    popup.setWindowTitle("Assign Test")
+                                    popup.setText(f"Test of Sign={path2} has been Assigned to Roll_No {users[0]}")
+                                    popup.setStandardButtons(QMessageBox.Ok)
+                                    popup.setIcon(QMessageBox.Information)
+                                    popup.exec_()
                 conn.close()
                 self.test_users=[]
                 self.class_assign=0
