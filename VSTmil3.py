@@ -157,7 +157,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.lineEdit_7.textChanged.connect(self.video_search)
         self.ui.lineEdit_8.textChanged.connect(self.subject_search)
 
-
+        self.ui.CameraFrame_4.resizeEvent = self.camera_resize
         #############Validators###################
         self.ui.lineEdit_2.setValidator(self.onlyInt)
         self.ui.lineEdit_3.setValidator(self.onlyInt)
@@ -1653,6 +1653,11 @@ class window(QtWidgets.QMainWindow):
         time.sleep(0.1)
         
         self.camerathread = cameraThread()
+        try:
+            self.camerathread.display_width=self.display_width
+            self.camerathread.display_height=self.display_height
+        except:
+            pass
         self.camerathread.acc_sign=video
         self.video=video
         self.camerathread.record=False
@@ -2117,6 +2122,15 @@ class window(QtWidgets.QMainWindow):
         self.video_browse(self.subject,folder)
     ############# Video and Camera Feed ##################
 
+    def camera_resize(self, resizeEvent:QResizeEvent):
+        self.ui.label_18.resize(resizeEvent.size())
+        self.display_width, self.display_height = self.ui.label_18.width(), self.ui.label_18.height()
+        try:
+            self.camerathread.display_width=self.display_width
+            self.camerathread.display_height=self.display_height
+        except:
+            pass
+
     def ImageUpdateSlot(self, Image):
         self.ui.label_18.setPixmap(QPixmap.fromImage(Image))
         self.camerathread.sentences_pass_on=False
@@ -2361,6 +2375,11 @@ class window(QtWidgets.QMainWindow):
             self.videoThread.stop()
             self.videoThread.key1=False
             self.camerathread = cameraThread()
+            try:
+                self.camerathread.display_width=self.display_width
+                self.camerathread.display_height=self.display_height
+            except:
+                pass
             self.camerathread.acc_sign=self.video
             self.camerathread.reference_signs=self.current_reference_signs
             self.camerathread.record=False
@@ -2453,6 +2472,8 @@ class cameraThread(QThread):
     accuracy_reset=pyqtSignal(str)
     ImageUpdate = pyqtSignal(QImage)
     accuracyUpdate=pyqtSignal(str,list,list,str,list,list,int)
+    display_width=320
+    display_height=240
     
     
     def on_release(self,record):
