@@ -52,6 +52,7 @@ class window(QtWidgets.QMainWindow):
         self.new_ref='a'
         self.subject='a'
         self.folder='a'
+        self.test_screen_condition=False
     ################## New widgets ######################
         self.dirModel = QFileSystemModel()
         self.dirModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs)
@@ -180,16 +181,15 @@ class window(QtWidgets.QMainWindow):
         # date=datetime.datetime.now()
         # date_format=date.month+'/'+date.day+'/'+date.year
         # time_format=date.hour+':'+date.minute
+        self.ui.tableWidget_7.setRowCount(0)
         try:
             self.ui.textEdit_2.clear()
             self.playlist.clear()
             self.camerathread.stop()
         except:
             pass
-        pass_s=[]
-        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        
-                
+
+        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')     
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
         cur = conn.cursor()
         cur.execute(f'Select Sign_Name,Test_Completed,End_Date FROM Student_Tests where ID == {self.std_roll_number};')
@@ -210,30 +210,6 @@ class window(QtWidgets.QMainWindow):
                     row_number, column_number, QTableWidgetItem(str(data)))
         self.ui.tableWidget_7.itemDoubleClicked.connect(self.perform_test)
         self.ui.stackedWidget_2.setCurrentIndex(5)
-        # self.ui.treeWidget.clear()
-        # data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        # conn = sqlite3.connect(f"{data_path}/Student_info.db")
-        # cur = conn.cursor()
-        # cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
-        # passw=cur.fetchall()
-        
-        # if passw==None:
-        #     parent=QtWidgets.QTreeWidgetItem(1)
-        #     parent.setText(0,"No Tests Are Assigned #Winning")
-        #     self.ui.treeWidget.addTopLevelItem(parent)
-        # else:
-        #     for i in passw:
-        #         if i[2]=="No":
-        #             parent=QtWidgets.QTreeWidgetItem(1)
-        #             parent.setText(0,f"{i[0]}")
-        #             self.ui.treeWidget.addTopLevelItem(parent)
-
-            
-            
-        #             conn.close()
-        #     self.ui.treeWidget.itemClicked.connect(self.perform_test)
-
-
 
     def test_back_screen(self):
         self.ui.stackedWidget_2.setCurrentIndex(0)
@@ -252,22 +228,25 @@ class window(QtWidgets.QMainWindow):
             self.camerathread.stop()
         except:
             pass
-        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        conn = sqlite3.connect(f"{data_path}/Student_info.db")
-        cur = conn.cursor()
-        cur.execute(f'SELECT ID,Sign_Name,Marks_Obtained,Test_Completed FROM Student_Tests where ID == {self.std_roll_number};')
-        passw=cur.fetchall()
-        conn.close()
-        for details in passw:
-            row_number = self.ui.tableWidget_4.rowCount()
-            if row_number == len(passw):
-                pass
-            else:
-                self.ui.tableWidget_4.insertRow(row_number)
-            for column_number, data in enumerate(details):
-                self.ui.tableWidget_4.setItem(
-                row_number, column_number, QTableWidgetItem(str(data)))
-        self.ui.stackedWidget_2.setCurrentIndex(6)
+        try:
+            data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+            conn = sqlite3.connect(f"{data_path}/Student_info.db")
+            cur = conn.cursor()
+            cur.execute(f'SELECT ID,Sign_Name,Marks_Obtained,Test_Completed FROM Student_Tests where ID == {self.std_roll_number};')
+            passw=cur.fetchall()
+            conn.close()
+            for details in passw:
+                row_number = self.ui.tableWidget_4.rowCount()
+                if row_number == len(passw):
+                    pass
+                else:
+                    self.ui.tableWidget_4.insertRow(row_number)
+                for column_number, data in enumerate(details):
+                    self.ui.tableWidget_4.setItem(
+                    row_number, column_number, QTableWidgetItem(str(data)))
+            self.ui.stackedWidget_2.setCurrentIndex(6)
+        except:
+            pass
     
     def std_data(self):
         try:
@@ -360,7 +339,7 @@ class window(QtWidgets.QMainWindow):
             pass
         current_row = self.ui.tableWidget.currentRow()
         current_column = self.ui.tableWidget.currentColumn()
-        
+        self.ui.tableWidget_7.setRowCount(0)
         if current_column!=0:
             pass
         else:
@@ -967,45 +946,49 @@ class window(QtWidgets.QMainWindow):
                 popup.exec_()
 
     def perform_test(self):
-        popup=QMessageBox()
-        popup.setWindowTitle("Perform Test")
-        popup.setText(f"Please Put your hands down before the Camera is Turned On Press Ok When Ready")
-        popup.setStandardButtons(QMessageBox.Ok)
-        popup.setIcon(QMessageBox.Information)
-        popup.exec_()
-        sign=''
-        current_row = self.ui.tableWidget_7.currentRow()
-        current_column = self.ui.tableWidget_7.currentColumn()
-        sign = self.ui.tableWidget_7.item(current_row, current_column).text()
-        self.test_sign=sign
-        data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
-        conn = sqlite3.connect(f"{data_path}/Student_info.db")
-        cur = conn.cursor()
-        cur.execute(f"SELECT path FROM Student_Tests where ID == {self.std_roll_number} AND Sign_Name == '{sign}' AND Test_Completed == 'No';")
-        passw=cur.fetchall()
-        conn.close()
-        reference_sign=''
-        for i in passw:
-            reference_sign=i[0]
+        try:
+            if self.test_screen_condition==False:
+                self.test_screen_condition=True
+                popup=QMessageBox()
+                popup.setWindowTitle("Perform Test")
+                popup.setText(f"Please Put your hands down before the Camera is Turned On Press Ok When Ready")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Information)
+                popup.exec_()
+                sign=''
+                current_row = self.ui.tableWidget_7.currentRow()
+                current_column = self.ui.tableWidget_7.currentColumn()
+                sign = self.ui.tableWidget_7.item(current_row, current_column).text()
+                self.test_sign=sign
+                data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
+                conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                cur = conn.cursor()
+                cur.execute(f"SELECT path FROM Student_Tests where ID == {self.std_roll_number} AND Sign_Name == '{sign}' AND Test_Completed == 'No';")
+                passw=cur.fetchall()
+                conn.close()
+                reference_sign=''
+                for i in passw:
+                    reference_sign=i[0]
 
-        reference_sign=globals()[reference_sign]
-        self.ui.stackedWidget_2.setCurrentIndex(4)
-        self.sentences=[]
-        self.camerathread = cameraThread()
-        self.camerathread.previous_record=False
-        self.camerathread.attempt_no=0
-        self.test_accuracy=0
-        self.test_attempt=0
-        self.camerathread.reference_signs=reference_sign
-        self.camerathread.acc_sign=sign
-        self.video=sign
+                reference_sign=globals()[reference_sign]
+                self.ui.stackedWidget_2.setCurrentIndex(4)
+                self.sentences=[]
+                self.camerathread = cameraThread()
+                self.camerathread.previous_record=False
+                self.camerathread.attempt_no=0
+                self.test_accuracy=0
+                self.test_attempt=0
+                self.camerathread.reference_signs=reference_sign
+                self.camerathread.acc_sign=sign
+                self.video=sign
 
-        self.camerathread.record=False
-        self.camerathread.start()
-        self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
-        self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
-        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-    
+                self.camerathread.record=False
+                self.camerathread.start()
+                self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
+                self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+                self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+        except:
+            pass
     
 
         
@@ -1023,30 +1006,19 @@ class window(QtWidgets.QMainWindow):
             conn.commit()
             conn.close()
 
-            #self.ui.tableWidget_7.clear()
             data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
             conn = sqlite3.connect(f"{data_path}/Student_info.db")
             cur = conn.cursor()
             cur.execute(f'SELECT Sign_Name,Marks_Obtained,Test_Completed,Path FROM Student_Tests where ID == {self.std_roll_number};')
             passw=cur.fetchall()
+            self.test_screen_condition=False
             
-            # if passw==None:
-            #     parent=QtWidgets.QTreeWidgetItem(1)
-            #     parent.setText(0,"No Tests Are Assigned #Winning")
-            #     self.ui.treeWidget.addTopLevelItem(parent)
-            # else:
-            #     for i in passw:
-            #         if i[2]=="No":
-            #             parent=QtWidgets.QTreeWidgetItem(1)
-            #             parent.setText(0,f"{i[0]}")
-            #             self.ui.treeWidget.addTopLevelItem(parent)
-            #             conn.close()
             self.acc2=0
             self.camerathread.stop()
             self.sentences_pass=0
             self.sentences=[]
             self.camerathread.sentences_pass_on=False
-            self.ui.stackedWidget_2.setCurrentIndex(5)
+            self.ui.stackedWidget_2.setCurrentIndex(0)
             self.test_accuracy=0
             self.test_attempt=0
         else:
@@ -1229,6 +1201,7 @@ class window(QtWidgets.QMainWindow):
     
     def submit_test(self):
         if self.test_attempt==3:
+            self.test_screen_condition=False
             popup=QMessageBox()
             popup.setWindowTitle("Test Submission")
             popup.setText(f"Test has been Submitted")
@@ -1238,6 +1211,7 @@ class window(QtWidgets.QMainWindow):
             self.camerathread.stop()
             self.camerathread.sentences_pass_on=False
             self.ui.tableWidget_7.setRowCount(0)
+            self.ui.tableWidget_4.setRowCount(0)
             data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
             conn = sqlite3.connect(f"{data_path}/Student_info.db")
             cur = conn.cursor()
@@ -1253,9 +1227,6 @@ class window(QtWidgets.QMainWindow):
             self.acc2=0
             self.test_attempt=0
             self.test_accuracy=0
-            
-
-
             self.ui.stackedWidget_2.setCurrentIndex(0)
         else:
             popup=QMessageBox()
@@ -1544,7 +1515,7 @@ class window(QtWidgets.QMainWindow):
                 time.sleep(0.2)
             except:
                 pass
-            
+            self.ui.tableWidget_7.setRowCount(0)
             self.sentences=[]
             self.ui.textEdit.clear()
             self.camerathread = cameraThread()
@@ -2157,139 +2128,144 @@ class window(QtWidgets.QMainWindow):
     def VideoUpdateSlot(self, Image):
         self.ui.label_18.setPixmap(QPixmap.fromImage(Image))
     
-    def accuracyUpdateSlot(self,predicted,sign,dist,acc,out_left,out_right):
+    def accuracyUpdateSlot(self,predicted,sign,dist,acc,out_left,out_right,attempt_no):
         acc=float(acc)
-        if self.test_attempt<3:
-            if self.test_accuracy==0:
-                if acc!=0:
-                    self.test_accuracy=acc
-                    self.test_attempt=0
-            else:
-                if dist[0]!=self.acc2 and acc!=0:
-                    if self.acc2==0:
-                        self.test_attempt=0
-                        self.camerathread.attempt_no=self.test_attempt
-                        self.acc2=dist[0]
-                        self.test_accuracy=acc
-                    
-                    else:
-                        self.acc2=dist[0]
-                        self.test_accuracy=acc
-                        self.test_attempt+=1
-                        self.camerathread.attempt_no=self.test_attempt
+        self.test_attempt=attempt_no
+        if acc==0:
+            pass
         else:
-            if len(sign)<2:
-                pass
-            else:
-                if self.sentences_pass==1:
-                    if len(predicted) <2:
-                        self.sentences.append(predicted)
-                        self.ui.textEdit.insertPlainText(str(predicted))
-                    else:
-                        self.sentences.append(" ")
-                        self.sentences.append(predicted)
-                        self.ui.textEdit.insertPlainText(str(" "))
-                        self.ui.textEdit.insertPlainText(str(predicted))
-                    self.sentences_pass=0
+            self.test_accuracy=acc
+        # if self.test_attempt<3:
+        #     if self.test_accuracy==0:
+        #         if acc!=0:
+        #             self.test_accuracy=acc
+        #             self.test_attempt=0
+        #     else:
+        #         if dist[0]!=self.acc2 and acc!=0:
+        #             if self.acc2==0:
+        #                 self.test_attempt=0
+        #                 self.camerathread.attempt_no=self.test_attempt
+        #                 self.acc2=dist[0]
+        #                 self.test_accuracy=acc
                     
+        #             else:
+        #                 self.acc2=dist[0]
+        #                 self.test_accuracy=acc
+        #                 self.test_attempt+=1
+        #                 self.camerathread.attempt_no=self.test_attempt
+        # else:
+        if len(sign)<2:
+            pass
+        else:
+            if self.sentences_pass==1:
+                if len(predicted) <2:
+                    self.sentences.append(predicted)
+                    self.ui.textEdit.insertPlainText(str(predicted))
+                else:
+                    self.sentences.append(" ")
+                    self.sentences.append(predicted)
+                    self.ui.textEdit.insertPlainText(str(" "))
+                    self.ui.textEdit.insertPlainText(str(predicted))
+                self.sentences_pass=0
                 
-                sign=sign[:4]
-                dist=dist[:4]
-                pre_val=0
-                list1=[]
-                for i in range(len(sign)):
-                    if sign[i]==self.video:
-                        pass            
+            
+            sign=sign[:4]
+            dist=dist[:4]
+            pre_val=0
+            list1=[]
+            for i in range(len(sign)):
+                if sign[i]==self.video:
+                    pass            
+                else:
+                    if dist[0]==float('inf'):
+                        self.ui.label_16.setText('No Close Signs Predicted')
+                        self.ui.label_17.setText('')
                     else:
-                        if dist[0]==float('inf'):
-                            self.ui.label_16.setText('No Close Signs Predicted')
-                            self.ui.label_17.setText('')
+                        if dist[i]==float('inf'):
+                            acc1=0
                         else:
-                            if dist[i]==float('inf'):
-                                acc1=0
+                            acc1=((int(dist[i])-60)/60)*100
+                            if int(dist[i])<60:
+                                acc1=round(acc1,2)
+                                self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
+                                self.ui.label_17.setText(str('98.5'))
+                                break
                             else:
-                                acc1=((int(dist[i])-60)/60)*100
-                                if int(dist[i])<60:
+                                if acc1>100:
+                                    acc1=(acc1)//100
                                     acc1=round(acc1,2)
                                     self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                    self.ui.label_17.setText(str('98.5'))
+                                    self.ui.label_17.setText(str(100-acc1))
                                     break
                                 else:
-                                    if acc1>100:
-                                        acc1=(acc1)//100
-                                        acc1=round(acc1,2)
-                                        self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                        self.ui.label_17.setText(str(100-acc1))
-                                        break
-                                    else:
-                                        acc1=round(acc1,2)
-                                        self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
-                                        self.ui.label_17.setText(str(100-acc1))
-                                        break
+                                    acc1=round(acc1,2)
+                                    self.ui.label_16.setText(str(f"Closest Sign Predicted is {sign[i]} with accuracy ="))
+                                    self.ui.label_17.setText(str(100-acc1))
+                                    break
 
-                
-                if float(acc)>50 and predicted==self.video:
-                    __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
-                    self.ui.tableWidget_3.setSortingEnabled(False)
-                    item = self.ui.tableWidget_3.item(0, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(0, 1)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 1)
-                    item.setText("1")
-                    self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
-                elif float(acc)>50 and predicted!=self.video:
-                    __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
-                    self.ui.tableWidget_3.setSortingEnabled(False)
-                    item = self.ui.tableWidget_3.item(0, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(0, 1)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 0)
-                    item.setText("1")
-                    item = self.ui.tableWidget_3.item(1, 1)
-                    item.setText("0")
-                    self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
-                elif float(acc)<50 and predicted==self.video:
-                    __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
-                    self.ui.tableWidget_3.setSortingEnabled(False)
-                    item = self.ui.tableWidget_3.item(0, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(0, 1)
-                    item.setText("1")
-                    item = self.ui.tableWidget_3.item(1, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 1)
-                    item.setText("0")
-                    self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
-                elif float(acc)<50 and predicted!=self.video:
-                    __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
-                    self.ui.tableWidget_3.setSortingEnabled(False)
-                    item = self.ui.tableWidget_3.item(0, 0)
-                    item.setText("1")
-                    item = self.ui.tableWidget_3.item(0, 1)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 1)
-                    item.setText("0")
-                    self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
+            
+            if float(acc)>50 and predicted==self.video:
+                __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
+                self.ui.tableWidget_3.setSortingEnabled(False)
+                item = self.ui.tableWidget_3.item(0, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(0, 1)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 1)
+                item.setText("1")
+                self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
+            elif float(acc)>50 and predicted!=self.video:
+                __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
+                self.ui.tableWidget_3.setSortingEnabled(False)
+                item = self.ui.tableWidget_3.item(0, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(0, 1)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 0)
+                item.setText("1")
+                item = self.ui.tableWidget_3.item(1, 1)
+                item.setText("0")
+                self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
+            elif float(acc)<50 and predicted==self.video:
+                __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
+                self.ui.tableWidget_3.setSortingEnabled(False)
+                item = self.ui.tableWidget_3.item(0, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(0, 1)
+                item.setText("1")
+                item = self.ui.tableWidget_3.item(1, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 1)
+                item.setText("0")
+                self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
+            elif float(acc)<50 and predicted!=self.video:
+                __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
+                self.ui.tableWidget_3.setSortingEnabled(False)
+                item = self.ui.tableWidget_3.item(0, 0)
+                item.setText("1")
+                item = self.ui.tableWidget_3.item(0, 1)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 1)
+                item.setText("0")
+                self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
 
-                else:
-                    __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
-                    self.ui.tableWidget_3.setSortingEnabled(False)
-                    item = self.ui.tableWidget_3.item(1, 1)
-                    item = self.ui.tableWidget_3.item(0, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(0, 1)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 0)
-                    item.setText("0")
-                    item = self.ui.tableWidget_3.item(1, 1)
-                    item.setText("0")
-                    self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
+            else:
+                __sortingEnabled = self.ui.tableWidget_3.isSortingEnabled()
+                self.ui.tableWidget_3.setSortingEnabled(False)
+                item = self.ui.tableWidget_3.item(1, 1)
+                item = self.ui.tableWidget_3.item(0, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(0, 1)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 0)
+                item.setText("0")
+                item = self.ui.tableWidget_3.item(1, 1)
+                item.setText("0")
+                self.ui.tableWidget_3.setSortingEnabled(__sortingEnabled)
         if self.sentences_pass==1:
             pass
         else:
@@ -2476,7 +2452,7 @@ class cameraThread(QThread):
     previous_record=False
     accuracy_reset=pyqtSignal(str)
     ImageUpdate = pyqtSignal(QImage)
-    accuracyUpdate=pyqtSignal(str,list,list,str,list,list)
+    accuracyUpdate=pyqtSignal(str,list,list,str,list,list,int)
     
     
     def on_release(self,record):
@@ -2496,6 +2472,7 @@ class cameraThread(QThread):
         from cv2 import VideoWriter
         from cv2 import VideoWriter_fourcc
         condition=0
+        test_condition=False
         self.sign_recorder = SignRecorder(self.reference_signs,self.acc_sign)
         self.ThreadActive = True
         webcam_manager = WebcamManager()
@@ -2517,14 +2494,22 @@ class cameraThread(QThread):
 
                     # Process results
                     sign_detected, is_recording,sign,dist,out_left,out_right = self.sign_recorder.process_results(results)
-
+                    if self.attempt_no==4:
+                        pass
+                    else:
+                        if self.attempt_no!=3:
+                            if is_recording and test_condition==False:
+                                self.attempt_no+=1
+                                test_condition=True
+                    
                     # Update the frame (draw landmarks & display result)
-                    FlippedImage,acc=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on,self.attempt_no)
+                    FlippedImage,acc,test_no=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on,self.attempt_no)
                     ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
                     Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
                     self.ImageUpdate.emit(Pic)
-                    self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc),list(out_left),list(out_right))
-                    
+                    self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc),list(out_left),list(out_right),int(self.attempt_no))
+                    if test_no:
+                        test_condition=False
                     if results.left_hand_landmarks:
                         if condition==0:
                             video = VideoWriter('webcamimage.avi', VideoWriter_fourcc(*'MP42'), 2.0, (640, 480))
@@ -2544,6 +2529,7 @@ class cameraThread(QThread):
                             self.on_release(False)
                         else:
                             video.release()
+                            
                             self.on_release(False)
                             condition=0
         else:

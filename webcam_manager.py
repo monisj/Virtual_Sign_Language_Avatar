@@ -50,6 +50,7 @@ class WebcamManager(object):
         self.val=""
         self.sentences_pass_on=False
         self.attempt=4
+        self.temp=0
 
     def update(
         self, frame: np.ndarray, results, sign_detected, is_recording,sign,dist,val,sentences_pass_on,attempt
@@ -63,14 +64,13 @@ class WebcamManager(object):
         # Draw landmarks
 
         self.draw_landmarks(frame, results)
-
+        test_no=False
         WIDTH = int(HEIGHT * len(frame[0]) / len(frame))
         # Resize frame
         frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation=cv2.INTER_AREA)
 
         # Flip the image vertically for mirror effect
         frame = cv2.flip(frame, 1)
-
         # Write result if there is
         frame,acc = self.draw_text(frame)
 
@@ -78,11 +78,15 @@ class WebcamManager(object):
         color = WHITE_COLOR
         if is_recording:
             color = RED_COLOR
+            self.temp=1    
+        if is_recording==False and self.temp==1:
+            test_no=True
+            self.temp=0
 
         # Update the frame
         cv2.circle(frame, (30, 30), 20, color, -1)
         #cv2.imshow("OpenCV Feed", frame)
-        return frame,acc
+        return frame,acc,test_no
 
     def update2(self, frame: np.ndarray, results,frame_counter,leftlist,rightlist):
         
