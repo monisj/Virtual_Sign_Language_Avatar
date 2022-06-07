@@ -97,7 +97,7 @@ def load_reference_signs(videos):
 
 def new_load_reference_signs(sign_name,videos,subject):
     # print('loading references')
-    reference_signs = pd.DataFrame(columns=["name", "sign_model", "distance"])
+    reference_signs = {"name": [], "sign_model": [], "distance": []}
     #tstart=time.time()
     for video_name in videos:
         #vstart=time.time()
@@ -109,21 +109,18 @@ def new_load_reference_signs(sign_name,videos,subject):
         
         embeddings=load_embeds(os.path.join(path, f"embeddings_{video_name}.pickle"))
 
-        reference_signs = reference_signs.append(
-            {
-                "name": sign_name,
-                "sign_model": embeddings,
-                "distance": 0,
-            },
-            ignore_index=True,
-        )
+        reference_signs["name"].append(sign_name)
+        reference_signs["sign_model"].append(embeddings)
+        reference_signs["distance"].append(0)
+
+    reference_signs = pd.DataFrame(reference_signs, dtype=object)
         
     return reference_signs
 
 
 def newer_load_reference_signs(videos,all_data_sentences):
     # print('loading references')
-    reference_signs = pd.DataFrame(columns=["name", "sign_model", "distance"])
+    reference_signs = {"name": [], "sign_model": [], "distance": []}
     #tstart=time.time()
     for p in videos:
         video_name=ntpath.basename(p)
@@ -150,27 +147,17 @@ def newer_load_reference_signs(videos,all_data_sentences):
         
         embeddings=load_embeds(os.path.join(path, f"embeddings_{video_name}.pickle"))
         
-        reference_signs = reference_signs.append(
-            {
-                "name": sign_name,
-                "sign_model": embeddings,
-                "distance": 0,
-            },
-            ignore_index=True,
-        )
-        all_data_sentences=all_data_sentences.append(
-            {
-                "name": sign_name,
-                "sign_model": embeddings,
-                "distance": 0,
-            },
-            ignore_index=True,
-        )
+        reference_signs["name"].append(sign_name)
+        reference_signs["sign_model"].append(embeddings)
+        reference_signs["distance"].append(0)
+    
+    reference_signs = pd.DataFrame(reference_signs, dtype=object)
+    all_data_sentences = pd.concat([all_data_sentences,reference_signs])
         
     return reference_signs,all_data_sentences
 def newload_reference_signs(videos):
     # print('loading references')
-    reference_signs = pd.DataFrame(columns=["name", "sign_model", "distance"])
+    reference_signs = {"name": [], "sign_model": [], "distance": []}
     #tstart=time.time()
     for p in videos:
         video_name=ntpath.basename(p)
@@ -197,14 +184,11 @@ def newload_reference_signs(videos):
         
         embeddings=load_embeds(os.path.join(path, f"embeddings_{video_name}.pickle"))
         
-        reference_signs = reference_signs.append(
-            {
-                "name": sign_name,
-                "sign_model": embeddings,
-                "distance": 0,
-            },
-            ignore_index=True,
-        )
+        reference_signs["name"].append(sign_name)
+        reference_signs["sign_model"].append(embeddings)
+        reference_signs["distance"].append(0)
+
+    reference_signs = pd.DataFrame(reference_signs, dtype=object)
         
         
     return reference_signs
