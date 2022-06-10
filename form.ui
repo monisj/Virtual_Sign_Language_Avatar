@@ -1211,7 +1211,7 @@ QPushButton#pushButton_47:hover:!pressed{
            <item>
             <widget class="QStackedWidget" name="stackedWidget_2">
              <property name="currentIndex">
-              <number>5</number>
+              <number>4</number>
              </property>
              <widget class="QWidget" name="page_15">
               <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1927,13 +1927,13 @@ QPushButton:hover:!pressed {
              </widget>
              <widget class="QWidget" name="page_8">
               <layout class="QGridLayout" name="gridLayout_4">
-               <item row="4" column="4">
-                <widget class="QPushButton" name="pushButton_25">
+               <item row="4" column="2">
+                <widget class="QPushButton" name="pushButton_23">
                  <property name="cursor">
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="text">
-                  <string>Back</string>
+                  <string>BackSpace</string>
                  </property>
                 </widget>
                </item>
@@ -1946,25 +1946,6 @@ QPushButton:hover:!pressed {
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0" colspan="5">
-                <widget class="QFrame" name="frame_18">
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_3">
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_4">
-                    <property name="text">
-                     <string>TextLabel</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
                <item row="4" column="3">
                 <widget class="QPushButton" name="pushButton_24">
                  <property name="cursor">
@@ -1975,16 +1956,6 @@ QPushButton:hover:!pressed {
                  </property>
                 </widget>
                </item>
-               <item row="4" column="2">
-                <widget class="QPushButton" name="pushButton_23">
-                 <property name="cursor">
-                  <cursorShape>PointingHandCursor</cursorShape>
-                 </property>
-                 <property name="text">
-                  <string>BackSpace</string>
-                 </property>
-                </widget>
-               </item>
                <item row="4" column="1">
                 <widget class="QPushButton" name="pushButton_22">
                  <property name="cursor">
@@ -1992,6 +1963,16 @@ QPushButton:hover:!pressed {
                  </property>
                  <property name="text">
                   <string>Clear</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="4">
+                <widget class="QPushButton" name="pushButton_25">
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="text">
+                  <string>Back</string>
                  </property>
                 </widget>
                </item>
@@ -2015,6 +1996,25 @@ QPushButton:hover:!pressed {
                  </property>
                 </spacer>
                </item>
+               <item row="0" column="0" colspan="5">
+                <widget class="QFrame" name="frame_18">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_3">
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_4">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
               </layout>
              </widget>
              <widget class="QWidget" name="page_9">
@@ -2028,7 +2028,7 @@ QPushButton:hover:!pressed {
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_6">
-                  <item row="1" column="0">
+                  <item row="1" column="0" alignment="Qt::AlignHCenter">
                    <widget class="QLabel" name="label_7">
                     <property name="text">
                      <string>Test</string>
@@ -2047,6 +2047,13 @@ QPushButton:hover:!pressed {
                      </size>
                     </property>
                    </spacer>
+                  </item>
+                  <item row="0" column="0" alignment="Qt::AlignHCenter">
+                   <widget class="QLabel" name="label_13">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -2392,8 +2399,8 @@ QPushButton:hover:!pressed {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>508</width>
-                    <height>386</height>
+                    <width>1203</width>
+                    <height>861</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">

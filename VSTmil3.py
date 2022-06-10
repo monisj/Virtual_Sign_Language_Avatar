@@ -1076,9 +1076,10 @@ class window(QtWidgets.QMainWindow):
                 passw=cur.fetchall()
                 conn.close()
                 reference_sign=''
+
                 for i in passw:
                     reference_sign=i[0]
-
+                
                 reference_sign=globals()[reference_sign]
                 self.ui.stackedWidget_2.setCurrentIndex(4)
                 self.sentences=[]
@@ -1090,7 +1091,7 @@ class window(QtWidgets.QMainWindow):
                 self.camerathread.reference_signs=reference_sign
                 self.camerathread.acc_sign=sign
                 self.video=sign
-
+                self.ui.label_13.setText(f'Sign Name:{sign}')
                 self.camerathread.record=False
                 self.camerathread.start()
                 self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
