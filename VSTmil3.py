@@ -177,10 +177,15 @@ class window(QtWidgets.QMainWindow):
     def pass_variable(self):
         pass
     def test_screen(self):
-        # import datetime
-        # date=datetime.datetime.now()
-        # date_format=date.month+'/'+date.day+'/'+date.year
-        # time_format=date.hour+':'+date.minute
+        import datetime
+        from datetime import date,datetime
+        
+        today=date.today()
+        c_year,c_month,c_day=str(today).split('-')
+        d2 = datetime(int(c_year),int(c_month),int(c_day))
+        now = datetime.now().time()
+        c_hour,c_min,c_sec=str(now).split(':')
+
         self.ui.tableWidget_7.setRowCount(0)
         try:
             self.ui.textEdit_2.clear()
@@ -192,7 +197,7 @@ class window(QtWidgets.QMainWindow):
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')     
         conn = sqlite3.connect(f"{data_path}/Student_info.db")
         cur = conn.cursor()
-        cur.execute(f'Select Sign_Name,Test_Completed,End_Date FROM Student_Tests where ID == {self.std_roll_number};')
+        cur.execute(f'Select Sign_Name,Test_Completed,Start_Date,End_Date FROM Student_Tests where ID == {self.std_roll_number};')
         passw2=cur.fetchall()
         conn.close()
         
@@ -204,7 +209,111 @@ class window(QtWidgets.QMainWindow):
                     if details[1]=='Yes':
                         pass
                     else:
-                        self.ui.tableWidget_7.insertRow(row_number)
+                        text=details[2]
+                        start=text.split(' ')
+                        text2=start[0]
+                        year,month,day=text2.split('-')
+                        c_year,c_month,c_day=str(today).split('-')
+                        d1=datetime(int(year),int(month),int(day))
+                        if d2<d1:
+                            pass
+                        elif d2>d1:
+                            etext=details[3]
+                            end=etext.split(' ')
+                            text2=end[0]
+                            year,month,day=text2.split('-')
+                            d11=datetime(int(year),int(month),int(day))
+                            if d2>d11:
+                                
+                                conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                                cur = conn.cursor()
+                                sql=''' UPDATE Student_Tests
+                                        SET Marks_Obtained = ?, Test_Completed= ? 
+                                        WHERE ID = ? AND Sign_Name= ?''' 
+                                data2=(0,'Yes',self.std_roll_number,details[0])
+                                cur.execute(sql,data2)
+                                conn.commit()
+                                conn.close()
+                            elif d2==d11:
+                                text3=end[1]
+                                hr,min=text3.split(':')
+                                
+                                if hr>c_hour:
+                                    self.ui.tableWidget_7.insertRow(row_number)
+                                elif hr<c_hour:
+                                    conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                                    cur = conn.cursor()
+                                    sql=''' UPDATE Student_Tests
+                                            SET Marks_Obtained = ?, Test_Completed= ? 
+                                            WHERE ID = ? AND Sign_Name= ?''' 
+                                    data2=(0,'Yes',self.std_roll_number,details[0])
+                                    cur.execute(sql,data2)
+                                    conn.commit()
+                                    conn.close()
+                                else:   
+                                    if min>c_min:
+                                        self.ui.tableWidget_7.insertRow(row_number)
+                                    else:
+                                
+                                        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                                        cur = conn.cursor()
+                            
+                                        sql=''' UPDATE Student_Tests
+                                                SET Marks_Obtained = ?, Test_Completed= ? 
+                                                WHERE ID = ? AND Sign_Name= ?''' 
+                                        data2=(0,'Yes',self.std_roll_number,details[0])
+                                        cur.execute(sql,data2)
+                                        conn.commit()
+                                        conn.close()
+                            else:
+                                self.ui.tableWidget_7.insertRow(row_number)
+                        else:
+                            etext=details[3]
+                            end=etext.split(' ')
+                            text2=end[0]
+                            year,month,day=text2.split('-')
+                            d11=datetime(int(year),int(month),int(day))
+                            if d2>d11:
+                                conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                                cur = conn.cursor()
+                                sql=''' UPDATE Student_Tests
+                                        SET Marks_Obtained = ?, Test_Completed= ? 
+                                        WHERE ID = ? AND Sign_Name= ?''' 
+                                data2=(0,'Yes',self.std_roll_number,details[0])
+                                cur.execute(sql,data2)
+                                conn.commit()
+                                conn.close()
+                            elif d2==d11:
+                
+                                text3=end[1]
+                                hr,min=text3.split(':')
+                                if hr>c_hour:
+                                    self.ui.tableWidget_7.insertRow(row_number)
+                                elif hr<c_hour:
+                                    conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                                    cur = conn.cursor()
+                                    sql=''' UPDATE Student_Tests
+                                            SET Marks_Obtained = ?, Test_Completed= ? 
+                                            WHERE ID = ? AND Sign_Name= ?''' 
+                                    data2=(0,'Yes',self.std_roll_number,details[0])
+                                    cur.execute(sql,data2)
+                                    conn.commit()
+                                    conn.close()
+                                else:
+                                    if min>c_min:
+                                        self.ui.tableWidget_7.insertRow(row_number)
+                                    else:
+                                        conn = sqlite3.connect(f"{data_path}/Student_info.db")
+                                        cur = conn.cursor()
+                                        sql=''' UPDATE Student_Tests
+                                                SET Marks_Obtained = ?, Test_Completed= ? 
+                                                WHERE ID = ? AND Sign_Name= ?''' 
+                                        data2=(0,'Yes',self.std_roll_number,details[0])
+                                        cur.execute(sql,data2)
+                                        conn.commit()
+                                        conn.close()
+                            else:
+                                self.ui.tableWidget_7.insertRow(row_number)
                 for column_number, data in enumerate(details):
                     self.ui.tableWidget_7.setItem(
                     row_number, column_number, QTableWidgetItem(str(data)))
