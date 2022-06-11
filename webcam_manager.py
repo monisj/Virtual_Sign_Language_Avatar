@@ -184,6 +184,65 @@ class WebcamManager(object):
         else:
             if self.sentences_pass_on==True:
                 self.sign_detected=f'Predicted Sign ={self.sign_detected}'
+                if self.sign_detected==self.val:
+                    #self.sign_detected=f'Predicted Correctly With Accuracy ={self.dist[0]}'
+                    for i in range(len(self.sign)):
+                        if self.sign[i]==self.val:
+                            list1.append(self.dist[i])
+                    if len(list1)==2:
+                        if math.isinf(list1[0]) or math.isinf(list1[1]):
+                            pass
+                        else:
+                            acc1=int(list1[0])
+                            acc2=int(list1[1])
+                            acc1=((acc1-60)/60)*100
+                            acc2=((acc2-60)/60)*100
+                            if int(list1[0])<60 or int(list1[1])<60:
+                                #self.sign_detected='Predicted correctly With Accuracy =98.5'
+                                acc2=98.5
+                                
+                            else:
+                                if acc1>100 or acc2>100:
+                                    acc=((acc1+acc2)/2)//100
+                                    acc=round(acc,2)
+                                    #self.sign_detected=f'Predicted correctly With Accuracy ={acc}'
+                                    acc2=acc
+                                    
+                                else:
+                                    acc=(acc1+acc2)/2
+                                    acc=round(acc,2)
+                                    #self.sign_detected=f'Predicted correctly With Accuracy ={100-acc}'
+                                    acc2=100-acc
+                                    
+                elif self.sign_detected !=self.val:
+                    for i in range(len(self.sign)):
+                        if self.sign[i]==self.val:                           
+                            list1.append(self.dist[i])
+                    if len(list1)==2:
+                        if math.isinf(list1[0]) or math.isinf(list1[1]):
+                            #self.sign_detected='No Sign Detected'
+                            acc2=0
+                        else:    
+                            acc1=int(list1[0])
+                            acc2=int(list1[1])
+                            acc1=((acc1-60)/60)*100
+                            acc2=((acc2-60)/60)*100
+                            if int(list1[0])<60 or int(list1[1])<60:
+                                #self.sign_detected='Predicted Incorrectly With Accuracy =98.5'
+                                acc2=98.5
+                                
+                            else:
+                                if acc1>100 or acc2>100:
+                                    acc=((acc1+acc2)/2)//100
+                                    acc=round(acc,2)
+                                    #self.sign_detected=f'Predicted Incorrectly With Accuracy ={acc}'
+                                    acc2=acc
+                                    
+                                else:
+                                    acc=(acc1+acc2)//2
+                                    acc=round(acc,2)
+                                    #self.sign_detected=f'Predicted Incorrectly With Accuracy ={100-acc}'
+                                    acc2=100-acc
             else:
                 if self.sign_detected==self.val:
                     self.sign_detected=f'Predicted Correctly With Accuracy ={self.dist[0]}'

@@ -53,6 +53,8 @@ class window(QtWidgets.QMainWindow):
         self.subject='a'
         self.folder='a'
         self.test_screen_condition=False
+        self.hold_data=0
+        self.sentence_accuracy=0
     ################## New widgets ######################
         self.dirModel = QFileSystemModel()
         self.dirModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs)
@@ -1633,6 +1635,9 @@ class window(QtWidgets.QMainWindow):
             self.camerathread.reference_signs=all_data_sentences
             self.camerathread.acc_sign='A'
             self.video='A'
+            self.sentence_accuracy=0
+            self.hold_data=0
+            self.ui.label_27.setText("Overall Accuracy = None")
             self.camerathread.record=False
             self.test_attempt=4
             self.camerathread.attempt_no=4
@@ -2283,9 +2288,29 @@ class window(QtWidgets.QMainWindow):
         else:
             if self.sentences_pass==1:
                 if len(predicted) <2:
+                    if self.sentence_accuracy==0:
+                        self.sentence_accuracy=acc
+                        self.hold_data=1
+                        self.ui.label_27.setText(f'Overall Accuracy = {self.sentence_accuracy}')
+                    else:
+                        self.sentence_accuracy+=acc
+                        self.hold_data+=1
+                        sentence_accuracy=self.sentence_accuracy/self.hold_data
+                        self.ui.label_27.setText(f'Overall Accuracy = {sentence_accuracy}')
+
                     self.sentences.append(predicted)
                     self.ui.textEdit.insertPlainText(str(predicted))
+                    
                 else:
+                    if self.sentence_accuracy==0:
+                        self.sentence_accuracy=acc
+                        self.hold_data=1
+                        self.ui.label_27.setText(f'Overall Accuracy = {self.sentence_accuracy}')
+                    else:
+                        self.sentence_accuracy+=acc
+                        self.hold_data+=1
+                        sentence_accuracy=self.sentence_accuracy/self.hold_data
+                        self.ui.label_27.setText(f'Overall Accuracy = {sentence_accuracy}')
                     self.sentences.append(" ")
                     self.sentences.append(predicted)
                     self.ui.textEdit.insertPlainText(str(" "))
@@ -2467,6 +2492,9 @@ class window(QtWidgets.QMainWindow):
     def clear_sentences(self):
         self.ui.textEdit.clear()
         self.sentences=[]
+        self.sentence_accuracy=0
+        self.hold_data=0
+        self.ui.label_27.setText('Overall Accuracy = None')
     def Back_sentences(self):
         if len(self.sentences) <1:
             pass

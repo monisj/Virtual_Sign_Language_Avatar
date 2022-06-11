@@ -1211,7 +1211,7 @@ QPushButton#pushButton_47:hover:!pressed{
            <item>
             <widget class="QStackedWidget" name="stackedWidget_2">
              <property name="currentIndex">
-              <number>4</number>
+              <number>3</number>
              </property>
              <widget class="QWidget" name="page_15">
               <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1225,8 +1225,8 @@ QPushButton#pushButton_47:hover:!pressed{
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>1203</width>
-                    <height>972</height>
+                    <width>401</width>
+                    <height>285</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -1483,8 +1483,8 @@ QPushButton:hover:!pressed {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>1203</width>
-                    <height>861</height>
+                    <width>149</width>
+                    <height>154</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -2005,7 +2005,7 @@ QPushButton:hover:!pressed {
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_3">
-                  <item row="1" column="0">
+                  <item row="1" column="0" alignment="Qt::AlignHCenter">
                    <widget class="QLabel" name="label_4">
                     <property name="text">
                      <string>TextLabel</string>
@@ -2013,6 +2013,13 @@ QPushButton:hover:!pressed {
                    </widget>
                   </item>
                  </layout>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QLabel" name="label_27">
+                 <property name="text">
+                  <string>TextLabel</string>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -2399,8 +2406,8 @@ QPushButton:hover:!pressed {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>1203</width>
-                    <height>861</height>
+                    <width>508</width>
+                    <height>386</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
