@@ -126,20 +126,23 @@ class Ui_MainWindow(object):
                 passw=subprocess.check_output([sys.executable, "Password.py"])
                 passw=str(passw.decode("utf-8"))
                 passw=passw[:-2]
-                sql='''UPDATE Login_S
-                     SET Password = ?
-                     WHERE Roll_No = ? '''
-                data=(passw,self.lineEdit.text())
-                cur2.execute(sql,data)
-                conn1.commit()
-                conn1.close()
-                popup=QMessageBox()
-                popup.setWindowTitle("Forgot Password")
-                popup.setText("Password Has Been Reset !")
-                popup.setStandardButtons(QMessageBox.Ok)
-                popup.setIcon(QMessageBox.Information)
-                popup.exec_()
-                MainWindow.close()
+                if passw=='':
+                    pass
+                else:
+                    sql='''UPDATE Login_S
+                        SET Password = ?
+                        WHERE Roll_No = ? '''
+                    data=(passw,self.lineEdit.text())
+                    cur2.execute(sql,data)
+                    conn1.commit()
+                    conn1.close()
+                    popup=QMessageBox()
+                    popup.setWindowTitle("Forgot Password")
+                    popup.setText("Password Has Been Reset !")
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Information)
+                    popup.exec_()
+                    MainWindow.close()
              
             elif self.lineEdit_2.text()!=answer:
                 popup=QMessageBox()

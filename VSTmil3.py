@@ -1546,7 +1546,10 @@ class window(QtWidgets.QMainWindow):
         except:
             pass
         popup=QMessageBox()
-        if self.ui.studentNameLineEdit.text()=="" or self.ui.fatherSNameLineEdit.text()=="" or self.ui.rollNumberLineEdit.text()=="" or self.ui.phoneNumberLineEdit.text()=="" or self.ui.fatherSPhoneNumberLineEdit.text()=="" or self.ui.gradeComboBox.currentText()=="":
+        if (self.ui.studentNameLineEdit.text()=="" or self.ui.fatherSNameLineEdit.text()=="" 
+        or self.ui.rollNumberLineEdit.text()=="" or self.ui.phoneNumberLineEdit.text()=="" 
+        or self.ui.fatherSPhoneNumberLineEdit.text()=="" or self.ui.gradeComboBox.currentText()=="" 
+        or self.ui.SecurityLineEdit.text()=='' or self.ui.SecurityAnswerlineEdit.text()==''):
             popup.setWindowTitle("Create User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -1598,8 +1601,8 @@ class window(QtWidgets.QMainWindow):
                     passw=passw[:-2]
                     conn1 = sqlite3.connect(f"{data_path}/Login.db")
                     cur2 = conn1.cursor()
-                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
-                    task2=(roll_no,passw,"S")
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type,Question,Answer) VALUES (?,?,?,?,?) '''
+                    task2=(roll_no,passw,"S",self.ui.SecurityLineEdit.text(),self.ui.SecurityAnswerlineEdit.text())
                     cur2.execute(sql2,task2)
                     conn1.commit()
                     conn1.close()
