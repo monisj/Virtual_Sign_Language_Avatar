@@ -96,6 +96,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_18.clicked.connect(self.add_video)
         self.ui.horizontalSlider_4.sliderMoved.connect(self.setPosition)
         self.ui.passwordLineEdit.returnPressed.connect(self.login)
+        self.ui.forgotpasswordlabel.clicked.connect(self.forgot_password)
         self.ui.pushButton_20.clicked.connect(self.logout)
         self.ui.pushButton_69.clicked.connect(self.sentence_screen)
         self.ui.pushButton_22.clicked.connect(self.clear_sentences)
@@ -1427,7 +1428,10 @@ class window(QtWidgets.QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(2)
         self.ui.stackedWidget_2.setCurrentIndex(0)
         
-    
+    def forgot_password(self):
+        passw=subprocess.check_output([sys.executable, "forgot_password.py"])
+        passw=str(passw.decode("utf-8"))
+        passw=passw[:-2]
     def login(self):
         data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
         conn = sqlite3.connect(f"{data_path}/Login.db")
