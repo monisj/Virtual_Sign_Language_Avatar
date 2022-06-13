@@ -480,7 +480,9 @@ class window(QtWidgets.QMainWindow):
         
     def Add_Teacher_Credentials(self):
         popup=QMessageBox()
-        if self.ui.TeachersNameLineEdit_4.text()=="" or self.ui.AssignedSubjectsComboBox_4.currentText()=="Please Select Subjects" or self.ui.IDNumberLineEdit_4.text()=="" or self.ui.phoneNumberLineEdit_4.text()=="" or self.ui.AssignedClassComboBox_4.currentText()=="Please Select Class":
+        if (self.ui.TeachersNameLineEdit_4.text()=="" or self.ui.AssignedSubjectsComboBox_4.currentText()=="Please Select Subjects" 
+        or self.ui.IDNumberLineEdit_4.text()=="" or self.ui.phoneNumberLineEdit_4.text()=="" 
+        or self.ui.AssignedClassComboBox_4.currentText()=="Please Select Class" or self.ui.lineEdit_11.text()=='' or self.ui.lineEdit_12.text()==''):
             popup.setWindowTitle("Create Teacher User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -492,6 +494,8 @@ class window(QtWidgets.QMainWindow):
             teach_id=self.ui.IDNumberLineEdit_4.text()
             teach_ph_no=self.ui.phoneNumberLineEdit_4.text()
             teach_assign_class=self.ui.AssignedClassComboBox_4.currentText()
+            teach_question=self.ui.lineEdit_11.text()
+            teach_answer=self.ui.lineEdit_12.text()
             if int(teach_id) <=10000:
                 popup.setWindowTitle("Create Teacher User")
                 popup.setText("Teacher ID Cannot Be Less than 1000x")
@@ -522,8 +526,8 @@ class window(QtWidgets.QMainWindow):
                     data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
                     conn = sqlite3.connect(f"{data_path}/Login.db")
                     cur = conn.cursor()
-                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
-                    task2=(teach_id,passw,"T")
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type,Question,Answer) VALUES (?,?,?,?,?) '''
+                    task2=(teach_id,passw,"T",teach_question,teach_answer)
                     cur.execute(sql2,task2)
                     conn.commit()
                     conn.close()
@@ -551,8 +555,8 @@ class window(QtWidgets.QMainWindow):
                     data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
                     conn = sqlite3.connect(f"{data_path}/Login.db")
                     cur = conn.cursor()
-                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
-                    task2=(teach_id,passw,"T")
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type,Question,Answer) VALUES (?,?,?,?,?) '''
+                    task2=(teach_id,passw,"T",teach_question,teach_answer)
                     cur.execute(sql2,task2)
                     conn.commit()
                     conn.close()
@@ -585,19 +589,31 @@ class window(QtWidgets.QMainWindow):
             passw=cur.fetchall()
             conn.close()
             temp=passw[0]
+
+            conn = sqlite3.connect(f"{data_path}/Login.db")
+            cur = conn.cursor()
+            cur.execute(f'SELECT * from Login_S where Roll_No = {self.user_remover}')
+            passw2=cur.fetchall()
+            conn.close()
+            temp2=passw2[0]
+            print(temp2)
             self.ui.TeachersNameLineEdit_5.setText(temp[1])
             self.ui.AssignedSubjectsComboBox_5.setItemText(0,temp[2])
             self.ui.IDNumberLineEdit_5.setText(str(temp[0]))
             self.ui.phoneNumberLineEdit_5.setText(str(temp[3]))
             self.ui.AssignedClassComboBox_5.setItemText(0,str(temp[4]))
             self.ui.stackedWidget_2.setCurrentIndex(12)
+            self.ui.lineEdit_13.setText(str(temp2[3]))
+            self.ui.lineEdit_14.setText(str(temp2[4]))
             self.user_remover=''
         else:
             pass
 
     def Teacher_Update(self):           
         popup=QMessageBox()
-        if self.ui.TeachersNameLineEdit_5.text()=="" or self.ui.AssignedSubjectsComboBox_5.currentText()=="Please Select Subjects" or self.ui.IDNumberLineEdit_5.text()=="" or self.ui.phoneNumberLineEdit_5.text()=="" or self.ui.AssignedClassComboBox_5.currentText()=="Please Select Class":
+        if (self.ui.TeachersNameLineEdit_5.text()=="" or self.ui.AssignedSubjectsComboBox_5.currentText()=="Please Select Subjects" 
+        or self.ui.IDNumberLineEdit_5.text()=="" or self.ui.phoneNumberLineEdit_5.text()=="" 
+        or self.ui.AssignedClassComboBox_5.currentText()=="Please Select Class" or self.ui.lineEdit_13.text()=='' or self.ui.lineEdit_14.text()==''):
             popup.setWindowTitle("Update Teacher User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -609,7 +625,10 @@ class window(QtWidgets.QMainWindow):
             teach_id=self.ui.IDNumberLineEdit_5.text()
             teach_ph_no=self.ui.phoneNumberLineEdit_5.text()
             teach_assign_class=self.ui.AssignedClassComboBox_5.currentText()
+            teach_question=self.ui.lineEdit_13.text()
+            teach_answer=self.ui.lineEdit_14.text()
             data=(teach_name,teach_assign_subj,teach_ph_no,teach_assign_class,teach_id)
+            data1=(teach_id,teach_question,teach_answer)
             data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
             conn = sqlite3.connect(f"{data_path}/Teachers_info.db")
             cur = conn.cursor()
@@ -617,6 +636,14 @@ class window(QtWidgets.QMainWindow):
                     SET Name = ?, Assigned_Subjects= ? ,Phone_No = ?, Assigned_Class=?
                     WHERE ID = ?''' 
             cur.execute(sql,data)
+            conn.commit()
+            conn.close() 
+            conn=sqlite3.connect(f"{data_path}/Login.db")
+            cur=conn.cursor()
+            sql1=''' UPDATE Login_S
+                    SET Question = ? , Answer = ?
+                    WHERE ID = ?'''
+            cur.execute(sql1,data1)
             conn.commit()
             conn.close()   
             self.ui.tableWidget_2.setRowCount(0)  
@@ -768,7 +795,10 @@ class window(QtWidgets.QMainWindow):
 
     def Add_Student_Credentials(self):
         popup=QMessageBox()
-        if self.ui.studentNameLineEdit_2.text()=="" or self.ui.fatherSNameLineEdit_2.text()=="" or self.ui.rollNumberLineEdit_2.text()=="" or self.ui.phoneNumberLineEdit_2.text()=="" or self.ui.fatherSPhoneNumberLineEdit_2.text()=="" or self.ui.gradeComboBox_2.currentText()=="":
+        if (self.ui.studentNameLineEdit_2.text()=="" or self.ui.fatherSNameLineEdit_2.text()=="" 
+        or self.ui.rollNumberLineEdit_2.text()=="" or self.ui.phoneNumberLineEdit_2.text()=="" 
+        or self.ui.fatherSPhoneNumberLineEdit_2.text()=="" or self.ui.gradeComboBox_2.currentText()=="" 
+        or self.ui.lineEdit_9.text()=="" or self.ui.lineEdit_10.text()==""):
             popup.setWindowTitle("Add Student User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -781,6 +811,8 @@ class window(QtWidgets.QMainWindow):
             std_ph_no=self.ui.phoneNumberLineEdit_2.text()
             std_fathers_ph_no=self.ui.fatherSPhoneNumberLineEdit_2.text()
             std_class=self.ui.gradeComboBox_2.currentText()
+            std_question=self.ui.lineEdit_9.text()
+            std_answer=self.ui.lineEdit_10.text()
 
             if self.ui.radioButton_3.isChecked():
                 gender="Male"
@@ -818,8 +850,8 @@ class window(QtWidgets.QMainWindow):
                     data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
                     conn = sqlite3.connect(f"{data_path}/Login.db")
                     cur = conn.cursor()
-                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
-                    task2=(std_roll_no,passw,"S")
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type,Question,Answer) VALUES (?,?,?,?,?) '''
+                    task2=(std_roll_no,passw,"S",std_question,std_answer)
                     cur.execute(sql2,task2)
                     conn.commit()
                     conn.close()
@@ -848,8 +880,8 @@ class window(QtWidgets.QMainWindow):
                     data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
                     conn = sqlite3.connect(f"{data_path}/Login.db")
                     cur = conn.cursor()
-                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type) VALUES (?,?,?) '''
-                    task2=(std_roll_no,passw,"S")
+                    sql2=''' INSERT INTO LOGIN_S (Roll_No,Password,Type,Question,Answer) VALUES (?,?,?,?,?) '''
+                    task2=(std_roll_no,passw,"S",std_question,std_answer)
                     cur.execute(sql2,task2)
                     conn.commit()
                     conn.close()
@@ -882,12 +914,21 @@ class window(QtWidgets.QMainWindow):
             passw=cur.fetchall()
             conn.close()
             temp=passw[0]
+            conn = sqlite3.connect(f"{data_path}/Login.db")
+            cur = conn.cursor()
+            cur.execute(f'SELECT * FROM Login_S where Roll_No == {self.user_remover};')
+            passw2=cur.fetchall()
+            conn.close()
+            temp2=passw2[0]
+            
             self.ui.studentNameLineEdit_7.setText(temp[1])
             self.ui.fatherSNameLineEdit_7.setText(temp[2])
             self.ui.rollNumberLineEdit_7.setText(str(temp[0]))
             self.ui.phoneNumberLineEdit_9.setText(str(temp[3]))
             self.ui.fatherSPhoneNumberLineEdit_7.setText(str(temp[4]))
             self.ui.gradeComboBox_7.setItemText(0,str(temp[6]))
+            self.ui.lineEdit.setText(str(temp2[3]))
+            self.ui.lineEdit_4.setText(str(temp2[4]))
             if temp[5]=="Male":
                 self.ui.radioButton_13.setChecked(True)
             elif temp[5]=="Female":
@@ -926,7 +967,10 @@ class window(QtWidgets.QMainWindow):
 
     def Student_Update(self):
         popup=QMessageBox()
-        if self.ui.studentNameLineEdit_7.text()=="" or self.ui.fatherSNameLineEdit_7.text()=="" or self.ui.rollNumberLineEdit_7.text()=="" or self.ui.phoneNumberLineEdit_9.text()=="" or self.ui.fatherSPhoneNumberLineEdit_7.text()=="" or self.ui.gradeComboBox_7.currentText()=="":
+        if (self.ui.studentNameLineEdit_7.text()=="" or self.ui.fatherSNameLineEdit_7.text()=="" 
+        or self.ui.rollNumberLineEdit_7.text()=="" or self.ui.phoneNumberLineEdit_9.text()=="" 
+        or self.ui.fatherSPhoneNumberLineEdit_7.text()=="" or self.ui.gradeComboBox_7.currentText()=="" 
+        or self.ui.lineEdit.text()=='' or self.ui.lineEdit.text()):
             popup.setWindowTitle("Update Student User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -939,6 +983,8 @@ class window(QtWidgets.QMainWindow):
             std_ph_no=self.ui.phoneNumberLineEdit_9.text()
             std_fathers_ph_no=self.ui.fatherSPhoneNumberLineEdit_7.text()
             std_class=self.ui.gradeComboBox_7.currentText()
+            std_question=self.ui.lineEdit.text()
+            std_answer=self.ui.lineEdit_4.text()
 
             if self.ui.radioButton_13.isChecked():
                 gender="Male"
@@ -955,7 +1001,17 @@ class window(QtWidgets.QMainWindow):
                     WHERE Roll_No = ?''' 
             cur.execute(sql,data)
             conn.commit()
-            conn.close()   
+            conn.close() 
+            data=(std_question,std_answer,std_roll_no)
+            conn = sqlite3.connect(f"{data_path}/Login.db")
+            cur = conn.cursor()
+            sql=''' UPDATE Login_S
+                    SET Question = ? , Answer = ?
+                    WHERE Roll_No = ?''' 
+            cur.execute(sql,data)
+            conn.commit()
+            conn.close()
+
             self.ui.tableWidget.setRowCount(0)  
             self.manage_students()
             popup.setWindowTitle("Update Student User")

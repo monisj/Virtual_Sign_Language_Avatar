@@ -136,19 +136,6 @@ QPushButton:hover:!pressed {
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_7">
-                 <item row="1" column="2">
-                  <spacer name="horizontalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
                  <item row="0" column="1">
                   <spacer name="verticalSpacer">
                    <property name="orientation">
@@ -164,6 +151,19 @@ QPushButton:hover:!pressed {
                  </item>
                  <item row="1" column="0">
                   <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="2">
+                  <spacer name="horizontalSpacer_2">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -325,6 +325,13 @@ border-bottom-right-radius:20px;}</string>
                            </widget>
                           </item>
                          </layout>
+                        </widget>
+                       </item>
+                       <item alignment="Qt::AlignRight">
+                        <widget class="QLabel" name="forgotpasswordlabel">
+                         <property name="text">
+                          <string>Forgot Password</string>
+                         </property>
                         </widget>
                        </item>
                       </layout>
@@ -673,6 +680,26 @@ Number</string>
                 </property>
                </item>
               </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="securitylabel">
+               <property name="text">
+                <string>Security Question</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="securityanswerlabel">
+               <property name="text">
+                <string>Answer</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QLineEdit" name="SecurityLineEdit"/>
+             </item>
+             <item row="8" column="1">
+              <widget class="QLineEdit" name="SecurityAnswerlineEdit"/>
              </item>
             </layout>
            </item>
@@ -1211,7 +1238,7 @@ QPushButton#pushButton_47:hover:!pressed{
            <item>
             <widget class="QStackedWidget" name="stackedWidget_2">
              <property name="currentIndex">
-              <number>3</number>
+              <number>10</number>
              </property>
              <widget class="QWidget" name="page_15">
               <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1225,8 +1252,8 @@ QPushButton#pushButton_47:hover:!pressed{
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>401</width>
-                    <height>285</height>
+                    <width>1203</width>
+                    <height>972</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -1483,8 +1510,8 @@ QPushButton:hover:!pressed {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>149</width>
-                    <height>154</height>
+                    <width>1203</width>
+                    <height>861</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -2406,8 +2433,8 @@ QPushButton:hover:!pressed {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>508</width>
-                    <height>386</height>
+                    <width>1203</width>
+                    <height>861</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3125,6 +3152,26 @@ Number</string>
                       </item>
                      </widget>
                     </item>
+                    <item row="7" column="0">
+                     <widget class="QLabel" name="label_30">
+                      <property name="text">
+                       <string>Security Question</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="8" column="0">
+                     <widget class="QLabel" name="label_31">
+                      <property name="text">
+                       <string>Answer</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="1">
+                     <widget class="QLineEdit" name="lineEdit_9"/>
+                    </item>
+                    <item row="8" column="1">
+                     <widget class="QLineEdit" name="lineEdit_10"/>
+                    </item>
                    </layout>
                   </item>
                  </layout>
@@ -3409,6 +3456,26 @@ Number</string>
                       </item>
                      </widget>
                     </item>
+                    <item row="5" column="0">
+                     <widget class="QLabel" name="label_32">
+                      <property name="text">
+                       <string>Security Question</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="0">
+                     <widget class="QLabel" name="label_33">
+                      <property name="text">
+                       <string>Answer</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="1">
+                     <widget class="QLineEdit" name="lineEdit_11"/>
+                    </item>
+                    <item row="6" column="1">
+                     <widget class="QLineEdit" name="lineEdit_12"/>
+                    </item>
                    </layout>
                   </item>
                  </layout>
@@ -3692,6 +3759,26 @@ Number</string>
                        </property>
                       </item>
                      </widget>
+                    </item>
+                    <item row="5" column="0">
+                     <widget class="QLabel" name="label_34">
+                      <property name="text">
+                       <string>Security Question</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="0">
+                     <widget class="QLabel" name="label_35">
+                      <property name="text">
+                       <string>Answer</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="1">
+                     <widget class="QLineEdit" name="lineEdit_13"/>
+                    </item>
+                    <item row="6" column="1">
+                     <widget class="QLineEdit" name="lineEdit_14"/>
                     </item>
                    </layout>
                   </item>
@@ -3979,7 +4066,7 @@ Number</string>
                       </layout>
                      </widget>
                     </item>
-                    <item row="6" column="0">
+                    <item row="7" column="0">
                      <widget class="QLabel" name="gradeLabel_7">
                       <property name="font">
                        <font>
@@ -3991,7 +4078,27 @@ Number</string>
                       </property>
                      </widget>
                     </item>
-                    <item row="6" column="1">
+                    <item row="8" column="1">
+                     <widget class="QLineEdit" name="lineEdit"/>
+                    </item>
+                    <item row="9" column="1">
+                     <widget class="QLineEdit" name="lineEdit_4"/>
+                    </item>
+                    <item row="8" column="0">
+                     <widget class="QLabel" name="label_28">
+                      <property name="text">
+                       <string>Security Question</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="9" column="0">
+                     <widget class="QLabel" name="label_29">
+                      <property name="text">
+                       <string>Answer</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="1">
                      <widget class="QComboBox" name="gradeComboBox_7">
                       <property name="font">
                        <font>
