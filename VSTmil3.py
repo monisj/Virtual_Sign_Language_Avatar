@@ -2,6 +2,7 @@ from ast import excepthandler
 from fileinput import filename
 from telnetlib import LOGOUT
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtMultimedia
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -94,6 +95,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_19.setIcon(QtGui.QIcon('play-button.png'))
         self.ui.pushButton_17.clicked.connect(self.delete_video)
         self.ui.pushButton_18.clicked.connect(self.add_video)
+        self.ui.pushButton_27.clicked.connect(self.playAudio)
         self.ui.horizontalSlider_4.sliderMoved.connect(self.setPosition)
         self.ui.passwordLineEdit.returnPressed.connect(self.login)
         self.ui.forgotpasswordlabel.clicked.connect(self.forgot_password)
@@ -1675,6 +1677,14 @@ class window(QtWidgets.QMainWindow):
                     popup.setStandardButtons(QMessageBox.Ok)
                     popup.setIcon(QMessageBox.Critical)
                     popup.exec_()
+
+    def playAudio(self):
+        from gtts import gTTS
+        mytext = self.ui.textEdit.toPlainText()
+        language = 'en'
+        myobj = gTTS(text=mytext, lang=language, slow=False)
+        myobj.save("test.mp3")
+        passw=subprocess.check_output([sys.executable, "audio.py"])
                     
     def sentence_screen(self):
         if self.ui.stackedWidget_2.currentIndex()==3:
@@ -2327,25 +2337,7 @@ class window(QtWidgets.QMainWindow):
             pass
         else:
             self.test_accuracy=acc
-        # if self.test_attempt<3:
-        #     if self.test_accuracy==0:
-        #         if acc!=0:
-        #             self.test_accuracy=acc
-        #             self.test_attempt=0
-        #     else:
-        #         if dist[0]!=self.acc2 and acc!=0:
-        #             if self.acc2==0:
-        #                 self.test_attempt=0
-        #                 self.camerathread.attempt_no=self.test_attempt
-        #                 self.acc2=dist[0]
-        #                 self.test_accuracy=acc
-                    
-        #             else:
-        #                 self.acc2=dist[0]
-        #                 self.test_accuracy=acc
-        #                 self.test_attempt+=1
-        #                 self.camerathread.attempt_no=self.test_attempt
-        # else:
+        
         if len(sign)<2:
             pass
         else:
