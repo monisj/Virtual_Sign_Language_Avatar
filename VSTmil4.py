@@ -2,7 +2,6 @@ from ast import excepthandler
 from fileinput import filename
 from telnetlib import LOGOUT
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5 import QtCore, QtWidgets, QtMultimedia
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -24,7 +23,7 @@ import pandas as pd
 from cmath import inf
 import subprocess
 
-from mil3gui import Ui_MainWindow
+from mil3guitestscale import Ui_MainWindow
 
 
 class window(QtWidgets.QMainWindow):
@@ -95,7 +94,6 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_19.setIcon(QtGui.QIcon('play-button.png'))
         self.ui.pushButton_17.clicked.connect(self.delete_video)
         self.ui.pushButton_18.clicked.connect(self.add_video)
-        self.ui.pushButton_27.clicked.connect(self.playAudio)
         self.ui.horizontalSlider_4.sliderMoved.connect(self.setPosition)
         self.ui.passwordLineEdit.returnPressed.connect(self.login)
         self.ui.forgotpasswordlabel.clicked.connect(self.forgot_password)
@@ -114,7 +112,7 @@ class window(QtWidgets.QMainWindow):
         self.ui.pushButton_23.clicked.connect(self.Back_sentences)
         self.ui.pushButton_24.clicked.connect(self.add_space)
         self.ui.pushButton_25.clicked.connect(self.sentence_back)
-        # self.ui.pushButton_27.clicked.connect(self.logout)
+        self.ui.pushButton_27.clicked.connect(self.playAudio)
         self.ui.pushButton_26.clicked.connect(self.teachers_back)
         self.ui.pushButton_6.clicked.connect(self.Remove_Student)
         self.ui.pushButton_10.clicked.connect(self.main)
@@ -163,6 +161,8 @@ class window(QtWidgets.QMainWindow):
         self.ui.lineEdit_8.textChanged.connect(self.subject_search)
 
         self.ui.CameraFrame_4.resizeEvent = self.camera_resize
+        self.ui.frame_51.resizeEvent = self.sentence_camera_resize
+        self.ui.frame_65.resizeEvent = self.quiz_camera_resize
         #############Validators###################
         self.ui.lineEdit_2.setValidator(self.onlyInt)
         self.ui.lineEdit_3.setValidator(self.onlyInt)
@@ -484,7 +484,7 @@ class window(QtWidgets.QMainWindow):
         popup=QMessageBox()
         if (self.ui.TeachersNameLineEdit_4.text()=="" or self.ui.AssignedSubjectsComboBox_4.currentText()=="Please Select Subjects" 
         or self.ui.IDNumberLineEdit_4.text()=="" or self.ui.phoneNumberLineEdit_4.text()=="" 
-        or self.ui.AssignedClassComboBox_4.currentText()=="Please Select Class" or self.ui.lineEdit_11.text()=='' or self.ui.lineEdit_12.text()==''):
+        or self.ui.AssignedClassComboBox_4.currentText()=="Please Select Class" or self.ui.securityQuestionLineEdit_2.text()=='' or self.ui.answerLineEdit_2.text()==''):
             popup.setWindowTitle("Create Teacher User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -496,8 +496,8 @@ class window(QtWidgets.QMainWindow):
             teach_id=self.ui.IDNumberLineEdit_4.text()
             teach_ph_no=self.ui.phoneNumberLineEdit_4.text()
             teach_assign_class=self.ui.AssignedClassComboBox_4.currentText()
-            teach_question=self.ui.lineEdit_11.text()
-            teach_answer=self.ui.lineEdit_12.text()
+            teach_question=self.ui.securityQuestionLineEdit_2.text()
+            teach_answer=self.ui.answerLineEdit_2.text()
             if int(teach_id) <=10000:
                 popup.setWindowTitle("Create Teacher User")
                 popup.setText("Teacher ID Cannot Be Less than 1000x")
@@ -605,8 +605,8 @@ class window(QtWidgets.QMainWindow):
             self.ui.phoneNumberLineEdit_5.setText(str(temp[3]))
             self.ui.AssignedClassComboBox_5.setItemText(0,str(temp[4]))
             self.ui.stackedWidget_2.setCurrentIndex(12)
-            self.ui.lineEdit_13.setText(str(temp2[3]))
-            self.ui.lineEdit_14.setText(str(temp2[4]))
+            self.ui.securityQuestionLineEdit_3.setText(str(temp2[3]))
+            self.ui.answerLineEdit_3.setText(str(temp2[4]))
             self.user_remover=''
         else:
             pass
@@ -615,7 +615,7 @@ class window(QtWidgets.QMainWindow):
         popup=QMessageBox()
         if (self.ui.TeachersNameLineEdit_5.text()=="" or self.ui.AssignedSubjectsComboBox_5.currentText()=="Please Select Subjects" 
         or self.ui.IDNumberLineEdit_5.text()=="" or self.ui.phoneNumberLineEdit_5.text()=="" 
-        or self.ui.AssignedClassComboBox_5.currentText()=="Please Select Class" or self.ui.lineEdit_13.text()=='' or self.ui.lineEdit_14.text()==''):
+        or self.ui.AssignedClassComboBox_5.currentText()=="Please Select Class" or self.ui.securityQuestionLineEdit_3.text()=='' or self.ui.answerLineEdit_3.text()==''):
             popup.setWindowTitle("Update Teacher User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -627,8 +627,8 @@ class window(QtWidgets.QMainWindow):
             teach_id=self.ui.IDNumberLineEdit_5.text()
             teach_ph_no=self.ui.phoneNumberLineEdit_5.text()
             teach_assign_class=self.ui.AssignedClassComboBox_5.currentText()
-            teach_question=self.ui.lineEdit_13.text()
-            teach_answer=self.ui.lineEdit_14.text()
+            teach_question=self.ui.securityQuestionLineEdit_3.text()
+            teach_answer=self.ui.answerLineEdit_3.text()
             data=(teach_name,teach_assign_subj,teach_ph_no,teach_assign_class,teach_id)
             data1=(teach_id,teach_question,teach_answer)
             data_path=pathlib.Path(__file__).parent.absolute().joinpath('Databases')
@@ -800,7 +800,7 @@ class window(QtWidgets.QMainWindow):
         if (self.ui.studentNameLineEdit_2.text()=="" or self.ui.fatherSNameLineEdit_2.text()=="" 
         or self.ui.rollNumberLineEdit_2.text()=="" or self.ui.phoneNumberLineEdit_2.text()=="" 
         or self.ui.fatherSPhoneNumberLineEdit_2.text()=="" or self.ui.gradeComboBox_2.currentText()=="" 
-        or self.ui.lineEdit_9.text()=="" or self.ui.lineEdit_10.text()==""):
+        or self.ui.securityQuestionLineEdit.text()=="" or self.ui.answerLineEdit.text()==""):
             popup.setWindowTitle("Add Student User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -813,8 +813,8 @@ class window(QtWidgets.QMainWindow):
             std_ph_no=self.ui.phoneNumberLineEdit_2.text()
             std_fathers_ph_no=self.ui.fatherSPhoneNumberLineEdit_2.text()
             std_class=self.ui.gradeComboBox_2.currentText()
-            std_question=self.ui.lineEdit_9.text()
-            std_answer=self.ui.lineEdit_10.text()
+            std_question=self.ui.securityQuestionLineEdit.text()
+            std_answer=self.ui.answerLineEdit.text()
 
             if self.ui.radioButton_3.isChecked():
                 gender="Male"
@@ -929,8 +929,8 @@ class window(QtWidgets.QMainWindow):
             self.ui.phoneNumberLineEdit_9.setText(str(temp[3]))
             self.ui.fatherSPhoneNumberLineEdit_7.setText(str(temp[4]))
             self.ui.gradeComboBox_7.setItemText(0,str(temp[6]))
-            self.ui.lineEdit.setText(str(temp2[3]))
-            self.ui.lineEdit_4.setText(str(temp2[4]))
+            self.ui.securityQuestionLineEdit_4.setText(str(temp2[3]))
+            self.ui.answerLineEdit_4.setText(str(temp2[4]))
             if temp[5]=="Male":
                 self.ui.radioButton_13.setChecked(True)
             elif temp[5]=="Female":
@@ -972,7 +972,7 @@ class window(QtWidgets.QMainWindow):
         if (self.ui.studentNameLineEdit_7.text()=="" or self.ui.fatherSNameLineEdit_7.text()=="" 
         or self.ui.rollNumberLineEdit_7.text()=="" or self.ui.phoneNumberLineEdit_9.text()=="" 
         or self.ui.fatherSPhoneNumberLineEdit_7.text()=="" or self.ui.gradeComboBox_7.currentText()=="" 
-        or self.ui.lineEdit.text()=='' or self.ui.lineEdit.text()):
+        or self.ui.securityQuestionLineEdit_4.text()=='' or self.ui.securityQuestionLineEdit_4.text()):
             popup.setWindowTitle("Update Student User")
             popup.setText("Please Enter All Fields")
             popup.setStandardButtons(QMessageBox.Ok)
@@ -985,8 +985,8 @@ class window(QtWidgets.QMainWindow):
             std_ph_no=self.ui.phoneNumberLineEdit_9.text()
             std_fathers_ph_no=self.ui.fatherSPhoneNumberLineEdit_7.text()
             std_class=self.ui.gradeComboBox_7.currentText()
-            std_question=self.ui.lineEdit.text()
-            std_answer=self.ui.lineEdit_4.text()
+            std_question=self.ui.securityQuestionLineEdit_4.text()
+            std_answer=self.ui.answerLineEdit_4.text()
 
             if self.ui.radioButton_13.isChecked():
                 gender="Male"
@@ -1145,6 +1145,11 @@ class window(QtWidgets.QMainWindow):
                 self.ui.stackedWidget_2.setCurrentIndex(4)
                 self.sentences=[]
                 self.camerathread = cameraThread()
+                try:
+                    self.camerathread.display_width=self.quiz_display_width
+                    self.camerathread.display_height=self.quiz_display_height
+                except:
+                    pass
                 self.camerathread.previous_record=False
                 self.camerathread.attempt_no=0
                 self.test_accuracy=0
@@ -1155,7 +1160,7 @@ class window(QtWidgets.QMainWindow):
                 self.ui.label_13.setText(f'Sign Name:{sign}')
                 self.camerathread.record=False
                 self.camerathread.start()
-                self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
+                self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_test)
                 self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
                 self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         except:
@@ -1677,14 +1682,21 @@ class window(QtWidgets.QMainWindow):
                     popup.setStandardButtons(QMessageBox.Ok)
                     popup.setIcon(QMessageBox.Critical)
                     popup.exec_()
-
     def playAudio(self):
         from gtts import gTTS
         mytext = self.ui.textEdit.toPlainText()
-        language = 'en'
-        myobj = gTTS(text=mytext, lang=language, slow=False)
-        myobj.save("test.mp3")
-        passw=subprocess.check_output([sys.executable, "audio.py"])
+        if mytext=='' or mytext==None:
+            popup=QMessageBox()
+            popup.setWindowTitle("Listen Audio")
+            popup.setText("First Create Some Signs")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        else:
+            language = 'en'
+            myobj = gTTS(text=mytext, lang=language, slow=False)
+            myobj.save("test.mp3")
+            passw=subprocess.check_output([sys.executable, "audio.py"])
                     
     def sentence_screen(self):
         if self.ui.stackedWidget_2.currentIndex()==3:
@@ -1704,6 +1716,11 @@ class window(QtWidgets.QMainWindow):
             self.sentences=[]
             self.ui.textEdit.clear()
             self.camerathread = cameraThread()
+            try:
+                self.camerathread.display_width=self.sentence_display_width
+                self.camerathread.display_height=self.sentence_display_height
+            except:
+                pass
             self.camerathread.previous_record=False
             self.camerathread.reference_signs=all_data_sentences
             self.camerathread.acc_sign='A'
@@ -2318,6 +2335,22 @@ class window(QtWidgets.QMainWindow):
             self.camerathread.display_height=self.display_height
         except:
             pass
+    def sentence_camera_resize(self, resizeEvent:QResizeEvent):
+        self.ui.label_4.resize(resizeEvent.size())
+        self.sentence_display_width, self.sentence_display_height = self.ui.label_4.width(), self.ui.label_4.height()
+        try:
+            self.camerathread.display_width=self.sentence_display_width
+            self.camerathread.display_height=self.sentence_display_height
+        except:
+            pass
+    def quiz_camera_resize(self, resizeEvent:QResizeEvent):
+        self.ui.label_7.resize(resizeEvent.size())
+        self.quiz_display_width, self.quiz_display_height = self.ui.label_7.width(), self.ui.label_7.height()
+        try:
+            self.camerathread.display_width=self.quiz_display_width
+            self.camerathread.display_height=self.quiz_display_height
+        except:
+            pass
 
     def ImageUpdateSlot(self, Image):
         self.ui.label_18.setPixmap(QPixmap.fromImage(Image))
@@ -2326,6 +2359,8 @@ class window(QtWidgets.QMainWindow):
     def ImageUpdateSlot_sentences(self, Image):
         self.camerathread.sentences_pass_on=True
         self.ui.label_4.setPixmap(QPixmap.fromImage(Image))
+    def ImageUpdateSlot_test(self,Image):
+        self.camerathread.sentences_pass_on=True
         self.ui.label_7.setPixmap(QPixmap.fromImage(Image))
     def VideoUpdateSlot(self, Image):
         self.ui.label_18.setPixmap(QPixmap.fromImage(Image))
@@ -2337,7 +2372,6 @@ class window(QtWidgets.QMainWindow):
             pass
         else:
             self.test_accuracy=acc
-        
         if len(sign)<2:
             pass
         else:
@@ -2719,7 +2753,7 @@ class cameraThread(QThread):
                     # Update the frame (draw landmarks & display result)
                     FlippedImage,acc,test_no=webcam_manager.update(frame, results, sign_detected, is_recording,sign,dist,self.acc_sign,self.sentences_pass_on,self.attempt_no)
                     ConvertToQtFormat = QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QImage.Format_BGR888)
-                    Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio)
+                    Pic = ConvertToQtFormat.scaled(self.display_width, self.display_height, QtCore.Qt.KeepAspectRatio)
                     self.ImageUpdate.emit(Pic)
                     self.accuracyUpdate.emit(str(sign_detected),list(sign),list(dist),str(acc),list(out_left),list(out_right),int(self.attempt_no))
                     if test_no:
