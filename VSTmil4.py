@@ -1144,25 +1144,38 @@ class window(QtWidgets.QMainWindow):
                 reference_sign=globals()[reference_sign]
                 self.ui.stackedWidget_2.setCurrentIndex(4)
                 self.sentences=[]
-                self.camerathread = cameraThread()
-                try:
-                    self.camerathread.display_width=self.quiz_display_width
-                    self.camerathread.display_height=self.quiz_display_height
-                except:
-                    pass
-                self.camerathread.previous_record=False
-                self.camerathread.attempt_no=0
-                self.test_accuracy=0
-                self.test_attempt=0
-                self.camerathread.reference_signs=reference_sign
-                self.camerathread.acc_sign=sign
-                self.video=sign
-                self.ui.label_13.setText(f'Sign Name:{sign}')
-                self.camerathread.record=False
-                self.camerathread.start()
-                self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_test)
-                self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
-                self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+
+                 # Check if the webcam is opened correctly
+                cap = cv2.VideoCapture(0)
+                if  cap.read()[0]==False:
+                    popup=QMessageBox()
+                    popup.setWindowTitle("Webcam Feed")
+                    popup.setText("No WebCam Found Please Connect a Camera and Try Again !!")
+                    popup.setStandardButtons(QMessageBox.Ok)
+                    popup.setIcon(QMessageBox.Critical)
+                    popup.exec_()
+                else:
+                    cap.release()
+                    cv2.destroyAllWindows()
+                    self.camerathread = cameraThread()
+                    try:
+                        self.camerathread.display_width=self.quiz_display_width
+                        self.camerathread.display_height=self.quiz_display_height
+                    except:
+                        pass
+                    self.camerathread.previous_record=False
+                    self.camerathread.attempt_no=0
+                    self.test_accuracy=0
+                    self.test_attempt=0
+                    self.camerathread.reference_signs=reference_sign
+                    self.camerathread.acc_sign=sign
+                    self.video=sign
+                    self.ui.label_13.setText(f'Sign Name:{sign}')
+                    self.camerathread.record=False
+                    self.camerathread.start()
+                    self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_test)
+                    self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+                    self.camerathread.accuracy_reset.connect(self.accuracy_reset)
         except:
             pass
     
@@ -1715,30 +1728,43 @@ class window(QtWidgets.QMainWindow):
             self.ui.tableWidget_7.setRowCount(0)
             self.sentences=[]
             self.ui.textEdit.clear()
-            self.camerathread = cameraThread()
-            try:
-                self.camerathread.display_width=self.sentence_display_width
-                self.camerathread.display_height=self.sentence_display_height
-            except:
-                pass
-            self.camerathread.previous_record=False
-            self.camerathread.reference_signs=all_data_sentences
-            self.camerathread.acc_sign='A'
-            self.video='A'
-            self.sentence_accuracy=0
-            self.hold_data=0
-            self.ui.label_27.setText("Overall Accuracy = None")
-            self.camerathread.record=False
-            self.test_attempt=4
-            self.camerathread.attempt_no=4
-            try:
-                self.camerathread.start()
-            except:
-                pass
-            self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
-            self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
-            self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-            self.ui.stackedWidget_2.setCurrentIndex(3)
+            cap = cv2.VideoCapture(0)
+
+            # Check if the webcam is opened correctly
+            if cap.read()[0]==False:
+                popup=QMessageBox()
+                popup.setWindowTitle("Webcam Feed")
+                popup.setText("No WebCam Found Please Connect a Camera and Try Again !!")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Critical)
+                popup.exec_()
+            else:
+                cap.release()
+                cv2.destroyAllWindows()
+                self.camerathread = cameraThread()
+                try:
+                    self.camerathread.display_width=self.sentence_display_width
+                    self.camerathread.display_height=self.sentence_display_height
+                except:
+                    pass
+                self.camerathread.previous_record=False
+                self.camerathread.reference_signs=all_data_sentences
+                self.camerathread.acc_sign='A'
+                self.video='A'
+                self.sentence_accuracy=0
+                self.hold_data=0
+                self.ui.label_27.setText("Overall Accuracy = None")
+                self.camerathread.record=False
+                self.test_attempt=4
+                self.camerathread.attempt_no=4
+                try:
+                    self.camerathread.start()
+                except:
+                    pass
+                self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot_sentences)
+                self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+                self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+                self.ui.stackedWidget_2.setCurrentIndex(3)
     
     def click(self,eve,subject,folder,video):
         self.select_video_new(subject,folder,video)
@@ -1857,29 +1883,43 @@ class window(QtWidgets.QMainWindow):
         self.mediaPlayer.play()
         time.sleep(0.1)
         
-        self.camerathread = cameraThread()
-        try:
-            self.camerathread.display_width=self.display_width
-            self.camerathread.display_height=self.display_height
-        except:
-            pass
-        self.camerathread.acc_sign=video
-        self.video=video
-        self.camerathread.record=False
+        cap = cv2.VideoCapture(0)
 
-        self.camerathread.reference_signs=data_signs
-        self.current_reference_signs=data_signs
-        try:
-            self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref)
-        except:
-            pass
-            
-        self.camerathread.start()
-        self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
-        self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
-        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-        self.ui.stackedWidget_2.setCurrentIndex(2)
-        self.camerathread.sentences_pass_on=False
+        # Check if the webcam is opened correctly
+        if cap.read()[0]==False:
+            popup=QMessageBox()
+            popup.setWindowTitle("Webcam Feed")
+            popup.setText("No WebCam Found Please Connect a Camera and Try Again !!")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        else:
+            cap.release()
+            cv2.destroyAllWindows()
+
+            self.camerathread = cameraThread()
+            try:
+                self.camerathread.display_width=self.display_width
+                self.camerathread.display_height=self.display_height
+            except:
+                pass
+            self.camerathread.acc_sign=video
+            self.video=video
+            self.camerathread.record=False
+
+            self.camerathread.reference_signs=data_signs
+            self.current_reference_signs=data_signs
+            try:
+                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref)
+            except:
+                pass
+                
+            self.camerathread.start()
+            self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
+            self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+            self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+            self.ui.stackedWidget_2.setCurrentIndex(2)
+            self.camerathread.sentences_pass_on=False
 
     def select_video_test(self,index): #For Student Video Assignment
             import re
@@ -2075,24 +2115,37 @@ class window(QtWidgets.QMainWindow):
         self.mediaPlayer.play()
         time.sleep(0.1)
 
-        monis=eval(f'{folder}_signs')
-        self.camerathread = cameraThread()
-        self.camerathread.reference_signs=monis
-        self.camerathread.acc_sign=video[:-4]
-        self.video=video[:-4]
-        self.camerathread.record=False
-        try:
-            self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref)
-        except:
-            pass
-            
-        self.camerathread.start()
-        self.camerathread.previous_record=False
-        self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
-        self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
-        self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-        self.ui.stackedWidget_2.setCurrentIndex(2)
-        self.camerathread.sentences_pass_on=False
+        cap = cv2.VideoCapture(0)
+
+        # Check if the webcam is opened correctly
+        if cap.read()[0]==False:
+            popup=QMessageBox()
+            popup.setWindowTitle("Webcam Feed")
+            popup.setText("No WebCam Found Please Connect a Camera and Try Again !!")
+            popup.setStandardButtons(QMessageBox.Ok)
+            popup.setIcon(QMessageBox.Critical)
+            popup.exec_()
+        else:
+            cap.release()
+            cv2.destroyAllWindows()
+            monis=eval(f'{folder}_signs')
+            self.camerathread = cameraThread()
+            self.camerathread.reference_signs=monis
+            self.camerathread.acc_sign=video[:-4]
+            self.video=video[:-4]
+            self.camerathread.record=False
+            try:
+                self.camerathread.reference_signs=self.camerathread.reference_signs.append(self.new_ref)
+            except:
+                pass
+                
+            self.camerathread.start()
+            self.camerathread.previous_record=False
+            self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
+            self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+            self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+            self.ui.stackedWidget_2.setCurrentIndex(2)
+            self.camerathread.sentences_pass_on=False
     
     def back_video(self):
         self.ui.textEdit_2.clear()
@@ -2601,23 +2654,37 @@ class window(QtWidgets.QMainWindow):
         try:
             self.videoThread.stop()
             self.videoThread.key1=False
-            self.camerathread = cameraThread()
-            try:
-                self.camerathread.display_width=self.display_width
-                self.camerathread.display_height=self.display_height
-            except:
-                pass
-            self.camerathread.acc_sign=self.video
-            self.camerathread.reference_signs=self.current_reference_signs
-            self.camerathread.record=False
-            self.camerathread.start()
-            self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
-            self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
-            self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-            self.ui.stackedWidget_2.setCurrentIndex(2)
-            self.camerathread.sentences_pass_on=False
-            self.left_list=[]
-            self.right_list=[]
+
+             # Check if the webcam is opened correctly
+            cap = cv2.VideoCapture(0)
+            if  cap.read()[0]==False:
+                popup=QMessageBox()
+                popup.setWindowTitle("Webcam Feed")
+                popup.setText("No WebCam Found Please Connect a Camera and Try Again !!")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Critical)
+                popup.exec_()
+            else:
+                cap.release()
+                cv2.destroyAllWindows()
+
+                self.camerathread = cameraThread()
+                try:
+                    self.camerathread.display_width=self.display_width
+                    self.camerathread.display_height=self.display_height
+                except:
+                    pass
+                self.camerathread.acc_sign=self.video
+                self.camerathread.reference_signs=self.current_reference_signs
+                self.camerathread.record=False
+                self.camerathread.start()
+                self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
+                self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+                self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+                self.ui.stackedWidget_2.setCurrentIndex(2)
+                self.camerathread.sentences_pass_on=False
+                self.left_list=[]
+                self.right_list=[]
         except: 
             pass
     def pause_play(self):
@@ -2640,16 +2707,28 @@ class window(QtWidgets.QMainWindow):
             popup.setStandardButtons(QMessageBox.Ok)
             popup.setIcon(QMessageBox.Critical)
             popup.exec_()
-            self.camerathread = cameraThread()
-            self.camerathread.acc_sign=self.video
-            self.camerathread.reference_signs=self.current_reference_signs
-            self.camerathread.record=False
-            self.camerathread.start()
-            self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
-            self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
-            self.camerathread.accuracy_reset.connect(self.accuracy_reset)
-            self.ui.stackedWidget_2.setCurrentIndex(2)
-            self.camerathread.sentences_pass_on=False
+             # Check if the webcam is opened correctly
+            cap = cv2.VideoCapture(0)
+            if  cap.read()[0]==False:
+                popup=QMessageBox()
+                popup.setWindowTitle("Webcam Feed")
+                popup.setText("No WebCam Found Please Connect a Camera and Try Again !!")
+                popup.setStandardButtons(QMessageBox.Ok)
+                popup.setIcon(QMessageBox.Critical)
+                popup.exec_()
+            else:
+                cap.release()
+                cv2.destroyAllWindows()
+                self.camerathread = cameraThread()
+                self.camerathread.acc_sign=self.video
+                self.camerathread.reference_signs=self.current_reference_signs
+                self.camerathread.record=False
+                self.camerathread.start()
+                self.camerathread.ImageUpdate.connect(self.ImageUpdateSlot)
+                self.camerathread.accuracyUpdate.connect(self.accuracyUpdateSlot)
+                self.camerathread.accuracy_reset.connect(self.accuracy_reset)
+                self.ui.stackedWidget_2.setCurrentIndex(2)
+                self.camerathread.sentences_pass_on=False
         else: 
             self.videoThread=videoThread()
             self.videoThread.leftlist=self.left_list
@@ -2878,6 +2957,7 @@ if __name__ == "__main__":
     bc=multiprocessing.Process(target=start_logo.main, args=())
     bc.start()
     dataset=pathlib.Path.cwd().joinpath('data')
+    print(dataset)
     data_len=os.listdir(dataset)
     start_time = time.time()
     
